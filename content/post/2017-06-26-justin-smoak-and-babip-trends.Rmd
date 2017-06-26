@@ -1,0 +1,36 @@
+---
+title: Justin Smoak and BABIP Trends
+author: Mike Ching
+date: '2017-06-26'
+slug: justin-smoak-and-babip-trends
+categories:
+  - R
+tags:
+  - baseball
+---
+
+The podcast I listen to mentioned Justin Smoak's poor career BABIP numbers and I wondered how this fits in with people with as many AB as he has. 
+
+```{r}
+library(Lahman)
+library(dplyr)
+library(ggplot2)
+library(hrbrthemes)
+```
+
+
+```{r}
+data("Batting")
+Batting %>% group_by(yearID) %>% 
+  summarize(BABIP = (sum(H, na.rm = T) - sum(HR, na.rm = T))/
+              (sum(AB, na.rm = T) - sum(SO, na.rm = T) - sum(HR, na.rm = T) + sum(SF, na.rm = T))) %>% 
+  filter(yearID>1953) %>% 
+  ggplot(aes(x = yearID, y = BABIP)) + geom_point() + geom_smooth(method = "loess") +
+  labs(title = "Batting Average on Balls in Play, 1953-2015",
+       x = "Year",
+       y = "BABIP") +
+  theme_ipsum()
+  
+
+```
+

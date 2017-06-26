@@ -1,0 +1,32 @@
+---
+title: Justin Smoak and BABIP Trends
+author: Mike Ching
+date: '2017-06-26'
+slug: justin-smoak-and-babip-trends
+categories:
+  - R
+tags:
+  - baseball
+---
+
+
+
+<p>The podcast I listen to mentioned Justin Smoak’s poor career BABIP numbers and I wondered how this fits in with people with as many AB as he has.</p>
+<pre class="r"><code>library(Lahman)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<pre class="r"><code>data(&quot;Batting&quot;)
+Batting %&gt;% group_by(yearID) %&gt;% 
+  summarize(BABIP = (sum(H, na.rm = T) - sum(HR, na.rm = T))/
+              (sum(AB, na.rm = T) - sum(SO, na.rm = T) - sum(HR, na.rm = T) + sum(SF, na.rm = T))) %&gt;% 
+  filter(yearID&gt;1953) %&gt;% 
+  ggplot(aes(x = yearID, y = BABIP)) + geom_point()</code></pre>
+<p><img src="/post/2017-06-26-justin-smoak-and-babip-trends_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>

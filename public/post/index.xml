@@ -6,10 +6,20 @@
     <description>Recent content in Posts on A Hugo website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 30 Dec 2016 21:49:57 -0700</lastBuildDate>
+    <lastBuildDate>Mon, 26 Jun 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Justin Smoak and BABIP Trends</title>
+      <link>/2017/06/26/justin-smoak-and-babip-trends/</link>
+      <pubDate>Mon, 26 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/26/justin-smoak-and-babip-trends/</guid>
+      <description>The podcast I listen to mentioned Justin Smoak’s poor career BABIP numbers and I wondered how this fits in with people with as many AB as he has.
+library(Lahman) library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) data(&amp;quot;Batting&amp;quot;) Batting %&amp;gt;% group_by(yearID) %&amp;gt;% summarize(BABIP = (sum(H, na.</description>
+    </item>
     
     <item>
       <title>A Plain Markdown Post</title>
