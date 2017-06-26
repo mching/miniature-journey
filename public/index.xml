@@ -6,10 +6,19 @@
     <description>Recent content on A Hugo website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 30 Dec 2016 21:49:57 -0700</lastBuildDate>
+    <lastBuildDate>Tue, 06 Jun 2017 09:48:51 -1000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Tue, 06 Jun 2017 09:48:51 -1000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>I am a developmental behavioral pediatrician who works with children with a diversity of abilities. My official profile is on the Kaiser Permanente Hawaii website. I am also involved in the American Academy of Pediatrics, Hawaii Chapter. I like reading, the outdoors, photography, and taiko drumming.</description>
+    </item>
     
     <item>
       <title>A Plain Markdown Post</title>
@@ -19,15 +28,6 @@
       <guid>/2016/12/30/a-plain-markdown-post/</guid>
       <description>This is a post written in plain Markdown (*.md) instead of R Markdown (*.Rmd). The major differences are:
  You cannot run any R code in a plain Markdown document, whereas in an R Markdown document, you can embed R code chunks (```{r}); A plain Markdown post is rendered through Blackfriday, and an R Markdown document is compiled by rmarkdown and Pandoc.  There are many differences in syntax between Blackfriday&amp;rsquo;s Markdown and Pandoc&amp;rsquo;s Markdown.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>/about/</link>
-      <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
-      
-      <guid>/about/</guid>
-      <description>I am a developmental behavioral pediatrician who works with children with a diversity of abilities. My official profile is on the Kaiser Permanente Hawaii website.</description>
     </item>
     
     <item>
