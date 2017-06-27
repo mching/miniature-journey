@@ -82,18 +82,6 @@ Batting %>% filter(yearID > 1953) %>%
 #   filter(playerID == "aaronha01")
 ```
 
-
-calculation of career AB to that point of the career. 
-
-```{r}
-Batting %>% filter(yearID > 1953) %>% 
-  group_by(playerID) %>% 
-  mutate(careerAB = cumsum(AB)) %>% 
-  select(yearID, playerID, careerAB) %>% 
-  filter(playerID == "aaronha01")
-```
-
-
 Other data:
 BABIP by position
 BABIP by year of career

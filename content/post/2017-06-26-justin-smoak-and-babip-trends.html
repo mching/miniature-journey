@@ -11,7 +11,7 @@ tags:
 
 
 
-<p>The podcast I listen to mentioned Justin Smoak’s poor career BABIP numbers and I wondered how this fits in with people with as many AB as he has.</p>
+<p>The podcast I listen to said something like, “I bet Justin Smoak must have one of the lowest BABIPs of anyone to this point in his career,” and I thought it might be a good chance to explore this nebulous BABIP a little.</p>
 <pre class="r"><code>library(Lahman)
 library(dplyr)</code></pre>
 <pre><code>## 
@@ -22,11 +22,83 @@ library(dplyr)</code></pre>
 <pre><code>## The following objects are masked from &#39;package:base&#39;:
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>library(ggplot2)</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(hrbrthemes)</code></pre>
+<p>BABIP is calculated as balls in play (hits minus home runs) divided by total at bats that caused these balls in play (at bats minus strikeouts minus home runs plus sacrifice flies). Note that walks aren’t included because they don’t count against AB and the ball wasn’t put in play.</p>
+<p><span class="math display">\[ BABP = {{H - HR} \over AB - K - HR + SF}\]</span></p>
+<p>As part of the exploration I discovered that there were some missing categories for years before 1954. I would assume these were sac flies since the others seem pretty straightforward.</p>
 <pre class="r"><code>data(&quot;Batting&quot;)
-Batting %&gt;% group_by(yearID) %&gt;% 
+Batting %&gt;% group_by(yearID) %&gt;% summarize(sum(H), sum(HR), sum(AB), sum(SO), sum(SF)) %&gt;% 
+  filter(yearID &gt; 1948 &amp; yearID &lt; 1958)</code></pre>
+<pre><code>## # A tibble: 9 x 6
+##   yearID `sum(H)` `sum(HR)` `sum(AB)` `sum(SO)` `sum(SF)`
+##    &lt;int&gt;    &lt;int&gt;     &lt;int&gt;     &lt;int&gt;     &lt;int&gt;     &lt;int&gt;
+## 1   1949    22168      1704     84380      8951        NA
+## 2   1950    22559      2073     84823      9554        NA
+## 3   1951    22191      1863     85065      9335        NA
+## 4   1952    21272      1701     84195     10380        NA
+## 5   1953    22459      2076     84997     10213        NA
+## 6   1954    21908      1937     83936     10215       795
+## 7   1955    21610      2224     83590     10803       698
+## 8   1956    21653      2294     83856     11505       644
+## 9   1957    21865      2202     84906     11948       687</code></pre>
+<p>I charted the league BABIP for all years since 1954 and came up with the figure below. It seems that BABIP has been going up a little and has recently been around .295-.300.</p>
+<pre class="r"><code>Batting %&gt;% group_by(yearID) %&gt;% 
+  # I think I needed all these na.rm because of pitchers who didn&#39;t have any ABs their whole career
   summarize(BABIP = (sum(H, na.rm = T) - sum(HR, na.rm = T))/
               (sum(AB, na.rm = T) - sum(SO, na.rm = T) - sum(HR, na.rm = T) + sum(SF, na.rm = T))) %&gt;% 
   filter(yearID&gt;1953) %&gt;% 
-  ggplot(aes(x = yearID, y = BABIP)) + geom_point()</code></pre>
-<p><img src="/post/2017-06-26-justin-smoak-and-babip-trends_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+  ggplot(aes(x = yearID, y = BABIP)) + geom_point() + geom_smooth(method = &quot;loess&quot;) +
+  labs(title = &quot;Batting Average on Balls in Play, 1953-2015&quot;,
+       x = &quot;Year&quot;,
+       y = &quot;BABIP&quot;) +
+  theme_ipsum()</code></pre>
+<p><img src="/post/2017-06-26-justin-smoak-and-babip-trends_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Let’s break down the announcer’s statement. What is Smoak’s BABIP? First I determined his playerID then calculated his games played and his BABIP.</p>
+<pre class="r"><code>data(&quot;Master&quot;)
+Master %&gt;% filter(nameLast == &quot;Smoak&quot;) %&gt;% select(playerID, birthYear, birthMonth, birthDay, nameFirst, nameLast)</code></pre>
+<pre><code>##    playerID birthYear birthMonth birthDay nameFirst nameLast
+## 1 smoakju01      1986         12        5    Justin    Smoak</code></pre>
+<p>Here are the by year BABIP numbers.</p>
+<pre class="r"><code>Batting %&gt;% filter(playerID == &quot;smoakju01&quot;) %&gt;% 
+  mutate(BABIP = (H - HR) / (AB - HR - SO + SF)) %&gt;%
+  select(yearID, AB, BABIP)</code></pre>
+<pre><code>##   yearID  AB     BABIP
+## 1   2010 235 0.2383721
+## 2   2010 113 0.2933333
+## 3   2011 427 0.2733119
+## 4   2012 483 0.2422535
+## 5   2013 454 0.2784810
+## 6   2014 248 0.2429379
+## 7   2015 296 0.2538860</code></pre>
+<p>And the total career to 2015.</p>
+<pre class="r"><code>Batting %&gt;% filter(playerID == &quot;smoakju01&quot;) %&gt;%
+  select(H, HR, AB, SO, SF) %&gt;% summarize_all(sum) %&gt;%   
+  mutate(BABIP = (H - HR) / (AB - HR - SO + SF))</code></pre>
+<pre><code>##     H HR   AB  SO SF     BABIP
+## 1 506 92 2256 578 13 0.2589118</code></pre>
+<p>This is quite a bit lower than the BABIP in those years (again around .300). Smoak is a first baseman but not a particularly portly one, so I’m not sure that it should be that low.</p>
+<p>Smoak has played for about 6 years. How do I filter players from around the same time who have played at least 6 years and calculate their BABIP to that first 6 years? Or maybe it might be easier by cumulative AB.</p>
+<pre class="r"><code>Batting %&gt;% filter(yearID &gt; 1953) %&gt;%
+  group_by(playerID) %&gt;%
+  mutate(totalAB = sum(AB), cumAB = cumsum(AB)) %&gt;%
+  filter(totalAB &gt;= 2256 &amp; cumAB &lt;3000) %&gt;% select(playerID, yearID, H, AB, HR, SO, SF, totalAB, cumAB) %&gt;%
+  group_by(playerID) %&gt;% summarize(totH = sum(H), totAB = sum(AB), totHR = sum(HR), totSO = sum(SO), totSF = sum(SF)) %&gt;% 
+  mutate(BABIP = (totH - totHR) / (totAB - totHR - totSO + totSF)) %&gt;% arrange(BABIP)</code></pre>
+<pre><code>## # A tibble: 1,302 x 7
+##     playerID  totH totAB totHR totSO totSF     BABIP
+##        &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;     &lt;dbl&gt;
+##  1 crandde01   636  2542   117   266    24 0.2377462
+##  2 hernaen01   522  2327     2   151     8 0.2383135
+##  3 grosswa01   676  2906   110   448    24 0.2386172
+##  4 duncada01   617  2885   109   677    18 0.2399622
+##  5  kingji01   699  2918   117   401    22 0.2402973
+##  6 nettlgr01   623  2560   105   326    15 0.2416045
+##  7 blefacu01   699  2947   112   444    25 0.2429636
+##  8 martibu01   618  2743    58   419    35 0.2433724
+##  9 mcgwima01   647  2656   178   592    37 0.2438898
+## 10 brinked01   551  2644    28   490    14 0.2443925
+## # ... with 1,292 more rows</code></pre>
+<pre class="r"><code># %&gt;%
+#   filter(playerID == &quot;aaronha01&quot;)</code></pre>
+<p>Other data: BABIP by position BABIP by year of career BABIP by age</p>
