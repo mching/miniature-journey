@@ -9,7 +9,7 @@ tags:
   - baseball
 ---
 
-The podcast I listen to mentioned Justin Smoak's poor career BABIP numbers and I wondered how this fits in with people with as many AB as he has. 
+The podcast I listen to said something like, "I bet Justin Smoak must have one of the lowest BABIPs of anyone to this point in his career," and I thought it might be a good chance to explore this nebulous BABIP a little.
 
 ```{r}
 library(Lahman)
@@ -18,10 +18,23 @@ library(ggplot2)
 library(hrbrthemes)
 ```
 
+BABIP is calculated as balls in play (hits minus home runs) divided by total at bats that caused these balls in play (at bats minus strikeouts minus home runs plus sacrifice flies). Note that walks aren't included because they don't count against AB and the ball wasn't put in play.
+
+$$ BABP = {{H - HR} \over AB - K - HR + SF}$$
+
+As part of the exploration I discovered that there were some missing categories for years before 1954. I would assume these were sac flies since the others seem pretty straightforward.
 
 ```{r}
 data("Batting")
+Batting %>% group_by(yearID) %>% summarize(sum(H), sum(HR), sum(AB), sum(SO), sum(SF)) %>% 
+  filter(yearID > 1948 & yearID < 1958)
+```
+
+I charted the league BABIP for all years since 1954 and came up with the figure below. It seems that BABIP has been going up a little and has recently been around .295-.300.
+
+```{r}
 Batting %>% group_by(yearID) %>% 
+  # I think I needed all these na.rm because of pitchers who didn't have any ABs their whole career
   summarize(BABIP = (sum(H, na.rm = T) - sum(HR, na.rm = T))/
               (sum(AB, na.rm = T) - sum(SO, na.rm = T) - sum(HR, na.rm = T) + sum(SF, na.rm = T))) %>% 
   filter(yearID>1953) %>% 
@@ -30,7 +43,58 @@ Batting %>% group_by(yearID) %>%
        x = "Year",
        y = "BABIP") +
   theme_ipsum()
-  
-
 ```
 
+Let's break down the announcer's statement. What is Smoak's BABIP? First I determined his playerID then calculated his games played and his BABIP.
+
+```{r}
+data("Master")
+Master %>% filter(nameLast == "Smoak") %>% select(playerID, birthYear, birthMonth, birthDay, nameFirst, nameLast)
+```
+
+Here are the by year BABIP numbers.
+```{r}
+Batting %>% filter(playerID == "smoakju01") %>% 
+  mutate(BABIP = (H - HR) / (AB - HR - SO + SF)) %>%
+  select(yearID, AB, BABIP)
+```
+
+And the total career to 2015.
+
+```{r}
+Batting %>% filter(playerID == "smoakju01") %>%
+  select(H, HR, AB, SO, SF) %>% summarize_all(sum) %>%   
+  mutate(BABIP = (H - HR) / (AB - HR - SO + SF))
+```
+
+This is quite a bit lower than the BABIP in those years (again around .300). Smoak is a first baseman but not a particularly portly one, so I'm not sure that it should be that low. 
+
+Smoak has played for about 6 years. How do I filter players from around the same time who have played at least 6 years and calculate their BABIP to that first 6 years? Or maybe it might be easier by cumulative AB. 
+
+```{r}
+Batting %>% filter(yearID > 1953) %>%
+  group_by(playerID) %>%
+  mutate(totalAB = sum(AB), cumAB = cumsum(AB)) %>%
+  filter(totalAB >= 2256 & cumAB <3000) %>% select(playerID, yearID, H, AB, HR, SO, SF, totalAB, cumAB) %>%
+  group_by(playerID) %>% summarize(totH = sum(H), totAB = sum(AB), totHR = sum(HR), totSO = sum(SO), totSF = sum(SF)) %>% 
+  mutate(BABIP = (totH - totHR) / (totAB - totHR - totSO + totSF)) %>% arrange(BABIP)
+# %>%
+#   filter(playerID == "aaronha01")
+```
+
+
+calculation of career AB to that point of the career. 
+
+```{r}
+Batting %>% filter(yearID > 1953) %>% 
+  group_by(playerID) %>% 
+  mutate(careerAB = cumsum(AB)) %>% 
+  select(yearID, playerID, careerAB) %>% 
+  filter(playerID == "aaronha01")
+```
+
+
+Other data:
+BABIP by position
+BABIP by year of career
+BABIP by age
