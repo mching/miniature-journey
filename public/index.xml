@@ -32,6 +32,16 @@ library(Lahman) library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; 
     </item>
     
     <item>
+      <title>Work for Dinosaur Speed Geocache</title>
+      <link>/2016/08/05/dinousaur-speed/</link>
+      <pubDate>Fri, 05 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/08/05/dinousaur-speed/</guid>
+      <description>This is the work for the geocache we did today. The geocache description instructed us to measure the stride length and footprint length of some dinosaur tracks at the Dinosaur Ridge hike outside of Denver, Colorado. The kids and I looked at both the thinner Ornithomimus tracks and the thicker Iguanodontid tracks. Here’s the work, done in R:
+First, set up a table of the data. The units for stride length and footprint length are meters.</description>
+    </item>
+    
+    <item>
       <title>Reverse-In Parking in Hawaii and California</title>
       <link>/2016/07/14/reverse-parking/</link>
       <pubDate>Thu, 14 Jul 2016 00:00:00 +0000</pubDate>
