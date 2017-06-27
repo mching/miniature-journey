@@ -13,9 +13,23 @@
   </url>
   
   <url>
-    <loc>/</loc>
-    <lastmod>2017-06-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
+    <loc>/2016/07/14/reverse-parking/</loc>
+    <lastmod>2016-07-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2016/06/13/sorting-photo-directories-with-r-and-exiftool/</loc>
+    <lastmod>2016-06-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2016/05/30/monopoly-simulations/</loc>
+    <lastmod>2016-05-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2016/05/29/hello-world/</loc>
+    <lastmod>2016-05-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -30,6 +44,18 @@
   </url>
   
   <url>
+    <loc>/</loc>
+    <lastmod>2017-06-26T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/parking/</loc>
+    <lastmod>2016-07-14T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/post/</loc>
     <lastmod>2017-06-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -38,6 +64,12 @@
   <url>
     <loc>/categories/r/</loc>
     <lastmod>2017-06-26T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/simulation/</loc>
+    <lastmod>2016-05-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

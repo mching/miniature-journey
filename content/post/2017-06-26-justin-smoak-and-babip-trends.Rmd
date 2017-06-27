@@ -9,7 +9,9 @@ tags:
   - baseball
 ---
 
-The podcast I listen to said something like, "I bet Justin Smoak must have one of the lowest BABIPs of anyone to this point in his career," and I thought it might be a good chance to explore this nebulous BABIP a little.
+The podcast I listen to said something like, "I bet Justin Smoak must have one of the lowest BABIPs of anyone to this point in his career." I thought it might be a good chance to explore this nebulous BABIP a little, what are the historical league and career trends in BABIP. Maybe 3 sentences are needed.
+
+Or maybe a second paragraph. Or 2.
 
 ```{r}
 library(Lahman)

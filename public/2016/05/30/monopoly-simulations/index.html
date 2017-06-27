@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Rolling 3 Doubles in Monopoly</title>
+  <meta property="og:title" content="Rolling 3 Doubles in Monopoly" />
+  <meta name="twitter:title" content="Rolling 3 Doubles in Monopoly" />
+  <meta name="description" content="Tonight my two kids and I were playing Monopoly. It’s a terrible, brutal game that usually ends in bad feelings, but for some reason they always want to play it. One of the rules of the game is that if you roll a double (e.g., two 2s), you get another turn. However, if you roll doubles three times in a row, you are sent to jail.
+I wondered what was the probability of rolling 3 doubles in a row.">
+  <meta property="og:description" content="Tonight my two kids and I were playing Monopoly. It’s a terrible, brutal game that usually ends in bad feelings, but for some reason they always want to play it. One of the rules of the game is that if you roll a double (e.g., two 2s), you get another turn. However, if you roll doubles three times in a row, you are sent to jail.
+I wondered what was the probability of rolling 3 doubles in a row.">
+  <meta name="twitter:description" content="Tonight my two kids and I were playing Monopoly. It’s a terrible, brutal game that usually ends in bad feelings, but for some reason they always want to play it. One of the rules of the game is that …">
+  <meta name="author" content=""/>
+  <meta property="og:image" content="" />
+  <meta name="twitter:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:url" content="/2016/05/30/monopoly-simulations/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Dripping Data" />
+
+  <meta name="generator" content="Hugo 0.24.1" />
+  <link rel="canonical" href="../../../../2016/05/30/monopoly-simulations/" />
+  <link rel="alternate" href="../../../../index.xml" type="application/rss+xml" title="Dripping Data">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../../../css/main.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="../../../../css/pygment_highlights.css" />
+  <link rel="stylesheet" href="../../../../css/highlight.min.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.css" integrity="sha256-sCl5PUOGMLfFYctzDW3MtRib0ctyUvI9Qsmq2wXOeBY=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/default-skin/default-skin.min.css" integrity="sha256-BFeI1V+Vh1Rk37wswuOYn5lsTcaU96hGaI7OUVCLjPc=" crossorigin="anonymous" />
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../../../../">Dripping Data</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="About" href="../../../../about/">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="LinkedIn" href="https://www.linkedin.com/in/michael-ching-033a5029">LinkedIn</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Twitter" href="https://twitter.com/mikec2a">Twitter</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Dripping Data" href="../../../../">
+            <img class="avatar-img" src="" alt="Dripping Data" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Rolling 3 Doubles in Monopoly</h1>
+                
+                
+                  <span class="post-meta">
+  Posted on May 30, 2016
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>Tonight my two kids and I were playing Monopoly. It’s a terrible, brutal game that usually ends in bad feelings, but for some reason they always want to play it. One of the rules of the game is that if you roll a double (e.g., two 2s), you get another turn. However, if you roll doubles three times in a row, you are sent to jail.</p>
+<p>I wondered what was the probability of rolling 3 doubles in a row. It seemed like it would be pretty unlikely, but each of us had this happen to us over the course of the game. Now what’s the chances of that happening?</p>
+<p>It seemed like an easy enough problem, but I was drinking a beer, eating pita chips, and watching Game 7 of the NBA Western Conference finals at the time. So I wasn’t really focused on the game, but still that seemed pretty unlikely.</p>
+<div id="simulation-of-the-probability-of-a-triple-double-roll" class="section level3">
+<h3>Simulation of the Probability of a Triple-double Roll</h3>
+<p>Later, I went to the computer to try to sort it out. I figured it would be easy enough as a simulation, and so I tried it. Here’s the code.</p>
+<p>I wrote a helper function to decide if a vector of 6 numbers (representing rolls of a single die) were the same for the first two, the same for the second two, and the same for the third two. I used a cascading if clause to cut down on computation in case the first two were not the same, or if the second two were not the same. This way I wouldn’t test all three pairs unnecessarily.</p>
+<pre class="r"><code>double3 &lt;- function(v) {
+  # takes a vector v of length 6 and checks if the first and second elements are
+  # equal, third and fourth are equal, and fifth and sixth are equal
+  if(length(v) != 6) {
+    return(&quot;input should be of length 6&quot;)
+  }
+  if(v[1] == v[2]) {
+    if(v[3] == v[4]) {
+      if(v[5] == v[6]) {
+        return(T)
+      }
+    }
+  }
+  return(F)
+}</code></pre>
+<p>Now for the simulation. I decided to run 100,000 trials of 6 die rolls. I created a matrix of 100,000 rows with 6 columns.</p>
+<pre class="r"><code>NUMBER_OF_ROWS &lt;- 100000
+NUMBER_OF_COLS &lt;- 6
+x &lt;- matrix(sample(1:6, NUMBER_OF_ROWS*NUMBER_OF_COLS, replace = T), 
+            nrow = NUMBER_OF_ROWS)</code></pre>
+<p>I then used the magic of <code>apply</code> to figure out if the first two rolls were the same, the second two, and the third. I summed the result and divided by the number of trials to get an estimate for the probability. I thought it would be rare but not that rare!</p>
+<pre class="r"><code>output &lt;- apply(x, 1, double3)
+sum(output) / NUMBER_OF_ROWS</code></pre>
+<pre><code>## [1] 0.00491</code></pre>
+</div>
+<div id="calculating-exact-probability-using-binomial-functions" class="section level3">
+<h3>Calculating Exact Probability using Binomial Functions</h3>
+<p>In retrospect, it is a simple probability problem that has an easy solution. Once you’ve rolled the first die, you have a 1/6 chance of rolling the same number on the second die. So the probability of getting the same number on a roll of two dice is 1/6. And if you want to know what is the chance of rolling two die and getting doubles three times in a row, that’s just 1/6 * 1/6 * 1/6 or 1/216. This is approximately 0.0046296.</p>
+</div>
+<div id="probability-of-observing-at-least-3-triple-doubles" class="section level3">
+<h3>Probability of Observing at Least 3 Triple-doubles</h3>
+<p>Now the next question was what’s the likelihood to have done this 3 times (or more) in a single Monopoly game. I’m not sure how many turns we took, but I had 10 properties at the point that someone started crying because she ran out of money. My son had about the same number. And she had only 5. So we had to have had at least 25 turns. Conservatively speaking, let’s multiply that by 6 for 150 total turns. What is the probability that we would observe 3 or more jail-inducing triple doubles?</p>
+<p>Here, the binomial functions are super helpful at producing the exact number. In this case, I used <code>pbinom</code> with the upper tail. It’s important to remember that the function’s default behavior is to return the probability of “x successes or fewer” so if we want 3 or more, we need to give the function “2 successes” rather than 3, and ask for the upper tail.</p>
+<pre class="r"><code>pbinom(2, 150, p = 1/216, lower.tail = F)</code></pre>
+<pre><code>## [1] 0.03310417</code></pre>
+<p>3%! Not that rare after all! I mean, it’s pretty unlikely, but we observed it in the one tiem we played this game in 6 months.</p>
+<p>Here’s the probability that it will happen at least once in a game of 150 turns.</p>
+<pre class="r"><code>pbinom(0, 150, 1/216, lower.tail = F)</code></pre>
+<pre><code>## [1] 0.5014528</code></pre>
+</div>
+<div id="conclusion" class="section level3">
+<h3>Conclusion:</h3>
+<p>It’s hard to roll three doubles in a roll on any one turn (1/216), but over the course of a game of 150 turns, it’s likely that it will happen at least once (about 50%).</p>
+</div>
+
+      </article>
+
+      <ul class="pager blog-pager">
+        
+          <li class="previous">
+            <a href="../../../../2016/05/29/hello-world/" data-toggle="tooltip" data-placement="top" title="Up and running!">&larr; Previous Post</a>
+          </li>
+        
+        
+          <li class="next">
+            <a href="../../../../2016/06/13/sorting-photo-directories-with-r-and-exiftool/" data-toggle="tooltip" data-placement="top" title="Sorting photo directories with R and exiftool">Next Post &rarr;</a>
+          </li>
+        
+      </ul>
+
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="../../../../">Dripping Data</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.24.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../../../js/main.js"></script>
+<script src="../../../../js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.js" integrity="sha256-UplRCs9v4KXVJvVY+p+RSo5Q4ilAUXh7kpjyIP5odyc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe-ui-default.min.js" integrity="sha256-PWHOlUzc96pMc8ThwRIXPn8yH4NOLu42RQ0b9SpnpFk=" crossorigin="anonymous"></script>
+<script src="../../../../js/load-photoswipe.js"></script>
+
+
+
+  </body>
+</html>
+

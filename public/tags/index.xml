@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Tags on A Hugo website</title>
+    <title>Tags on Dripping Data</title>
     <link>/tags/</link>
-    <description>Recent content in Tags on A Hugo website</description>
+    <description>Recent content in Tags on Dripping Data</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 26 Jun 2017 00:00:00 +0000</lastBuildDate>
@@ -17,6 +17,24 @@
       <pubDate>Mon, 26 Jun 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/baseball/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Parking</title>
+      <link>/tags/parking/</link>
+      <pubDate>Thu, 14 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/parking/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Simulation</title>
+      <link>/tags/simulation/</link>
+      <pubDate>Mon, 30 May 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/simulation/</guid>
       <description></description>
     </item>
     

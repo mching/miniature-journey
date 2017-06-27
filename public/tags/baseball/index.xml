@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Baseball on A Hugo website</title>
+    <title>Baseball on Dripping Data</title>
     <link>/tags/baseball/</link>
-    <description>Recent content in Baseball on A Hugo website</description>
+    <description>Recent content in Baseball on Dripping Data</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 26 Jun 2017 00:00:00 +0000</lastBuildDate>
@@ -17,7 +17,8 @@
       <pubDate>Mon, 26 Jun 2017 00:00:00 +0000</pubDate>
       
       <guid>/2017/06/26/justin-smoak-and-babip-trends/</guid>
-      <description>The podcast I listen to said something like, “I bet Justin Smoak must have one of the lowest BABIPs of anyone to this point in his career,” and I thought it might be a good chance to explore this nebulous BABIP a little.
+      <description>The podcast I listen to said something like, “I bet Justin Smoak must have one of the lowest BABIPs of anyone to this point in his career.” I thought it might be a good chance to explore this nebulous BABIP a little, what are the historical league and career trends in BABIP. Maybe 3 sentences are needed.
+Or maybe a second paragraph. Or 2.
 library(Lahman) library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(hrbrthemes) BABIP is calculated as balls in play (hits minus home runs) divided by total at bats that caused these balls in play (at bats minus strikeouts minus home runs plus sacrifice flies).</description>
     </item>
     
