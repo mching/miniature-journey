@@ -1,15 +1,53 @@
 baseurl = "/"
 relativeurls = true
 languageCode = "en-us"
+# baseurl = "https://username.github.io"
+DefaultContentLanguage = "en"
+#DefaultContentLanguage = "ja"
 title = "Dripping Data"
 theme = "beautifulhugo"
-googleAnalytics = ""
-disqusShortname = ""
+metaDataFormat = "yaml"
+pygmentsUseClasses = true
+pygmentCodeFences = true
+#disqusShortname = "XXX"
+#googleAnalytics = "XXX"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
+
+[Params]
+  subtitle = "My numbers blog. It's not quite Flowing."
+  logo = "images/4506820.jpg"
+  favicon = "img/favicon.ico"
+  dateFormat = "January 2, 2006"
+  commit = false
+  rss = true
+  comments = true
+  
+[Author]
+  name = "Mike Ching"
+#  email = "youremail@domain.com"
+#  facebook = "username"
+#  googleplus = "+username" # or xxxxxxxxxxxxxxxxxxxxx
+  github = "mching"
+  twitter = "mikec2a"
+#  reddit = "username"
+  linkedin = "michael-ching-033a5029"
+#  xing = "username"
+#  stackoverflow = "users/XXXXXXX/username"
+#  snapchat = "username"
+#  instagram = "username"
+#  youtube = "user/username" # or channel/channelname
+#  soundcloud = "username"
+#  spotify = "username"
+#  bandcamp = "username"
+#  itchio = "username"
 
 [permalinks]
     post = "/:year/:month/:day/:slug/"
 
+[[menu.main]]
+    name = "Blog"
+    url = ""
+    weight = 1
 [[menu.main]]
     name = "About"
     url = "/about/"
