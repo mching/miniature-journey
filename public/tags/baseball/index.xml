@@ -6,30 +6,10 @@
     <description>Recent content in Baseball on Dripping Data</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 26 Jun 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 21 May 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/baseball/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Justin Smoak and BABIP Trends</title>
-      <link>/2017/06/26/justin-smoak-and-babip-trends/</link>
-      <pubDate>Mon, 26 Jun 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/2017/06/26/justin-smoak-and-babip-trends/</guid>
-      <description>The podcast I listen to said something like, “I bet Justin Smoak must have one of the lowest BABIPs of anyone to this point in his career.” I thought it might be a good chance to explore this nebulous BABIP a little, what are the historical league and career trends in BABIP. Maybe 3 sentences are needed.
-Or maybe a second paragraph. Or 2.
-library(Lahman) library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(hrbrthemes) BABIP is calculated as balls in play (hits minus home runs) divided by total at bats that caused these balls in play (at bats minus strikeouts minus home runs plus sacrifice flies).</description>
-    </item>
-    
-    <item>
-      <title>Exploring Disabled List Data from Major League Baseball</title>
-      <link>/2017/06/09/dl-data-exploration/</link>
-      <pubDate>Fri, 09 Jun 2017 00:00:00 +0000</pubDate>
-      
-      <guid>/2017/06/09/dl-data-exploration/</guid>
-      <description>library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(tidyr) DL &amp;lt;- read.csv(&amp;quot;../datasets/DL2010_2016.csv&amp;quot;) DL &amp;lt;- tbl_df(DL) str(DL) ## Classes &amp;#39;tbl_df&amp;#39;, &amp;#39;tbl&amp;#39; and &amp;#39;data.frame&amp;#39;: 3509 obs. of 19 variables: ## $ Last_name : Factor w/ 888 levels &amp;quot;&amp;quot;,&amp;quot;Aardsma&amp;quot;,&amp;quot;Abad&amp;quot;,..: 518 95 481 796 104 680 535 349 140 868 .</description>
-    </item>
     
     <item>
       <title>Pitchers with More Saves than Strikeouts</title>

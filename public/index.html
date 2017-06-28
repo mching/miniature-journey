@@ -1,698 +1,178 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-<head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Dripping Data </title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="HandheldFriendly" content="True">
-<meta name="MobileOptimized" content="320">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-<meta name="description" content="" />
-
-<meta name="keywords" content="">
-
-
-<meta property="og:title" content="Dripping Data ">
-<meta property="og:site_name" content="Dripping Data"/>
-<meta property="og:url" content="/" />
-<meta property="og:locale" content="en-us">
-
-
-<meta property="og:type" content="website" />
-
-
-
-<link href="./index.xml" rel="alternate" type="application/rss+xml" title="Dripping Data" />
-
-<link rel="canonical" href="./" />
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="./touch-icon-144-precomposed.png">
-<link rel="icon" href="./favicon.png">
-<meta name="generator" content="Hugo 0.24.1" />
-
-  <!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"></script>
-<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
-
-
-
-    <link rel="stylesheet" href="./css/bootswatch/default/bootstrap.min.css">
-
-
-<link rel="stylesheet" href="./css/font-awesome.min.css">
-<link rel="stylesheet" href="./css/style.css">
-
-
-
-
-  <link rel="stylesheet" href="./css/highlight/default.css">
-
-
-</head>
-<body data-ng-app="myapp" data-ng-controller="MyController" data-ng-mouseleave="MouseLeave($event)">
-    <header id="main-header">
-  <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        
-          
-          <a class="navbar-brand-img" href="./">
-            <img alt="" src="">
-            
-          </a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav navbar-right">
-            
-            
-            <li class="">
-
-              <a href="./" >
-                
-                Blog
-              </a>
-            </li>
-            
-            <li class="">
-
-              <a href="./about/" >
-                
-                About
-              </a>
-            </li>
-            
-            <li class="">
-
-              <a href="https://www.linkedin.com/in/michael-ching-033a5029" >
-                
-                LinkedIn
-              </a>
-            </li>
-            
-            <li class="">
-
-              <a href="https://twitter.com/mikec2a" >
-                
-                Twitter
-              </a>
-            </li>
-            
-            
-              
-          </ul>
-        </div>
-        
-      </div>
-    </nav>
-  </header>
-
-
-  <div class="container">
+<html lang="en-us">
+  <head>
+	<meta name="generator" content="Hugo 0.24.1" />
+    <meta charset="utf-8">
+    <title>Dripping Data | Dripping Data</title>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/fonts.css" />
     
-    <div class="row">
-      <div class="col-sm-12">
-        
-        
-          <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div>
-  <h2><a href="./2017/06/26/justin-smoak-and-babip-trends/">DRAFT :: Justin Smoak and BABIP Trends</a>
-</h2>
-
-  <div class="margin-10">
-    <small>
-  <i class="fa fa-calendar"></i>
-  <time datetime="2017-06-26">26 Jun, 2017</time>
-</small>
-
-    
-  <i class="fa fa-tags"></i>
-  
-  <a href="./tags/baseball" class="label label-primary">baseball</a>
-  
-
-
-  </div>
-</div>
-
-    <p>
-  
-  
-    The podcast I listen to said something like, “I bet Justin Smoak must have one of the lowest BABIPs of anyone to this point in his career.” I thought it might be a good chance to explore this nebulous BABIP a little, what are the historical league and career trends in BABIP. Maybe 3 sentences are needed.
-Or maybe a second paragraph. Or 2.
-library(Lahman) library(dplyr) ## ## Attaching package: &#39;dplyr&#39; ## The following objects are masked from &#39;package:stats&#39;: ## ## filter, lag ## The following objects are masked from &#39;package:base&#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(hrbrthemes) BABIP is calculated as balls in play (hits minus home runs) divided by total at bats that caused these balls in play (at bats minus strikeouts minus home runs plus sacrifice flies).
-  
-
-
-</p>
-
-
-    <p class="lead"><a href="./2017/06/26/justin-smoak-and-babip-trends/" class="btn btn-default">Read more &rarr;</a></p>
-
-
-  </div>
-</div>
-
-        
-          <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div>
-  <h2><a href="./2017/06/19/goodreads-analysis/">Goodreads Analysis</a>
-</h2>
-
-  <div class="margin-10">
-    <small>
-  <i class="fa fa-calendar"></i>
-  <time datetime="2017-06-19">19 Jun, 2017</time>
-</small>
-
-    
-  <i class="fa fa-tags"></i>
-  
-  <a href="./tags/visualization" class="label label-primary">visualization</a>
-  
-
-
-  </div>
-</div>
-
-    <p>
-  
-  
-    I just finished my 2017 Reading Challenge on Goodreads. My goal was to read 15 books this year. Poking around the site I discovered that I could export my data. I decided to have a look to see what my reading habits looked like, and since I was doing this for me, I decided to look at my wife’s data too.
-Dataset library(dplyr) ## ## Attaching package: &#39;dplyr&#39; ## The following objects are masked from &#39;package:stats&#39;: ## ## filter, lag ## The following objects are masked from &#39;package:base&#39;: ## ## intersect, setdiff, setequal, union library(tidyr) library(ggplot2) library(lubridate) ## ## Attaching package: &#39;lubridate&#39; ## The following object is masked from &#39;package:base&#39;: ## ## date library(hrbrthemes) books &lt;- read.
-  
-
-
-</p>
-
-
-    <p class="lead"><a href="./2017/06/19/goodreads-analysis/" class="btn btn-default">Read more &rarr;</a></p>
-
-
-  </div>
-</div>
-
-        
-          <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div>
-  <h2><a href="./2017/06/09/dl-data-exploration/">DRAFT :: Exploring Disabled List Data from Major League Baseball</a>
-</h2>
-
-  <div class="margin-10">
-    <small>
-  <i class="fa fa-calendar"></i>
-  <time datetime="2017-06-09">9 Jun, 2017</time>
-</small>
-
-    
-  <i class="fa fa-tags"></i>
-  
-  <a href="./tags/baseball" class="label label-primary">baseball</a>
-  
-  <a href="./tags/sports" class="label label-primary">sports</a>
-  
-
-
-  </div>
-</div>
-
-    <p>
-  
-  
-    library(dplyr) ## ## Attaching package: &#39;dplyr&#39; ## The following objects are masked from &#39;package:stats&#39;: ## ## filter, lag ## The following objects are masked from &#39;package:base&#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(tidyr) DL &lt;- read.csv(&quot;../datasets/DL2010_2016.csv&quot;) DL &lt;- tbl_df(DL) str(DL) ## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;: 3509 obs. of 19 variables: ## $ Last_name : Factor w/ 888 levels &quot;&quot;,&quot;Aardsma&quot;,&quot;Abad&quot;,..: 518 95 481 796 104 680 535 349 140 868 .
-  
-
-
-</p>
-
-
-    <p class="lead"><a href="./2017/06/09/dl-data-exploration/" class="btn btn-default">Read more &rarr;</a></p>
-
-
-  </div>
-</div>
-
-        
-          <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div>
-  <h2><a href="./2017/05/30/years-at-private-school-and-academic-achievement/">Association between Years at a Private School and Academic Achievement</a>
-</h2>
-
-  <div class="margin-10">
-    <small>
-  <i class="fa fa-calendar"></i>
-  <time datetime="2017-05-30">30 May, 2017</time>
-</small>
-
-    
-  <i class="fa fa-tags"></i>
-  
-  <a href="./tags/education" class="label label-primary">education</a>
-  
-
-
-  </div>
-</div>
-
-    <p>
-  
-  
-    The kids brought home their yearbooks this past week, and it was time to settle a question that I have had for a long time. Do kids who enter their private school at kindergarten do better or worse than the kids who enter later?
-Methods At this school there are two honor rolls (Headmaster’s List and Honor Roll). To get Headmaster’s List, a student must achieve a 3.5 grade point average with no grade below a B-.
-  
-
-
-</p>
-
-
-    <p class="lead"><a href="./2017/05/30/years-at-private-school-and-academic-achievement/" class="btn btn-default">Read more &rarr;</a></p>
-
-
-  </div>
-</div>
-
-        
-          <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div>
-  <h2><a href="./2017/05/26/king-tides-gis/">DRAFT :: King Tides Citizen Science Project</a>
-</h2>
-
-  <div class="margin-10">
-    <small>
-  <i class="fa fa-calendar"></i>
-  <time datetime="2017-05-26">26 May, 2017</time>
-</small>
-
-    
-  <i class="fa fa-tags"></i>
-  
-  <a href="./tags/gis" class="label label-primary">GIS</a>
-  
-
-
-  </div>
-</div>
-
-    <p>
-  
-  
-    I read in the newspaper that the University of Hawaii was recruiting &ldquo;citizen scientists&rdquo; to help document the impact of this week&rsquo;s &ldquo;king tides&rdquo; on our coastline. I uploaded some photos to the website but also found that we could download the dataset. I took this as an opportunity to learn something about geographic information systems (GIS) and R, and the end result was a pretty nice map of all the places that were photographed this week.
-  
-
-
-</p>
-
-
-    <p class="lead"><a href="./2017/05/26/king-tides-gis/" class="btn btn-default">Read more &rarr;</a></p>
-
-
-  </div>
-</div>
-
-        
-          <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div>
-  <h2><a href="./2017/05/21/saves-vs-strikeouts/">Pitchers with More Saves than Strikeouts</a>
-</h2>
-
-  <div class="margin-10">
-    <small>
-  <i class="fa fa-calendar"></i>
-  <time datetime="2017-05-21">21 May, 2017</time>
-</small>
-
-    
-  <i class="fa fa-tags"></i>
-  
-  <a href="./tags/baseball" class="label label-primary">baseball</a>
-  
-  <a href="./tags/sports" class="label label-primary">sports</a>
-  
-
-
-  </div>
-</div>
-
-    <p>
-  
-  
-    On my favorite fantasy baseball podcast, the host mentioned the phenomenon of pitchers who had more saves than strikeouts. This seemed like it would be fairly uncommon since it seems that many closers are power pitchers (e.g., Aroldis Chapman). I decided to investigate further using the Lahman database.
-Methods I used the Lahman database again, which is perfect for answering this kind of questions. It has a Pitching table that contains season long stats for every pitcher from 1871 to 2015 (as of this post).
-  
-
-
-</p>
-
-
-    <p class="lead"><a href="./2017/05/21/saves-vs-strikeouts/" class="btn btn-default">Read more &rarr;</a></p>
-
-
-  </div>
-</div>
-
-        
-          <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div>
-  <h2><a href="./2017/05/11/iced-coffee/">Economical Iced Coffee</a>
-</h2>
-
-  <div class="margin-10">
-    <small>
-  <i class="fa fa-calendar"></i>
-  <time datetime="2017-05-11">11 May, 2017</time>
-</small>
-
-    
-  <i class="fa fa-tags"></i>
-  
-  <a href="./tags/calculation" class="label label-primary">calculation</a>
-  
-
-
-  </div>
-</div>
-
-    <p>
-  
-  
-    My wife and I like iced coffee but drinking it at Starbucks is expensive. I&rsquo;ve been making it myself at home and it&rsquo;s a reasonable facsimile at what I think is a much lower price. I decided to run the calculations to see how much we&rsquo;re saving.
-Grounds I tried a bunch of different coffees to see what would work the best: whole bean Kirkland (Costco) brand, whole bean Kona coffee, ground Lion coffee (a local brand), ground Folgers, and ground Kirkland.
-  
-
-
-</p>
-
-
-    <p class="lead"><a href="./2017/05/11/iced-coffee/" class="btn btn-default">Read more &rarr;</a></p>
-
-
-  </div>
-</div>
-
-        
-          <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div>
-  <h2><a href="./2017/04/22/bank-shot/">Bank Shot Win Analysis</a>
-</h2>
-
-  <div class="margin-10">
-    <small>
-  <i class="fa fa-calendar"></i>
-  <time datetime="2017-04-22">22 Apr, 2017</time>
-</small>
-
-    
-  <i class="fa fa-tags"></i>
-  
-  <a href="./tags/games" class="label label-primary">games</a>
-  
-
-
-  </div>
-</div>
-
-    <p>
-  
-  
-    There’s a carnival game at the Iolani Fair called Bank Shot. You have to roll a ball on a ramp into a hole and win a prize. Get it in the green hole and you win tickets, and if you get it in the red hole, you win a big inflatable prize. I wondered what was the rate of hitting the red and green holes.
-Here’s a picture of the game layout.
-  
-
-
-</p>
-
-
-    <p class="lead"><a href="./2017/04/22/bank-shot/" class="btn btn-default">Read more &rarr;</a></p>
-
-
-  </div>
-</div>
-
-        
-          <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div>
-  <h2><a href="./2017/04/20/alf-consent-calendar/">AAP Annual Leadership Forum Consent Calendar Resolutions Less Likely to Make Top 10</a>
-</h2>
-
-  <div class="margin-10">
-    <small>
-  <i class="fa fa-calendar"></i>
-  <time datetime="2017-04-20">20 Apr, 2017</time>
-</small>
-
-    
-  <i class="fa fa-tags"></i>
-  
-  <a href="./tags/aap" class="label label-primary">AAP</a>
-  
-
-
-  </div>
-</div>
-
-    <p>
-  
-  
-    Last month I went to the American Academy of Pediatrics’ Annual Leadership Forum. This is a meeting of local chapter leaders from across the country where we make resolutions for the AAP to act on. Some resolutions were passed quickly as a group because they were not controversial. This process is called the “consent calendar”. The other resolutions were debated, sometimes at much length, before being voted on individually. At the end of the meeting we came up with the top 10 resolutions that we wanted the AAP to work on this year.
-  
-
-
-</p>
-
-
-    <p class="lead"><a href="./2017/04/20/alf-consent-calendar/" class="btn btn-default">Read more &rarr;</a></p>
-
-
-  </div>
-</div>
-
-        
-          <div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div>
-  <h2><a href="./2017/04/18/saves-and-runs-scored/">Effect of Runs and Other Factors on Team Saves in Major League Baseball</a>
-</h2>
-
-  <div class="margin-10">
-    <small>
-  <i class="fa fa-calendar"></i>
-  <time datetime="2017-04-18">18 Apr, 2017</time>
-</small>
-
-    
-  <i class="fa fa-tags"></i>
-  
-  <a href="./tags/baseball" class="label label-primary">baseball</a>
-  
-  <a href="./tags/sports" class="label label-primary">sports</a>
-  
-
-
-  </div>
-</div>
-
-    <p>
-  
-  
-    From listening to my favorite fantasy baseball podcast it seems that there is a belief that teams that score lots of runs are not likely to produce saves. The idea seems to be that such teams would blow out their competitors and so have less opportunity for games to be saved. While it made sense, I wondered what the data said.
-library(dplyr) ## ## Attaching package: &#39;dplyr&#39; ## The following objects are masked from &#39;package:stats&#39;: ## ## filter, lag ## The following objects are masked from &#39;package:base&#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(Lahman) data(&quot;Teams&quot;) Teams &lt;- tbl_df(Teams) Exploration of Saves over Time Saves did not become an official statistic until 1969 (source).
-  
-
-
-</p>
-
-
-    <p class="lead"><a href="./2017/04/18/saves-and-runs-scored/" class="btn btn-default">Read more &rarr;</a></p>
-
-
-  </div>
-</div>
-
-        
-        
-<nav>
-  <ul class="pagination">
-    
-
-
-<li  class="disabled" >
-  <a aria-label="First" href="//">
-    <span aria-hidden="true">&laquo;&laquo;</span>
-  </a>
-</li>
-
-<li  class="disabled" >
-  <a aria-label="Previous" href="#">
-    <span aria-hidden="true">&laquo;</span>
-    </a>
-</li>
-
-<li  class="active" >
-  <a href="//">
-    1
-    </a>
-</li>
-
-<li >
-  <a href="//page/2/">
-    2
-    </a>
-</li>
-
-<li >
-  <a href="//page/3/">
-    3
-    </a>
-</li>
-
-
-<li >
-  <a aria-label="Next" href="//page/2/">
-    <span aria-hidden="true">&raquo;</span>
-    </a>
-</li>
-<li >
-  <a aria-label="Last" href="//page/3/">
-    <span aria-hidden="true">&raquo;&raquo;</span>
-  </a>
-</li>
-
-
-  </ul>
-</nav>
-
-
-      </div>
+  </head>
+
+  <body>
+    <nav>
+    <ul class="menu">
       
-    </div>
-
-  </div>
-
-    
-<footer class="footer hidden-print">
-  <div class="container">
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-           <div class="pull-left">
-  <a class="toplink" href="javascript:" id="return-to-top">back to top</a>
-</div>
-<div class="pull-right">
-
-</div>
-
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
-              
-    
-<div class="container footline">
-    <small>
-</small>
-</div>
-
-
-    
-
-
-        </div>
-    </div>
-  </div>
-</footer>
-
-    
-
-<script src="//s3.amazonaws.com/mailmunch/static/site.js" id="mailmunch-script" data-mailmunch-site-id="" async="async"></script>
-
-
-
-<script src="//load.sumome.com/" data-sumo-site-id="" async="async"></script>
-
-<script src="./js/jquery.min.js"></script>
-<script src="./js/bootstrap.min.js"></script>
-
-<script src="./js/angular.min.js"></script>
-<script src="./js/popover/angular-storage.min.js"></script>
-<script src="./js/highlight.pack.js"></script>
-<script src="./js/site.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-
-
-<script>
-var ENABLE_POPOVER = "", 
-EXPIRE_COOKIE = "", 
-SHOW_MODAL_TIMEOUT = "", 
-MOUSE_LEAVE = "", 
-MODAL_SIZE = "", 
-POST_URL = "", 
-SIGNUP_HEADER = "",
-HEADER_IMAGE = "",
-IMG_DESCRIPTION = "",
-SIGNUP_TEXT = "",
-INPUT_PLACEHOLDER = "",
-SUBMIT_BUTTON = "",
-SUCCESS_MESSAGE = "",
-ERROR_MESSAGE = "",
-OPTIN = "",
-COOKIE_NAME = "",
-CONTENTLANGUAGE = ""; 
-</script>
-
-<script src="./js/popover/angular-modal-service.min.js"></script>
-<script src="./js/angular-ismobile.min.js"></script>
-<script src="./js/popover/popover.min.js"></script>
-
-
-<script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax//MathJax.js"></script>
-<script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax//config/TeX-AMS-MML_HTMLorMML.js"></script>
-
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {
-    inlineMath: [['$','$'], ['\\(','\\)']],
-    displayMath: [['$$','$$'], ['\[','\]']],
-    processEscapes: true,
-    processEnvironments: true,
-    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-    TeX: { equationNumbers: { autoNumber: "AMS" },
-         extensions: ["AMSmath.js", "AMSsymbols.js"] }
-  }
-});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    for(var all in MathJax.Hub.getAllJax()) {
-        all.SourceElement().parentNode.className += ' has-jax';
-
-    }
-});
-</script>
+      <li><a href="./">Blog</a></li>
+      
+      <li><a href="./about/">About</a></li>
+      
+      <li><a href="https://www.linkedin.com/in/michael-ching-033a5029">LinkedIn</a></li>
+      
+      <li><a href="https://twitter.com/mikec2a">Twitter</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
 
 
 
 
 
 
+<ul>
+  
+  <li>
+    <span class="date">2017/06/19</span>
+    <a href="./2017/06/19/goodreads-analysis/">Goodreads Analysis</a>
+  </li>
+  
+  <li>
+    <span class="date">2017/05/30</span>
+    <a href="./2017/05/30/years-at-private-school-and-academic-achievement/">Association between Years at a Private School and Academic Achievement</a>
+  </li>
+  
+  <li>
+    <span class="date">2017/05/21</span>
+    <a href="./2017/05/21/saves-vs-strikeouts/">Pitchers with More Saves than Strikeouts</a>
+  </li>
+  
+  <li>
+    <span class="date">2017/05/11</span>
+    <a href="./2017/05/11/iced-coffee/">Economical Iced Coffee</a>
+  </li>
+  
+  <li>
+    <span class="date">2017/04/22</span>
+    <a href="./2017/04/22/bank-shot/">Bank Shot Win Analysis</a>
+  </li>
+  
+  <li>
+    <span class="date">2017/04/20</span>
+    <a href="./2017/04/20/alf-consent-calendar/">AAP Annual Leadership Forum Consent Calendar Resolutions Less Likely to Make Top 10</a>
+  </li>
+  
+  <li>
+    <span class="date">2017/04/18</span>
+    <a href="./2017/04/18/saves-and-runs-scored/">Effect of Runs and Other Factors on Team Saves in Major League Baseball</a>
+  </li>
+  
+  <li>
+    <span class="date">2017/04/09</span>
+    <a href="./2017/04/09/bean-sprout-respiration/">Graphing Bean Sprout Respiration with the Hadleyverse</a>
+  </li>
+  
+  <li>
+    <span class="date">2017/03/31</span>
+    <a href="./2017/03/31/baseball-team-season-saves/">Baseball Team Season Save Leaders with the Lowest Totals since 2000</a>
+  </li>
+  
+  <li>
+    <span class="date">2017/01/08</span>
+    <a href="./2017/01/08/pidgey-evolution-updated/">Pidgey Evolution: Effects on Combat Power and Hit Points (Updated)</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/12/30</span>
+    <a href="./2016/12/30/birthday-problem-at-work/">Birthday Problem at Work</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/12/29</span>
+    <a href="./2016/12/29/electric-vehicle-parking-at-hnl/">Electric Vehicle Parking at Honolulu International Airport</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/12/14</span>
+    <a href="./2016/12/14/pidgey-evolution/">Pidgey Evolution: Effects on Combat Power and Hit Points</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/12/09</span>
+    <a href="./2016/12/09/simple-secret-santa-picker/">Simple Secret Santa Picker</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/11/30</span>
+    <a href="./2016/11/30/unlucky-fantasy-football/">An Unlucky Fantasy Football Season Is Over</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/11/25</span>
+    <a href="./2016/11/25/turkey-graph/">Convection vs. Conventional Electric Oven Speed in Roasting Turkey</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/11/15</span>
+    <a href="./2016/11/15/pass-my-board-exam/">Will I Pass My Board Exam?</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/11/06</span>
+    <a href="./2016/11/06/scale-model-of-solar-system/">Scale Model of Solar System</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/10/03</span>
+    <a href="./2016/10/03/football-shutouts/">Most Yards of Offense by a College Football Team in a Shutout Loss</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/09/11</span>
+    <a href="./2016/09/11/electric-car-economy/">Gas vs. Electric Car Operating Prices in Honolulu</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/08/14</span>
+    <a href="./2016/08/14/late-patients/">How Late Can My Patient Be</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/08/05</span>
+    <a href="./2016/08/05/dinousaur-speed/">Work for Dinosaur Speed Geocache</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/07/22</span>
+    <a href="./2016/07/22/flashcard-deck-size-prediction/">Predicting Flashcard Deck Size Using Linear Regression</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/07/14</span>
+    <a href="./2016/07/14/reverse-parking/">Reverse-In Parking in Hawaii and California</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/06/13</span>
+    <a href="./2016/06/13/sorting-photo-directories-with-r-and-exiftool/">Sorting photo directories with R and exiftool</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/05/30</span>
+    <a href="./2016/05/30/monopoly-simulations/">Rolling 3 Doubles in Monopoly</a>
+  </li>
+  
+  <li>
+    <span class="date">2016/05/29</span>
+    <a href="./2016/05/29/hello-world/">Up and running!</a>
+  </li>
+  
+</ul>
+
+  <footer>
+  
+  
+  </footer>
   </body>
 </html>
 

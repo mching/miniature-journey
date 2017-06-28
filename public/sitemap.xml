@@ -3,18 +3,8 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/2017/06/26/justin-smoak-and-babip-trends/</loc>
-    <lastmod>2017-06-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/2017/06/19/goodreads-analysis/</loc>
     <lastmod>2017-06-19T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2017/06/09/dl-data-exploration/</loc>
-    <lastmod>2017-06-09T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -25,11 +15,6 @@
   <url>
     <loc>/2017/05/30/years-at-private-school-and-academic-achievement/</loc>
     <lastmod>2017-05-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/2017/05/26/king-tides-gis/</loc>
-    <lastmod>2017-05-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -171,7 +156,7 @@
   
   <url>
     <loc>/tags/baseball/</loc>
-    <lastmod>2017-06-26T00:00:00+00:00</lastmod>
+    <lastmod>2017-05-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -200,7 +185,7 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2017-06-26T00:00:00+00:00</lastmod>
+    <lastmod>2017-06-19T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -219,12 +204,6 @@
   <url>
     <loc>/tags/games/</loc>
     <lastmod>2017-04-22T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/gis/</loc>
-    <lastmod>2017-05-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -248,7 +227,7 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2017-06-26T00:00:00+00:00</lastmod>
+    <lastmod>2017-06-19T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -266,7 +245,7 @@
   
   <url>
     <loc>/categories/r/</loc>
-    <lastmod>2017-06-26T00:00:00+00:00</lastmod>
+    <lastmod>2017-06-19T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -284,7 +263,7 @@
   
   <url>
     <loc>/tags/sports/</loc>
-    <lastmod>2017-06-09T00:00:00+00:00</lastmod>
+    <lastmod>2017-05-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
