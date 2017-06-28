@@ -5,7 +5,7 @@ languageCode = "en-us"
 DefaultContentLanguage = "en"
 #DefaultContentLanguage = "ja"
 title = "Dripping Data"
-theme = "beautifulhugo"
+theme = "hugo-bootstrap-premium"
 metaDataFormat = "yaml"
 pygmentsUseClasses = true
 pygmentCodeFences = true
@@ -15,7 +15,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [Params]
   subtitle = "My numbers blog. It's not quite Flowing."
-  logo = "images/4506820.jpg"
+#  logo = "images/4506820.jpg"
   favicon = "img/favicon.ico"
   dateFormat = "January 2, 2006"
   commit = false

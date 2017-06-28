@@ -1,0 +1,371 @@
+---
+title: "Goodreads Analysis"
+author: Mike Ching
+date: "2017-06-19"
+slug: goodreads-analysis
+categories:
+  - R
+tags:
+  - visualization
+---
+
+
+
+<p>I just finished my 2017 Reading Challenge on Goodreads. My goal was to read 15 books this year. Poking around the site I discovered that I could export my data. I decided to have a look to see what my reading habits looked like, and since I was doing this for me, I decided to look at my wife’s data too.</p>
+<div id="dataset" class="section level2">
+<h2>Dataset</h2>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(tidyr)
+library(ggplot2)
+library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     date</code></pre>
+<pre class="r"><code>library(hrbrthemes)
+books &lt;- read.csv(&quot;../datasets/goodreads.csv&quot;, colClasses = &quot;character&quot;)
+books_wife &lt;- read.csv(&quot;../datasets/goodreads_wife.csv&quot;, colClasses = &quot;character&quot;)
+books &lt;- tbl_df(books)
+books_wife &lt;- tbl_df(books_wife)</code></pre>
+<pre class="r"><code>books &lt;- mutate(books, reader = &quot;me&quot;)
+books_wife &lt;- mutate(books_wife, reader = &quot;wife&quot;)
+books &lt;- full_join(books, books_wife)</code></pre>
+<pre><code>## Joining, by = c(&quot;Book.Id&quot;, &quot;Title&quot;, &quot;Author&quot;, &quot;Author.l.f&quot;, &quot;Additional.Authors&quot;, &quot;ISBN&quot;, &quot;ISBN13&quot;, &quot;My.Rating&quot;, &quot;Average.Rating&quot;, &quot;Publisher&quot;, &quot;Binding&quot;, &quot;Number.of.Pages&quot;, &quot;Year.Published&quot;, &quot;Original.Publication.Year&quot;, &quot;Date.Read&quot;, &quot;Date.Added&quot;, &quot;Bookshelves&quot;, &quot;Bookshelves.with.positions&quot;, &quot;Exclusive.Shelf&quot;, &quot;My.Review&quot;, &quot;Spoiler&quot;, &quot;Private.Notes&quot;, &quot;Read.Count&quot;, &quot;Recommended.For&quot;, &quot;Recommended.By&quot;, &quot;Owned.Copies&quot;, &quot;Original.Purchase.Date&quot;, &quot;Original.Purchase.Location&quot;, &quot;Condition&quot;, &quot;Condition.Description&quot;, &quot;BCID&quot;, &quot;reader&quot;)</code></pre>
+<p>The data were arranged into variables like Author and Title but also Pages, Publication Date, Date Read, My Rating, Average Rating, etc.</p>
+<pre class="r"><code>str(books)</code></pre>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    491 obs. of  32 variables:
+##  $ Book.Id                   : chr  &quot;3852882&quot; &quot;31920777&quot; &quot;30653783&quot; &quot;840&quot; ...
+##  $ Title                     : chr  &quot;Your Hate Mail Will Be Graded: A Decade of Whatever, 1998-2008&quot; &quot;American Kingpin: The Epic Hunt for the Criminal Mastermind Behind the Silk Road&quot; &quot;Smart Baseball: The Story Behind the Old Stats That Are Ruining the Game, the New Ones That Are Running It, and&quot;| __truncated__ &quot;The Design of Everyday Things&quot; ...
+##  $ Author                    : chr  &quot;John Scalzi&quot; &quot;Nick Bilton&quot; &quot;Keith Law&quot; &quot;Donald A. Norman&quot; ...
+##  $ Author.l.f                : chr  &quot;Scalzi, John&quot; &quot;Bilton, Nick&quot; &quot;Law, Keith&quot; &quot;Norman, Donald A.&quot; ...
+##  $ Additional.Authors        : chr  &quot;&quot; &quot;&quot; &quot;Tbd&quot; &quot;&quot; ...
+##  $ ISBN                      : chr  &quot;=\&quot;1596062118\&quot;&quot; &quot;=\&quot;1591848148\&quot;&quot; &quot;=\&quot;0062490222\&quot;&quot; &quot;=\&quot;0465067107\&quot;&quot; ...
+##  $ ISBN13                    : chr  &quot;=\&quot;9781596062115\&quot;&quot; &quot;=\&quot;9781591848141\&quot;&quot; &quot;=\&quot;9780062490223\&quot;&quot; &quot;=\&quot;9780465067107\&quot;&quot; ...
+##  $ My.Rating                 : chr  &quot;4&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
+##  $ Average.Rating            : chr  &quot;3.67&quot; &quot;4.36&quot; &quot;4.10&quot; &quot;4.18&quot; ...
+##  $ Publisher                 : chr  &quot;Subterranean&quot; &quot;Portfolio&quot; &quot;Harper Collins&quot; &quot;Basic Books&quot; ...
+##  $ Binding                   : chr  &quot;Hardcover&quot; &quot;Hardcover&quot; &quot;Hardcover&quot; &quot;Paperback&quot; ...
+##  $ Number.of.Pages           : chr  &quot;368&quot; &quot;352&quot; &quot;304&quot; &quot;240&quot; ...
+##  $ Year.Published            : chr  &quot;2008&quot; &quot;2017&quot; &quot;2017&quot; &quot;2002&quot; ...
+##  $ Original.Publication.Year : chr  &quot;2008&quot; &quot;2017&quot; &quot;2017&quot; &quot;1988&quot; ...
+##  $ Date.Read                 : chr  &quot;2017/06/17&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Date.Added                : chr  &quot;2017/06/17&quot; &quot;2017/06/16&quot; &quot;2017/06/10&quot; &quot;2017/06/10&quot; ...
+##  $ Bookshelves               : chr  &quot;&quot; &quot;to-read&quot; &quot;to-read&quot; &quot;to-read&quot; ...
+##  $ Bookshelves.with.positions: chr  &quot;&quot; &quot;to-read (#16)&quot; &quot;to-read (#15)&quot; &quot;to-read (#14)&quot; ...
+##  $ Exclusive.Shelf           : chr  &quot;read&quot; &quot;to-read&quot; &quot;to-read&quot; &quot;to-read&quot; ...
+##  $ My.Review                 : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Spoiler                   : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Private.Notes             : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Read.Count                : chr  &quot;1&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
+##  $ Recommended.For           : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Recommended.By            : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Owned.Copies              : chr  &quot;0&quot; &quot;0&quot; &quot;0&quot; &quot;0&quot; ...
+##  $ Original.Purchase.Date    : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Original.Purchase.Location: chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Condition                 : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ Condition.Description     : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ BCID                      : chr  &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##  $ reader                    : chr  &quot;me&quot; &quot;me&quot; &quot;me&quot; &quot;me&quot; ...</code></pre>
+</div>
+<div id="data-cleaning" class="section level2">
+<h2>Data Cleaning</h2>
+<p>Some boring data cleaning code…</p>
+<pre class="r"><code># Factor author names
+books$Author &lt;- factor(books$Author)
+
+# Factor bookshelves
+books$Exclusive.Shelf &lt;- factor(books$Exclusive.Shelf)
+
+# Numeric ratings
+books$My.Rating &lt;- as.numeric(books$My.Rating)
+books$Average.Rating &lt;- as.numeric(books$Average.Rating)
+
+# Number of Pages
+books$Number.of.Pages &lt;- as.integer(books$Number.of.Pages)
+
+# Years
+books$Year.Published &lt;- as.integer(books$Year.Published)
+books$Original.Publication.Year &lt;- as.integer(books$Original.Publication.Year)
+
+# Dates
+books$Date.Added &lt;- ymd(books$Date.Added)
+books$Date.Read &lt;- ymd(books$Date.Read)</code></pre>
+</div>
+<div id="books-read-vs-added" class="section level2">
+<h2>Books Read vs Added</h2>
+<p>I’ve recorded 150 books as being read, and the wife has recorded 302 books as being read.</p>
+<pre class="r"><code>books %&gt;% select(Exclusive.Shelf, reader) %&gt;% group_by(reader, Exclusive.Shelf) %&gt;% 
+  summarize(n = length(Exclusive.Shelf))</code></pre>
+<pre><code>## Source: local data frame [6 x 3]
+## Groups: reader [?]
+## 
+##   reader   Exclusive.Shelf     n
+##    &lt;chr&gt;            &lt;fctr&gt; &lt;int&gt;
+## 1     me currently-reading     2
+## 2     me              read   150
+## 3     me           to-read    16
+## 4   wife currently-reading     1
+## 5   wife              read   302
+## 6   wife           to-read    20</code></pre>
+</div>
+<div id="dates-added-and-read" class="section level2">
+<h2>Dates Added and Read</h2>
+<p>I have only been adding to this list off and on since joining Goodreads. I plotted below the distribution of when I added and read books.</p>
+<pre class="r"><code>tmp1 &lt;- books %&gt;% select(Book.Id, Date.Added, reader) %&gt;% mutate(action = &quot;added&quot;) %&gt;% rename(year = Date.Added)
+tmp2 &lt;- books %&gt;% select(Book.Id, Date.Read, reader) %&gt;% mutate(action = &quot;read&quot;) %&gt;% rename(year = Date.Read)
+bind_rows(tmp1, tmp2) %&gt;% filter(!is.na(year)) %&gt;%
+  ggplot(aes(x = year, fill = action)) +
+  geom_histogram(binwidth = 365, position=position_dodge()) +
+  ggtitle(&quot;Books Added and Read per Year&quot;) +
+  ylab(&quot;number of books&quot;) +
+  xlab(&quot;year&quot;) +
+  theme_ipsum() +
+  facet_grid(reader ~ .)</code></pre>
+<p><img src="/post/2017-06-19-Goodreads_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>It looks like I signed up for Goodreads in 2012 and started adding books to my list of read books. If I couldn’t remember when I read the book, I left the date read field blank. My wife started in 2009 and had a similar pattern of behavior. After this initial flurry of adding books, I recorded little activity on the website until about 2014-2015 when I started using Goodreads in earnest. This graph doesn’t really represent my reading history since there’s a lot of missing data, but it does represent pretty well how I’ve used this website.</p>
+</div>
+<div id="most-popular-author" class="section level2">
+<h2>Most popular author</h2>
+<p>I wondered which author we had read the most of. This is subject to recall bias, but it seems that for me #1 is Haruki Murakami, whose work I just love. Then came two comic artists (Gene Luen Yang and Sara Varon). Finally there were a whole bunch of 3-timers including Hugh Howey (Wool series), John Elder Robison (autistic writer), Stieg Larsson (The Girl Who… series) Suzanne Collins (Hunger Games series).</p>
+<pre class="r"><code>books %&gt;% filter(reader == &quot;me&quot;) %&gt;% 
+  group_by(Author) %&gt;% summarize(n = length(Author)) %&gt;% arrange(desc(n))</code></pre>
+<pre><code>## # A tibble: 124 × 2
+##                    Author     n
+##                    &lt;fctr&gt; &lt;int&gt;
+## 1         Haruki Murakami    10
+## 2          Gene Luen Yang     6
+## 3              Sara Varon     4
+## 4              Hugh Howey     3
+## 5      John Elder Robison     3
+## 6          Randall Munroe     3
+## 7           Stieg Larsson     3
+## 8         Suzanne Collins     3
+## 9           Veronica Roth     3
+## 10 America&#39;s Test Kitchen     2
+## # ... with 114 more rows</code></pre>
+<p>For my wife, it’s the romance novels that predominate.</p>
+<pre class="r"><code>books %&gt;% filter(reader == &quot;wife&quot;) %&gt;% 
+  group_by(Author) %&gt;% summarize(n = length(Author)) %&gt;% arrange(desc(n))</code></pre>
+<pre><code>## # A tibble: 157 × 2
+##                    Author     n
+##                    &lt;fctr&gt; &lt;int&gt;
+## 1             Bella Andre    18
+## 2               Meg Cabot    12
+## 3          Daisy Prescott    11
+## 4              Penny Reid    11
+## 5         Tasha Alexander     9
+## 6            J.K. Rowling     8
+## 7          Kristin Hannah     7
+## 8           Michael Scott     6
+## 9             Violet Duke     6
+## 10 Alexander McCall Smith     5
+## # ... with 147 more rows</code></pre>
+</div>
+<div id="my-ratings" class="section level2">
+<h2>My Ratings</h2>
+<p>I wondered about the ratings we had given books.</p>
+<pre class="r"><code># Unrated books got a rating of zero
+books$My.Rating &lt;- ifelse(books$My.Rating == 0, NA, books$My.Rating)
+
+books %&gt;% filter(!is.na(My.Rating)) %&gt;%
+  ggplot(aes(x = My.Rating, fill = reader)) + 
+  geom_histogram(binwidth = 1, position=position_dodge()) +
+  ggtitle(&quot;Our Ratings&quot;) +
+  xlab(&quot;Rating&quot;) + 
+  theme_ipsum()</code></pre>
+<p><img src="/post/2017-06-19-Goodreads_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>It looks pretty heavily skewed to 4 and 5 star ratings. In fact, both of our median ratings were a 4.</p>
+<pre class="r"><code>books %&gt;% group_by(reader) %&gt;% summarize(median(My.Rating, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 2 × 2
+##   reader `median(My.Rating, na.rm = T)`
+##    &lt;chr&gt;                          &lt;dbl&gt;
+## 1     me                              4
+## 2   wife                              4</code></pre>
+<pre class="r"><code>books %&gt;% 
+  ggplot(aes(x=Average.Rating, fill = reader)) + 
+  geom_histogram(binwidth = 0.1) + 
+  ggtitle(&quot;Community Ratings of Books that We&#39;ve Added&quot;) +
+  xlab(&quot;Rating&quot;) +
+  theme_ipsum()</code></pre>
+<p><img src="/post/2017-06-19-Goodreads_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>The median rating by the community was actually pretty similar to mine.</p>
+<pre class="r"><code>median(books$Average.Rating)</code></pre>
+<pre><code>## [1] 3.97</code></pre>
+</div>
+<div id="difference-between-my-ratings-and-the-masses" class="section level2">
+<h2>Difference between My Ratings and the Masses</h2>
+<p>Were there books that I enjoyed way more or less than the community? I didn’t have the distribution of the ratings for each book, but I did have the mean and could calculate the difference between the community average rating and mine.</p>
+<pre class="r"><code>books %&gt;% select(Title, Author, My.Rating, Average.Rating, reader) %&gt;% 
+  mutate(dRating = My.Rating - Average.Rating) %&gt;% 
+  filter(!is.na(dRating)) %&gt;% arrange(desc(dRating)) %&gt;%
+  ggplot(aes(x = dRating, fill = reader)) +
+  geom_histogram(binwidth = 0.25, position = &quot;identity&quot;, alpha = 0.5) +
+  ggtitle(&quot;Difference between My Ratings and Community Ratings&quot;) +
+  xlab(&quot;My Rating - Community Rating&quot;) +
+  theme_ipsum()</code></pre>
+<p><img src="/post/2017-06-19-Goodreads_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Here are the top 10 books that we liked more than the community.</p>
+<pre class="r"><code>books %&gt;% select(Title, Author, My.Rating, Average.Rating) %&gt;% mutate(dRating = My.Rating - Average.Rating) %&gt;% 
+  filter(!is.na(dRating)) %&gt;% arrange(desc(dRating))</code></pre>
+<pre><code>## # A tibble: 440 × 5
+##                                                                          Title
+##                                                                          &lt;chr&gt;
+## 1                        FOUND IT! Introducing Geocaching to Kids and Families
+## 2                                                      A Hologram for the King
+## 3                                                      Twilight (Twilight, #1)
+## 4                                   The Meanings of Craft Beer (Kindle Single)
+## 5       The Fortune Cookie Chronicles: Adventures in the World of Chinese Food
+## 6  Three Cups of Tea: One Man&#39;s Mission to Promote Peace ... One School at a T
+## 7                                                       The Fantastic Mr. Wani
+## 8                                                                   After Dark
+## 9                                                After You (Me Before You, #2)
+## 10                                                Breaking Dawn (Twilight, #4)
+## # ... with 430 more rows, and 4 more variables: Author &lt;fctr&gt;,
+## #   My.Rating &lt;dbl&gt;, Average.Rating &lt;dbl&gt;, dRating &lt;dbl&gt;</code></pre>
+<p>And the ones we liked worse than the community.</p>
+<pre class="r"><code>books %&gt;% select(Title, Author, My.Rating, Average.Rating) %&gt;% mutate(dRating = My.Rating - Average.Rating) %&gt;% 
+  filter(!is.na(dRating)) %&gt;% arrange(dRating)</code></pre>
+<pre><code>## # A tibble: 440 × 5
+##                                                                          Title
+##                                                                          &lt;chr&gt;
+## 1                                            Under Pressure: Cooking Sous Vide
+## 2                           A Wind in the Door (A Wrinkle in Time Quintet, #2)
+## 3                           Be Different: Adventures of a Free-Range Aspergian
+## 4                                        Angels &amp; Demons  (Robert Langdon, #1)
+## 5                                             Every Day is an Atheist Holiday!
+## 6                                                           Last Chance Saloon
+## 7                                                      Grey (Fifty Shades, #4)
+## 8                       The Orchid Thief: A True Story of Beauty and Obsession
+## 9                                                         The Mermaid&#39;s Sister
+## 10 Apps for Autism: An Essential Guide to Over 200 Effective Apps for Improvin
+## # ... with 430 more rows, and 4 more variables: Author &lt;fctr&gt;,
+## #   My.Rating &lt;dbl&gt;, Average.Rating &lt;dbl&gt;, dRating &lt;dbl&gt;</code></pre>
+</div>
+<div id="publication-date" class="section level2">
+<h2>Publication Date</h2>
+<p>How old were the books I’ve been reading?</p>
+<pre class="r"><code>books %&gt;% filter(!is.na(Original.Publication.Year)) %&gt;%
+  ggplot(aes(x = Original.Publication.Year, fill = reader)) + 
+  geom_histogram(binwidth = 5, position = &quot;identity&quot;, alpha = 0.5) +
+  ggtitle(&quot;Original Publication Year&quot;) +
+  xlab(&quot;Publication Year&quot;) + 
+  theme_ipsum()</code></pre>
+<p><img src="/post/2017-06-19-Goodreads_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>These two 17th century books were Shakespeare plays I had read before going to see them live (Othello, Twelfth Night). Taking those out led to this admittedly still skewed distribution.</p>
+<pre class="r"><code>books %&gt;% filter(Original.Publication.Year &gt; 1900) %&gt;%
+  ggplot(aes(x = Original.Publication.Year, fill = reader)) + 
+  geom_histogram(binwidth = 2, position = &quot;identity&quot;, alpha = 0.5) +
+  xlab(&quot;Original Publication Year&quot;) +
+  ggtitle(&quot;Original Publication Year (Books Written since 1900)&quot;) +
+  theme_ipsum()</code></pre>
+<p><img src="/post/2017-06-19-Goodreads_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>The distribution is highly skewed, with a median original publication date of 2010.</p>
+<pre class="r"><code>median(books$Original.Publication.Year, na.rm = T)</code></pre>
+<pre><code>## [1] 2010</code></pre>
+<p>Those outliers were:</p>
+<pre class="r"><code>books %&gt;% filter(Original.Publication.Year &lt; 1980) %&gt;% 
+  arrange(Original.Publication.Year) %&gt;% 
+  select(Original.Publication.Year, Title) %&gt;% 
+  as.data.frame()</code></pre>
+<pre><code>##    Original.Publication.Year
+## 1                       1601
+## 2                       1603
+## 3                       1811
+## 4                       1813
+## 5                       1814
+## 6                       1817
+## 7                       1817
+## 8                       1847
+## 9                       1868
+## 10                      1919
+## 11                      1937
+## 12                      1937
+## 13                      1937
+## 14                      1951
+## 15                      1955
+## 16                      1962
+## 17                      1970
+## 18                      1970
+## 19                      1971
+## 20                      1971
+## 21                      1973
+## 22                      1974
+## 23                      1975
+## 24                      1978
+## 25                      1979
+##                                                                    Title
+## 1                                                          Twelfth Night
+## 2                                                                Othello
+## 3                                                  Sense and Sensibility
+## 4                                                    Pride and Prejudice
+## 5                                                         Mansfield Park
+## 6                                                       Northanger Abbey
+## 7                                                             Persuasion
+## 8                                                              Jane Eyre
+## 9                                        Little Women (Little Women, #1)
+## 10                                                                 South
+## 11                                                            The Hobbit
+## 12                                          Their Eyes Were Watching God
+## 13                                                       Of Mice and Men
+## 14                                                The Catcher in the Rye
+## 15                   The Lord of the Rings (The Lord of the Rings, #1-3)
+## 16                                  A Wrinkle in Time (Time Quintet, #1)
+## 17 Bury My Heart at Wounded Knee: An Indian History of the American West
+## 18                         Frog and Toad Are Friends (Frog and Toad, #1)
+## 19                                         Encounters with the Archdruid
+## 20                   Suzuki Violin School, Volume 1: Piano Accompaniment
+## 21                    A Wind in the Door (A Wrinkle in Time Quintet, #2)
+## 22                                               Where the Sidewalk Ends
+## 23                                       Danny the Champion of the World
+## 24                                                         Once a Runner
+## 25                                        Wind/Pinball: Two Early Novels</code></pre>
+</div>
+<div id="number-of-pages-and-over-time" class="section level2">
+<h2>Number of Pages (and over time)</h2>
+<p>The last thing I looked at was the number of pages we’ve read since beginning recording in earnest.</p>
+<pre class="r"><code>books %&gt;% mutate(Year_read = factor(year(Date.Read))) %&gt;%
+  filter(!is.na(Year_read)) %&gt;%
+  group_by(Year_read, reader) %&gt;% 
+  summarize(npages = sum(Number.of.Pages, na.rm = T)) %&gt;%
+  ggplot(aes(x = Year_read, y = npages, fill = reader)) +
+  geom_bar(stat=&quot;identity&quot;, position = &quot;identity&quot;, alpha = 0.5) + 
+  xlab(&quot;Year Read&quot;) + 
+  ylab(&quot;Number of Pages&quot;) +
+  ggtitle(&quot;Pages Recorded as Read per Year&quot;) +
+  theme_ipsum() </code></pre>
+<p><img src="/post/2017-06-19-Goodreads_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p>This year (2017) has been a big reading year and it’s not even half over yet. I think the summer reading program from my library and the Goodreads Reading Challenge have been big reasons that I have done so much this year.</p>
+</div>
+<div id="date-published-vs.date-read" class="section level2">
+<h2>Date Published vs. Date Read</h2>
+<pre class="r"><code>books %&gt;% select(Date.Read, Original.Publication.Year, reader) %&gt;% 
+  filter(!is.na(Date.Read) &amp; !is.na(Original.Publication.Year)) %&gt;%
+  ggplot(aes(x = Date.Read, y = Original.Publication.Year, color = reader)) +
+  geom_point(alpha = 0.2) +
+  theme_ipsum() +
+  labs(title = &quot;Date Read vs. Original Publication Year&quot;,
+       x = &quot;Date Read&quot;,
+       y = &quot;Original Publication Year&quot;)</code></pre>
+<p><img src="/post/2017-06-19-Goodreads_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>Shoot, those Shakespeare plays really mess with the plot. I don’t think even putting a log scale would help. I filtered them out to get the plot below.</p>
+<pre class="r"><code>library(scales)
+books %&gt;% select(Date.Read, Original.Publication.Year, reader) %&gt;% 
+  filter(!is.na(Date.Read) &amp; !is.na(Original.Publication.Year)) %&gt;%
+  filter(Original.Publication.Year &gt; 1700) %&gt;% 
+  ggplot(aes(x = Date.Read, y = Original.Publication.Year, color = reader)) +
+  geom_point(alpha = 0.2) +
+  theme_ipsum() +
+  labs(title = &quot;Date Read vs. Original Publication Year (Books after 1700)&quot;,
+       x = &quot;Date Read&quot;,
+       y = &quot;Original Publication Year&quot;)</code></pre>
+<p><img src="/post/2017-06-19-Goodreads_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+</div>

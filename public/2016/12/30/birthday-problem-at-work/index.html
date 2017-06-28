@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Birthday Problem at Work  &middot; Dripping Data</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="description" content="" />
+
+<meta name="keywords" content="probability, ">
+
+
+<meta property="og:title" content="Birthday Problem at Work  &middot; Dripping Data ">
+<meta property="og:site_name" content="Dripping Data"/>
+<meta property="og:url" content="/2016/12/30/birthday-problem-at-work/" />
+<meta property="og:locale" content="en-us">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:description" content=""/>
+<meta property="og:article:published_time" content="2016-12-30T00:00:00Z" />
+<meta property="og:article:modified_time" content="2016-12-30T00:00:00Z" />
+
+  
+    
+<meta property="og:article:tag" content="probability">
+    
+  
+
+  
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@" />
+<meta name="twitter:creator" content="@" />
+<meta name="twitter:title" content="Birthday Problem at Work" />
+<meta name="twitter:description" content="" />
+<meta name="twitter:url" content="/2016/12/30/birthday-problem-at-work/" />
+<meta name="twitter:domain" content="/">
+  
+
+  
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "headline": "Birthday Problem at Work",
+    "author": {
+      "@type": "Person",
+      "name": "http://profiles.google.com/+?rel=author"
+    },
+    "datePublished": "2016-12-30",
+    "description": "",
+    "wordCount": 521
+  }
+</script>
+  
+
+
+
+<link rel="canonical" href="../../../../2016/12/30/birthday-problem-at-work/" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../../../touch-icon-144-precomposed.png">
+<link rel="icon" href="../../../../favicon.png">
+<meta name="generator" content="Hugo 0.24.1" />
+
+  <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+
+    <link rel="stylesheet" href="../../../../css/bootswatch/default/bootstrap.min.css">
+
+
+<link rel="stylesheet" href="../../../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../css/style.css">
+
+
+
+
+  <link rel="stylesheet" href="../../../../css/highlight/default.css">
+
+
+</head>
+<body data-ng-app="myapp" data-ng-controller="MyController" data-ng-mouseleave="MouseLeave($event)">
+    <header id="main-header">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        
+          
+          <a class="navbar-brand-img" href="../../../../">
+            <img alt="" src="">
+            
+          </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            
+            
+            <li class="">
+
+              <a href="../../../../" >
+                
+                Blog
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="../../../../about/" >
+                
+                About
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="https://www.linkedin.com/in/michael-ching-033a5029" >
+                
+                LinkedIn
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="https://twitter.com/mikec2a" >
+                
+                Twitter
+              </a>
+            </li>
+            
+            
+              
+          </ul>
+        </div>
+        
+      </div>
+    </nav>
+  </header>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+  <div class="text-center">
+
+    <h1>Birthday Problem at Work
+</h1>
+
+    <div class="metas">
+<small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-12-30">30 Dec, 2016</time>
+</small>
+
+
+  <small>
+    &middot; by Michael Ching
+  
+  &middot; Read in about 3 min
+  &middot; (521 words)
+  &middot; 
+<span class="share-box">Share this on:
+    <a href="https://www.facebook.com/sharer/sharer.php?u=%2f2016%2f12%2f30%2fbirthday-problem-at-work%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-facebook-official "></i></a>
+
+    <a href="https://twitter.com/intent/tweet?text=Birthday%20Problem%20at%20Work&amp;url=%2f2016%2f12%2f30%2fbirthday-problem-at-work%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-twitter"></i></a>
+
+    <a href="https://plus.google.com/share?url=%2f2016%2f12%2f30%2fbirthday-problem-at-work%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-google-plus"></i></a>
+
+    <a href="http://www.reddit.com/submit?url=%2f2016%2f12%2f30%2fbirthday-problem-at-work%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-reddit"></i></a>
+
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2f2016%2f12%2f30%2fbirthday-problem-at-work%2f&amp;title=Birthday%20Problem%20at%20Work" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-linkedin"></i></a>
+
+    <a href="mailto:?subject=Birthday%20Problem%20at%20Work&amp;body=Check out this site %2f2016%2f12%2f30%2fbirthday-problem-at-work%2f" data-proofer-ignore=""><i class="fa fa-envelope"></i></a>
+  </span>
+
+  </small>
+
+<div class="margin-10">
+  <i class="fa fa-tags"></i>
+  
+  <a href="../../../../tags/probability" class="label label-primary">probability</a>
+  
+
+
+</div>
+
+<br>
+</div>
+
+  </div>
+</div>
+
+      <div class="content">
+  <p>My coworker keeps a list of our coworkers’ birthdays so she can plan a monthly celebration. There are 36 of us in the office, and it turns out that none of us have the same birthday. My coworker wondered what was the chance of that happening.</p>
+<p>As it turns out, the <a href="https://en.wikipedia.org/wiki/Birthday_problem">birthday problem</a> is a classic probability question. Given a certain number of people, what is the probability that two of them have the same birthday?</p>
+<div id="derivation-of-probability" class="section level2">
+<h2>Derivation of Probability</h2>
+<p>It is easier to calculate what is the probability of no one having the same birthday, or all the birthdays being different. We can use an example of 3 people. Starting with the first person, the probability that the next person does not have the same birthday is 364/365. The probability that the third person does not share either of the first two birthdays is 363/365.</p>
+<p><span class="math display">\[ P(birthdays \space are \space all \space different) = {365 \over 365} \times {364 \over 365} \times {363 \over 365} \approx 0.992\]</span></p>
+<p>We can see that this generalizes to:</p>
+<p><span class="math display">\[ P(n \space birthdays \space are \space all \space different) = {365 \over 365} \times {364 \over 365} \times \ldots \times {365 - n + 1 \over 365} \]</span> <span class="math display">\[ = {365! \over 365^{n}(365-n)!}\]</span> To get the probability that there is at least two or more birthdays are the same, you can subtract this number from one.</p>
+<p><span class="math display">\[ P(at \space least \space two \space birthdays \space are \space the \space same) = 1- {365! \over 365^{n}(365-n)!} \]</span></p>
+<p>Because these are humongous numbers, there are various approximations that have been developed for these. One simple example is based on the Taylor series expansion of the exponential function:</p>
+<p><span class="math display">\[ p(n) \approx 1 - e^{-n(n-1)/(2\times365)}\]</span></p>
+<p>Fortunately there is an R function <code>pbirthday</code> that calculates this for us. Examining the code, we can see that in the case when we want to see if there are two birthdays (<code>if (k == 2)</code>), it actually provides the exact (non approximation) calculation.</p>
+<pre class="r"><code>pbirthday</code></pre>
+<pre><code>## function (n, classes = 365, coincident = 2) 
+## {
+##     k &lt;- coincident
+##     c &lt;- classes
+##     if (k &lt; 2) 
+##         return(1)
+##     if (k == 2) 
+##         return(1 - prod((c:(c - n + 1))/rep(c, n)))
+##     if (k &gt; n) 
+##         return(0)
+##     if (n &gt; c * (k - 1)) 
+##         return(1)
+##     LHS &lt;- n * exp(-n/(c * k))/(1 - n/(c * (k + 1)))^(1/k)
+##     lxx &lt;- k * log(LHS) - (k - 1) * log(c) - lgamma(k + 1)
+##     -expm1(-exp(lxx))
+## }
+## &lt;bytecode: 0x7fba690e6e70&gt;
+## &lt;environment: namespace:stats&gt;</code></pre>
+</div>
+<div id="answering-the-original-question" class="section level2">
+<h2>Answering the Original Question</h2>
+<p>The <code>pbirthday</code> function makes it trivial to calculate the answer to the original question. Because <code>pbirthday</code> returns the probability that at least 2 have the same birthday, to get the probability that none have the same birthday, we just subtract the result of the function from 1.</p>
+<pre class="r"><code>1 - pbirthday(36)</code></pre>
+<pre><code>## [1] 0.1678179</code></pre>
+<p>The probability that no two coworkers would have the same birthday in an office with 36 people is 16.8%. That’s uncommon but by no means improbable. I guess we’re just a special bunch of people!</p>
+</div>
+
+</div>
+
+
+      <footer>
+  
+<span class="share-box">Share this on:
+    <a href="https://www.facebook.com/sharer/sharer.php?u=%2f2016%2f12%2f30%2fbirthday-problem-at-work%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-facebook-official "></i></a>
+
+    <a href="https://twitter.com/intent/tweet?text=Birthday%20Problem%20at%20Work&amp;url=%2f2016%2f12%2f30%2fbirthday-problem-at-work%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-twitter"></i></a>
+
+    <a href="https://plus.google.com/share?url=%2f2016%2f12%2f30%2fbirthday-problem-at-work%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-google-plus"></i></a>
+
+    <a href="http://www.reddit.com/submit?url=%2f2016%2f12%2f30%2fbirthday-problem-at-work%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-reddit"></i></a>
+
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2f2016%2f12%2f30%2fbirthday-problem-at-work%2f&amp;title=Birthday%20Problem%20at%20Work" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-linkedin"></i></a>
+
+    <a href="mailto:?subject=Birthday%20Problem%20at%20Work&amp;body=Check out this site %2f2016%2f12%2f30%2fbirthday-problem-at-work%2f" data-proofer-ignore=""><i class="fa fa-envelope"></i></a>
+  </span>
+
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      
+  
+    <nav><ul class="pager">
+    
+        <li class="previous">
+          <a href="../../../../2016/12/29/electric-vehicle-parking-at-hnl/" title="Electric Vehicle Parking at Honolulu International Airport">
+            <span aria-hidden="true">&larr;</span>Previous
+          </a>
+        </li>
+    
+
+    
+      <li class="next">
+        <a href="../../../../2017/01/08/pidgey-evolution-updated/" title="Pidgey Evolution: Effects on Combat Power and Hit Points (Updated)">
+            Next <span aria-hidden="true">&rarr;</span>
+        </a>
+      </li>
+    
+    </ul> </nav>
+  
+
+
+</div>
+
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+  
+
+</div>
+
+</footer>
+
+    </div>
+    
+  </div>
+</div>
+    
+<footer class="footer hidden-print">
+  <div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+           <div class="pull-left">
+  <a class="toplink" href="javascript:" id="return-to-top">back to top</a>
+</div>
+<div class="pull-right">
+
+</div>
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+              
+    
+<div class="container footline">
+    <small>
+</small>
+</div>
+
+
+    
+
+
+        </div>
+    </div>
+  </div>
+</footer>
+
+    
+
+<script src="//s3.amazonaws.com/mailmunch/static/site.js" id="mailmunch-script" data-mailmunch-site-id="" async="async"></script>
+
+
+
+<script src="//load.sumome.com/" data-sumo-site-id="" async="async"></script>
+
+<script src="../../../../js/jquery.min.js"></script>
+<script src="../../../../js/bootstrap.min.js"></script>
+
+<script src="../../../../js/angular.min.js"></script>
+<script src="../../../../js/popover/angular-storage.min.js"></script>
+<script src="../../../../js/highlight.pack.js"></script>
+<script src="../../../../js/site.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script>
+var ENABLE_POPOVER = "", 
+EXPIRE_COOKIE = "", 
+SHOW_MODAL_TIMEOUT = "", 
+MOUSE_LEAVE = "", 
+MODAL_SIZE = "", 
+POST_URL = "", 
+SIGNUP_HEADER = "",
+HEADER_IMAGE = "",
+IMG_DESCRIPTION = "",
+SIGNUP_TEXT = "",
+INPUT_PLACEHOLDER = "",
+SUBMIT_BUTTON = "",
+SUCCESS_MESSAGE = "",
+ERROR_MESSAGE = "",
+OPTIN = "",
+COOKIE_NAME = "",
+CONTENTLANGUAGE = ""; 
+</script>
+
+<script src="../../../../js/popover/angular-modal-service.min.js"></script>
+<script src="../../../../js/angular-ismobile.min.js"></script>
+<script src="../../../../js/popover/popover.min.js"></script>
+
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax//MathJax.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax//config/TeX-AMS-MML_HTMLorMML.js"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    for(var all in MathJax.Hub.getAllJax()) {
+        all.SourceElement().parentNode.className += ' has-jax';
+
+    }
+});
+</script>
+
+
+
+
+
+
+  </body>
+</html>
+

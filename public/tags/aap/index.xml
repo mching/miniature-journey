@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Aap on Dripping Data</title>
+    <link>/tags/aap/</link>
+    <description>Recent content in Aap on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 20 Apr 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/aap/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>AAP Annual Leadership Forum Consent Calendar Resolutions Less Likely to Make Top 10</title>
+      <link>/2017/04/20/alf-consent-calendar/</link>
+      <pubDate>Thu, 20 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/04/20/alf-consent-calendar/</guid>
+      <description>Last month I went to the American Academy of Pediatrics’ Annual Leadership Forum. This is a meeting of local chapter leaders from across the country where we make resolutions for the AAP to act on. Some resolutions were passed quickly as a group because they were not controversial. This process is called the “consent calendar”. The other resolutions were debated, sometimes at much length, before being voted on individually. At the end of the meeting we came up with the top 10 resolutions that we wanted the AAP to work on this year.</description>
+    </item>
+    
+  </channel>
+</rss>

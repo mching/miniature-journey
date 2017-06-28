@@ -22,5 +22,43 @@ Or maybe a second paragraph. Or 2.
 library(Lahman) library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(hrbrthemes) BABIP is calculated as balls in play (hits minus home runs) divided by total at bats that caused these balls in play (at bats minus strikeouts minus home runs plus sacrifice flies).</description>
     </item>
     
+    <item>
+      <title>Exploring Disabled List Data from Major League Baseball</title>
+      <link>/2017/06/09/dl-data-exploration/</link>
+      <pubDate>Fri, 09 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/09/dl-data-exploration/</guid>
+      <description>library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(tidyr) DL &amp;lt;- read.csv(&amp;quot;../datasets/DL2010_2016.csv&amp;quot;) DL &amp;lt;- tbl_df(DL) str(DL) ## Classes &amp;#39;tbl_df&amp;#39;, &amp;#39;tbl&amp;#39; and &amp;#39;data.frame&amp;#39;: 3509 obs. of 19 variables: ## $ Last_name : Factor w/ 888 levels &amp;quot;&amp;quot;,&amp;quot;Aardsma&amp;quot;,&amp;quot;Abad&amp;quot;,..: 518 95 481 796 104 680 535 349 140 868 .</description>
+    </item>
+    
+    <item>
+      <title>Pitchers with More Saves than Strikeouts</title>
+      <link>/2017/05/21/saves-vs-strikeouts/</link>
+      <pubDate>Sun, 21 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/05/21/saves-vs-strikeouts/</guid>
+      <description>On my favorite fantasy baseball podcast, the host mentioned the phenomenon of pitchers who had more saves than strikeouts. This seemed like it would be fairly uncommon since it seems that many closers are power pitchers (e.g., Aroldis Chapman). I decided to investigate further using the Lahman database.
+Methods I used the Lahman database again, which is perfect for answering this kind of questions. It has a Pitching table that contains season long stats for every pitcher from 1871 to 2015 (as of this post).</description>
+    </item>
+    
+    <item>
+      <title>Effect of Runs and Other Factors on Team Saves in Major League Baseball</title>
+      <link>/2017/04/18/saves-and-runs-scored/</link>
+      <pubDate>Tue, 18 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/04/18/saves-and-runs-scored/</guid>
+      <description>From listening to my favorite fantasy baseball podcast it seems that there is a belief that teams that score lots of runs are not likely to produce saves. The idea seems to be that such teams would blow out their competitors and so have less opportunity for games to be saved. While it made sense, I wondered what the data said.
+library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(Lahman) data(&amp;quot;Teams&amp;quot;) Teams &amp;lt;- tbl_df(Teams) Exploration of Saves over Time Saves did not become an official statistic until 1969 (source).</description>
+    </item>
+    
+    <item>
+      <title>Baseball Team Season Save Leaders with the Lowest Totals since 2000</title>
+      <link>/2017/03/31/baseball-team-season-saves/</link>
+      <pubDate>Fri, 31 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/03/31/baseball-team-season-saves/</guid>
+      <description>I was listening to my fantasy baseball podcast last week, and the conversation turned to the Phillies closer situation. One host suggested that the Phillies might not have any pitcher with more than 10 saves this season. The other host thought that this would be unlikely. They looked quickly at the data and found that this has happened a few times since 2000. I wondered if there was a way to look this up using the Lahman database in R.</description>
+    </item>
+    
   </channel>
 </rss>

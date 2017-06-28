@@ -5,7 +5,6 @@ date: '2016-06-13'
 slug: Sorting-photo-directories-with-R-and-exiftool
 categories:
   - R
-tags:
 ---
 
 We were fans of Google's Picasa photo organization software, but when it was discontinued, I decided that I would like to transfer all my digital photos onto an external drive and then into Adobe Lightroom. To do so, however, my "research" told me that it would be best to group them into catalogs based on year, mainly because I have on the order of 10^5 photos.

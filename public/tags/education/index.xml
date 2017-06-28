@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Education on Dripping Data</title>
+    <link>/tags/education/</link>
+    <description>Recent content in Education on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 30 May 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/education/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Association between Years at a Private School and Academic Achievement</title>
+      <link>/2017/05/30/years-at-private-school-and-academic-achievement/</link>
+      <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/05/30/years-at-private-school-and-academic-achievement/</guid>
+      <description>The kids brought home their yearbooks this past week, and it was time to settle a question that I have had for a long time. Do kids who enter their private school at kindergarten do better or worse than the kids who enter later?
+Methods At this school there are two honor rolls (Headmaster’s List and Honor Roll). To get Headmaster’s List, a student must achieve a 3.5 grade point average with no grade below a B-.</description>
+    </item>
+    
+  </channel>
+</rss>

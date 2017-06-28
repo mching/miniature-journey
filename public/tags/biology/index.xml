@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Biology on Dripping Data</title>
+    <link>/tags/biology/</link>
+    <description>Recent content in Biology on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 09 Apr 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/biology/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Graphing Bean Sprout Respiration with the Hadleyverse</title>
+      <link>/2017/04/09/bean-sprout-respiration/</link>
+      <pubDate>Sun, 09 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/04/09/bean-sprout-respiration/</guid>
+      <description>My wife’s high school biology students did a lab recently and had difficulty graphing the pooled data. One student allegedly took 2 hours to figure out how to do this in Excel. This seemed like it would be a nice exercise to try in the Hadleyverse. To replicate this plot, I had to take her students’ data in wide form, tidy it up, calculate means for each group and time, and then plot these.</description>
+    </item>
+    
+  </channel>
+</rss>

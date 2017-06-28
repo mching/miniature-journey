@@ -23,12 +23,239 @@ library(Lahman) library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; 
     </item>
     
     <item>
+      <title>Goodreads Analysis</title>
+      <link>/2017/06/19/goodreads-analysis/</link>
+      <pubDate>Mon, 19 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/19/goodreads-analysis/</guid>
+      <description>I just finished my 2017 Reading Challenge on Goodreads. My goal was to read 15 books this year. Poking around the site I discovered that I could export my data. I decided to have a look to see what my reading habits looked like, and since I was doing this for me, I decided to look at my wife’s data too.
+Dataset library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(tidyr) library(ggplot2) library(lubridate) ## ## Attaching package: &amp;#39;lubridate&amp;#39; ## The following object is masked from &amp;#39;package:base&amp;#39;: ## ## date library(hrbrthemes) books &amp;lt;- read.</description>
+    </item>
+    
+    <item>
+      <title>Exploring Disabled List Data from Major League Baseball</title>
+      <link>/2017/06/09/dl-data-exploration/</link>
+      <pubDate>Fri, 09 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/09/dl-data-exploration/</guid>
+      <description>library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(tidyr) DL &amp;lt;- read.csv(&amp;quot;../datasets/DL2010_2016.csv&amp;quot;) DL &amp;lt;- tbl_df(DL) str(DL) ## Classes &amp;#39;tbl_df&amp;#39;, &amp;#39;tbl&amp;#39; and &amp;#39;data.frame&amp;#39;: 3509 obs. of 19 variables: ## $ Last_name : Factor w/ 888 levels &amp;quot;&amp;quot;,&amp;quot;Aardsma&amp;quot;,&amp;quot;Abad&amp;quot;,..: 518 95 481 796 104 680 535 349 140 868 .</description>
+    </item>
+    
+    <item>
       <title>About</title>
       <link>/about/</link>
       <pubDate>Tue, 06 Jun 2017 09:48:51 -1000</pubDate>
       
       <guid>/about/</guid>
       <description>I am a developmental behavioral pediatrician who works with children with a diversity of abilities. My official profile is on the Kaiser Permanente Hawaii website. I am also involved in the American Academy of Pediatrics, Hawaii Chapter. I like reading, the outdoors, photography, and taiko drumming.</description>
+    </item>
+    
+    <item>
+      <title>Association between Years at a Private School and Academic Achievement</title>
+      <link>/2017/05/30/years-at-private-school-and-academic-achievement/</link>
+      <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/05/30/years-at-private-school-and-academic-achievement/</guid>
+      <description>The kids brought home their yearbooks this past week, and it was time to settle a question that I have had for a long time. Do kids who enter their private school at kindergarten do better or worse than the kids who enter later?
+Methods At this school there are two honor rolls (Headmaster’s List and Honor Roll). To get Headmaster’s List, a student must achieve a 3.5 grade point average with no grade below a B-.</description>
+    </item>
+    
+    <item>
+      <title>King Tides Citizen Science Project</title>
+      <link>/2017/05/26/king-tides-gis/</link>
+      <pubDate>Fri, 26 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/05/26/king-tides-gis/</guid>
+      <description>I read in the newspaper that the University of Hawaii was recruiting &amp;ldquo;citizen scientists&amp;rdquo; to help document the impact of this week&amp;rsquo;s &amp;ldquo;king tides&amp;rdquo; on our coastline. I uploaded some photos to the website but also found that we could download the dataset. I took this as an opportunity to learn something about geographic information systems (GIS) and R, and the end result was a pretty nice map of all the places that were photographed this week.</description>
+    </item>
+    
+    <item>
+      <title>Pitchers with More Saves than Strikeouts</title>
+      <link>/2017/05/21/saves-vs-strikeouts/</link>
+      <pubDate>Sun, 21 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/05/21/saves-vs-strikeouts/</guid>
+      <description>On my favorite fantasy baseball podcast, the host mentioned the phenomenon of pitchers who had more saves than strikeouts. This seemed like it would be fairly uncommon since it seems that many closers are power pitchers (e.g., Aroldis Chapman). I decided to investigate further using the Lahman database.
+Methods I used the Lahman database again, which is perfect for answering this kind of questions. It has a Pitching table that contains season long stats for every pitcher from 1871 to 2015 (as of this post).</description>
+    </item>
+    
+    <item>
+      <title>Economical Iced Coffee</title>
+      <link>/2017/05/11/iced-coffee/</link>
+      <pubDate>Thu, 11 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/05/11/iced-coffee/</guid>
+      <description>My wife and I like iced coffee but drinking it at Starbucks is expensive. I&amp;rsquo;ve been making it myself at home and it&amp;rsquo;s a reasonable facsimile at what I think is a much lower price. I decided to run the calculations to see how much we&amp;rsquo;re saving.
+Grounds I tried a bunch of different coffees to see what would work the best: whole bean Kirkland (Costco) brand, whole bean Kona coffee, ground Lion coffee (a local brand), ground Folgers, and ground Kirkland.</description>
+    </item>
+    
+    <item>
+      <title>Bank Shot Win Analysis</title>
+      <link>/2017/04/22/bank-shot/</link>
+      <pubDate>Sat, 22 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/04/22/bank-shot/</guid>
+      <description>There’s a carnival game at the Iolani Fair called Bank Shot. You have to roll a ball on a ramp into a hole and win a prize. Get it in the green hole and you win tickets, and if you get it in the red hole, you win a big inflatable prize. I wondered what was the rate of hitting the red and green holes.
+Here’s a picture of the game layout.</description>
+    </item>
+    
+    <item>
+      <title>AAP Annual Leadership Forum Consent Calendar Resolutions Less Likely to Make Top 10</title>
+      <link>/2017/04/20/alf-consent-calendar/</link>
+      <pubDate>Thu, 20 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/04/20/alf-consent-calendar/</guid>
+      <description>Last month I went to the American Academy of Pediatrics’ Annual Leadership Forum. This is a meeting of local chapter leaders from across the country where we make resolutions for the AAP to act on. Some resolutions were passed quickly as a group because they were not controversial. This process is called the “consent calendar”. The other resolutions were debated, sometimes at much length, before being voted on individually. At the end of the meeting we came up with the top 10 resolutions that we wanted the AAP to work on this year.</description>
+    </item>
+    
+    <item>
+      <title>Effect of Runs and Other Factors on Team Saves in Major League Baseball</title>
+      <link>/2017/04/18/saves-and-runs-scored/</link>
+      <pubDate>Tue, 18 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/04/18/saves-and-runs-scored/</guid>
+      <description>From listening to my favorite fantasy baseball podcast it seems that there is a belief that teams that score lots of runs are not likely to produce saves. The idea seems to be that such teams would blow out their competitors and so have less opportunity for games to be saved. While it made sense, I wondered what the data said.
+library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union library(ggplot2) library(Lahman) data(&amp;quot;Teams&amp;quot;) Teams &amp;lt;- tbl_df(Teams) Exploration of Saves over Time Saves did not become an official statistic until 1969 (source).</description>
+    </item>
+    
+    <item>
+      <title>Graphing Bean Sprout Respiration with the Hadleyverse</title>
+      <link>/2017/04/09/bean-sprout-respiration/</link>
+      <pubDate>Sun, 09 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/04/09/bean-sprout-respiration/</guid>
+      <description>My wife’s high school biology students did a lab recently and had difficulty graphing the pooled data. One student allegedly took 2 hours to figure out how to do this in Excel. This seemed like it would be a nice exercise to try in the Hadleyverse. To replicate this plot, I had to take her students’ data in wide form, tidy it up, calculate means for each group and time, and then plot these.</description>
+    </item>
+    
+    <item>
+      <title>Baseball Team Season Save Leaders with the Lowest Totals since 2000</title>
+      <link>/2017/03/31/baseball-team-season-saves/</link>
+      <pubDate>Fri, 31 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/03/31/baseball-team-season-saves/</guid>
+      <description>I was listening to my fantasy baseball podcast last week, and the conversation turned to the Phillies closer situation. One host suggested that the Phillies might not have any pitcher with more than 10 saves this season. The other host thought that this would be unlikely. They looked quickly at the data and found that this has happened a few times since 2000. I wondered if there was a way to look this up using the Lahman database in R.</description>
+    </item>
+    
+    <item>
+      <title>Pidgey Evolution: Effects on Combat Power and Hit Points (Updated)</title>
+      <link>/2017/01/08/pidgey-evolution-updated/</link>
+      <pubDate>Sun, 08 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/01/08/pidgey-evolution-updated/</guid>
+      <description>I was evolving some Pokemon in Pokemon Go and wondered how much the Pokemon’s attributes change after evolution. The attributes of interest were combat power (CP) and hit points (HP). I focused my analysis from Pidgeys because I had the most data points for this species.
+I collected data from a couple of days’ evolution, available for viewing here. Both times I was using a Lucky Egg.
+x &amp;lt;- read.csv(&amp;quot;../datasets/evolution2.csv&amp;quot;) x &amp;lt;- tbl_df(x) pidgeys &amp;lt;- filter(x, pokemon == &amp;quot;Pidgey&amp;quot;) pidgeys ## # A tibble: 55 × 7 ## pokemon CP_pre HP_pre kg_pre CP_post HP_post kg_post ## &amp;lt;fctr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; ## 1 Pidgey 270 NA NA 533 NA NA ## 2 Pidgey 267 NA NA 515 NA NA ## 3 Pidgey 259 NA NA 526 NA NA ## 4 Pidgey 212 NA NA 413 NA NA ## 5 Pidgey 209 43 2.</description>
+    </item>
+    
+    <item>
+      <title>Birthday Problem at Work</title>
+      <link>/2016/12/30/birthday-problem-at-work/</link>
+      <pubDate>Fri, 30 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/12/30/birthday-problem-at-work/</guid>
+      <description>My coworker keeps a list of our coworkers’ birthdays so she can plan a monthly celebration. There are 36 of us in the office, and it turns out that none of us have the same birthday. My coworker wondered what was the chance of that happening.
+As it turns out, the birthday problem is a classic probability question. Given a certain number of people, what is the probability that two of them have the same birthday?</description>
+    </item>
+    
+    <item>
+      <title>Electric Vehicle Parking at Honolulu International Airport</title>
+      <link>/2016/12/29/electric-vehicle-parking-at-hnl/</link>
+      <pubDate>Thu, 29 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/12/29/electric-vehicle-parking-at-hnl/</guid>
+      <description>In Hawaii, electric cars park for free at state owned parking lots. This is a big benefit when we travel since the airport parking lot is normally $18 per day. I wondered how much money the state loses on the electric car parking at the airport. Because I travel to Maui every week for work, I was able to collect some data to try to answer this question.
+Methods I made video recordings of parked cars while driving through the Honolulu International Airport interisland parking structure between November 29, 2016 and December 28, 2016.</description>
+    </item>
+    
+    <item>
+      <title>Pidgey Evolution: Effects on Combat Power and Hit Points</title>
+      <link>/2016/12/14/pidgey-evolution/</link>
+      <pubDate>Wed, 14 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/12/14/pidgey-evolution/</guid>
+      <description>I was evolving some Pokemon in Pokemon Go today and wondered how much the Pokemon’s attributes change after evolution. The attributes of interest were combat power (CP) and hit points (HP). I focused my analysis from Pidgeys because I had the most data points for this species.
+I collected data from one day’s evolution, available for viewing here.
+x &amp;lt;- read.csv(&amp;quot;../datasets/evolution.csv&amp;quot;) x &amp;lt;- tbl_df(x) pidgeys &amp;lt;- filter(x, pokemon == &amp;quot;Pidgey&amp;quot;) pidgeys ## # A tibble: 12 × 7 ## pokemon CP_pre HP_pre kg_pre CP_post HP_post kg_post ## &amp;lt;fctr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; ## 1 Pidgey 270 NA NA 533 NA NA ## 2 Pidgey 267 NA NA 515 NA NA ## 3 Pidgey 259 NA NA 526 NA NA ## 4 Pidgey 212 NA NA 413 NA NA ## 5 Pidgey 209 43 2.</description>
+    </item>
+    
+    <item>
+      <title>Simple Secret Santa Picker</title>
+      <link>/2016/12/09/simple-secret-santa-picker/</link>
+      <pubDate>Fri, 09 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/12/09/simple-secret-santa-picker/</guid>
+      <description>A post about automating Secret Santa assignments popped up in my Facebook feed the other day. This being the Christmas season, I took a look. It seemed a bit complex, and I wondered if I could make it more efficient.
+The original function took in a list of people (e.g., Ann, Bill, Chris). Using a nested while-for loop, it randomly picked a name (Bill), and matched it to the first person in the list (Ann:Bill).</description>
+    </item>
+    
+    <item>
+      <title>An Unlucky Fantasy Football Season Is Over</title>
+      <link>/2016/11/30/unlucky-fantasy-football/</link>
+      <pubDate>Wed, 30 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/11/30/unlucky-fantasy-football/</guid>
+      <description>The regular fantasy football season just finished, and as usual, my team underperformed. I had the 3rd most points in the league and finished 7 out of 8 teams with a record of 4-8. I wondered what were the chances of such a bad record. This called for a simulation!
+Methods I transcribed all the scores for each game into a spreadsheet and loaded it into R.
+library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union dat &amp;lt;- read.</description>
+    </item>
+    
+    <item>
+      <title>Convection vs. Conventional Electric Oven Speed in Roasting Turkey</title>
+      <link>/2016/11/25/turkey-graph/</link>
+      <pubDate>Fri, 25 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/11/25/turkey-graph/</guid>
+      <description>It’s the day after Thanksgiving, and we have data on another turkey. This year our electricity went out just before I was going to put the turkey in our old electric oven so I had to go to my parents’ house to cook the turkey. They just got a fancy new oven with convection roasting, and they claimed it would be faster. This called for an analysis!
+Methods Like last year, I took measurements of the probe thermomenter inserted into the deepest part of the breast.</description>
+    </item>
+    
+    <item>
+      <title>Will I Pass My Board Exam?</title>
+      <link>/2016/11/15/pass-my-board-exam/</link>
+      <pubDate>Tue, 15 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/11/15/pass-my-board-exam/</guid>
+      <description>I am in the process of studying for my pediatrics board recertification and the pass rate is rumored to be about 75% of the questions correct. I got 163/199 (82%) of the questions correct on my practice exam. What is the probability that I will get at least 75% on my 200 question board exam based on this performance?
+Here’s the exact binomial way to figure it out.
+The idea is that if my probability of getting any question right is 0.</description>
+    </item>
+    
+    <item>
+      <title>Scale Model of Solar System</title>
+      <link>/2016/11/06/scale-model-of-solar-system/</link>
+      <pubDate>Sun, 06 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/11/06/scale-model-of-solar-system/</guid>
+      <description>One of my son’s Cub Scout “adventures” requires him to create a scale model of the solar system. We sketched the calculations on the back of a receipt over lunch. We started with the distance we figured that we would use (length of our street, 387 feet) and then calculated the distances to each planet based on this. I figured it would be neat to create a function in R that would return a table of the relative distances based on a given model solar system radius.</description>
+    </item>
+    
+    <item>
+      <title>Most Yards of Offense by a College Football Team in a Shutout Loss</title>
+      <link>/2016/10/03/football-shutouts/</link>
+      <pubDate>Mon, 03 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/10/03/football-shutouts/</guid>
+      <description>Introduction The purpose of this document is to explore the most yards in a shutout loss for a college football team. It was inspired after the University of Hawai`i gave up 462 yards in shutting out San Jose State on November 15, 2014. I wanted to see if I could use the dplyr package to explore this question.
+library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union  Data Source To obtain a source of data, I downloaded a database of football game statistics from 2000-2013, from http://www.</description>
+    </item>
+    
+    <item>
+      <title>Gas vs. Electric Car Operating Prices in Honolulu</title>
+      <link>/2016/09/11/electric-car-economy/</link>
+      <pubDate>Sun, 11 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/09/11/electric-car-economy/</guid>
+      <description>Our family has an electric car (Nissan Leaf) and a hybrid (Toyota Prius), and we often have to choose which one we will take out on the weekend. I wondered which one was cheaper to operate and which one was better for the environment.
+Wallet Impact The Leaf travels about 4.8 miles per kilowatt hour (kwh), and the Prius gets about 55 miles per gallon (mpg). Our electricity costs about $0.</description>
+    </item>
+    
+    <item>
+      <title>How Late Can My Patient Be</title>
+      <link>/2016/08/14/late-patients/</link>
+      <pubDate>Sun, 14 Aug 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/08/14/late-patients/</guid>
+      <description>When a patient doesn’t come to their developmental behavioral pediatrics appointment, it’s bad for my employer, but it’s an unexpected boon for me. Most of my patients seem to come early and only a few arrive later than 5-10 minutes past their appointment time. I wanted to know when I could start to give up on them and start doing something else. When would it be likely that a patient will no-show?</description>
     </item>
     
     <item>
@@ -39,6 +266,16 @@ library(Lahman) library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; 
       <guid>/2016/08/05/dinousaur-speed/</guid>
       <description>This is the work for the geocache we did today. The geocache description instructed us to measure the stride length and footprint length of some dinosaur tracks at the Dinosaur Ridge hike outside of Denver, Colorado. The kids and I looked at both the thinner Ornithomimus tracks and the thicker Iguanodontid tracks. Here’s the work, done in R:
 First, set up a table of the data. The units for stride length and footprint length are meters.</description>
+    </item>
+    
+    <item>
+      <title>Predicting Flashcard Deck Size Using Linear Regression</title>
+      <link>/2016/07/22/flashcard-deck-size-prediction/</link>
+      <pubDate>Fri, 22 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/07/22/flashcard-deck-size-prediction/</guid>
+      <description>I’m studying for my pediatric recertification board exam right now, and to help me remember things, I’m making flashcards as I read an exam study book. Lately, I’ve been wondering how many flashcards I will have by the time I reach the end of the book.
+I average about 15 pages a day and about 45 flashcards a day, or 3 flashcards per day. The book itself is 849 pages long, with the real content starting on page 43.</description>
     </item>
     
     <item>

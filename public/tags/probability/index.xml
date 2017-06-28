@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Probability on Dripping Data</title>
+    <link>/tags/probability/</link>
+    <description>Recent content in Probability on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 30 Dec 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/probability/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Birthday Problem at Work</title>
+      <link>/2016/12/30/birthday-problem-at-work/</link>
+      <pubDate>Fri, 30 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/12/30/birthday-problem-at-work/</guid>
+      <description>My coworker keeps a list of our coworkers’ birthdays so she can plan a monthly celebration. There are 36 of us in the office, and it turns out that none of us have the same birthday. My coworker wondered what was the chance of that happening.
+As it turns out, the birthday problem is a classic probability question. Given a certain number of people, what is the probability that two of them have the same birthday?</description>
+    </item>
+    
+    <item>
+      <title>Will I Pass My Board Exam?</title>
+      <link>/2016/11/15/pass-my-board-exam/</link>
+      <pubDate>Tue, 15 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/11/15/pass-my-board-exam/</guid>
+      <description>I am in the process of studying for my pediatrics board recertification and the pass rate is rumored to be about 75% of the questions correct. I got 163/199 (82%) of the questions correct on my practice exam. What is the probability that I will get at least 75% on my 200 question board exam based on this performance?
+Here’s the exact binomial way to figure it out.
+The idea is that if my probability of getting any question right is 0.</description>
+    </item>
+    
+  </channel>
+</rss>

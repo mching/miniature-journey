@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Games on Dripping Data</title>
+    <link>/tags/games/</link>
+    <description>Recent content in Games on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 22 Apr 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/games/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Bank Shot Win Analysis</title>
+      <link>/2017/04/22/bank-shot/</link>
+      <pubDate>Sat, 22 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/04/22/bank-shot/</guid>
+      <description>There’s a carnival game at the Iolani Fair called Bank Shot. You have to roll a ball on a ramp into a hole and win a prize. Get it in the green hole and you win tickets, and if you get it in the red hole, you win a big inflatable prize. I wondered what was the rate of hitting the red and green holes.
+Here’s a picture of the game layout.</description>
+    </item>
+    
+  </channel>
+</rss>

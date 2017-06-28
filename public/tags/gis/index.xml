@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Gis on Dripping Data</title>
+    <link>/tags/gis/</link>
+    <description>Recent content in Gis on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 26 May 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/gis/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>King Tides Citizen Science Project</title>
+      <link>/2017/05/26/king-tides-gis/</link>
+      <pubDate>Fri, 26 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/05/26/king-tides-gis/</guid>
+      <description>I read in the newspaper that the University of Hawaii was recruiting &amp;ldquo;citizen scientists&amp;rdquo; to help document the impact of this week&amp;rsquo;s &amp;ldquo;king tides&amp;rdquo; on our coastline. I uploaded some photos to the website but also found that we could download the dataset. I took this as an opportunity to learn something about geographic information systems (GIS) and R, and the end result was a pretty nice map of all the places that were photographed this week.</description>
+    </item>
+    
+  </channel>
+</rss>

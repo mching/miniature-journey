@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Calculation on Dripping Data</title>
+    <link>/tags/calculation/</link>
+    <description>Recent content in Calculation on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 11 May 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/calculation/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Economical Iced Coffee</title>
+      <link>/2017/05/11/iced-coffee/</link>
+      <pubDate>Thu, 11 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/05/11/iced-coffee/</guid>
+      <description>My wife and I like iced coffee but drinking it at Starbucks is expensive. I&amp;rsquo;ve been making it myself at home and it&amp;rsquo;s a reasonable facsimile at what I think is a much lower price. I decided to run the calculations to see how much we&amp;rsquo;re saving.
+Grounds I tried a bunch of different coffees to see what would work the best: whole bean Kirkland (Costco) brand, whole bean Kona coffee, ground Lion coffee (a local brand), ground Folgers, and ground Kirkland.</description>
+    </item>
+    
+  </channel>
+</rss>

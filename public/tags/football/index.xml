@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Football on Dripping Data</title>
+    <link>/tags/football/</link>
+    <description>Recent content in Football on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 30 Nov 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/football/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>An Unlucky Fantasy Football Season Is Over</title>
+      <link>/2016/11/30/unlucky-fantasy-football/</link>
+      <pubDate>Wed, 30 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/11/30/unlucky-fantasy-football/</guid>
+      <description>The regular fantasy football season just finished, and as usual, my team underperformed. I had the 3rd most points in the league and finished 7 out of 8 teams with a record of 4-8. I wondered what were the chances of such a bad record. This called for a simulation!
+Methods I transcribed all the scores for each game into a spreadsheet and loaded it into R.
+library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union dat &amp;lt;- read.</description>
+    </item>
+    
+    <item>
+      <title>Most Yards of Offense by a College Football Team in a Shutout Loss</title>
+      <link>/2016/10/03/football-shutouts/</link>
+      <pubDate>Mon, 03 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/10/03/football-shutouts/</guid>
+      <description>Introduction The purpose of this document is to explore the most yards in a shutout loss for a college football team. It was inspired after the University of Hawai`i gave up 462 yards in shutting out San Jose State on November 15, 2014. I wanted to see if I could use the dplyr package to explore this question.
+library(dplyr) ## ## Attaching package: &amp;#39;dplyr&amp;#39; ## The following objects are masked from &amp;#39;package:stats&amp;#39;: ## ## filter, lag ## The following objects are masked from &amp;#39;package:base&amp;#39;: ## ## intersect, setdiff, setequal, union  Data Source To obtain a source of data, I downloaded a database of football game statistics from 2000-2013, from http://www.</description>
+    </item>
+    
+  </channel>
+</rss>

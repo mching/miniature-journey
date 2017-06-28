@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Graphing Bean Sprout Respiration with the Hadleyverse  &middot; Dripping Data</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="description" content="" />
+
+<meta name="keywords" content="biology, ">
+
+
+<meta property="og:title" content="Graphing Bean Sprout Respiration with the Hadleyverse  &middot; Dripping Data ">
+<meta property="og:site_name" content="Dripping Data"/>
+<meta property="og:url" content="/2017/04/09/bean-sprout-respiration/" />
+<meta property="og:locale" content="en-us">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:description" content=""/>
+<meta property="og:article:published_time" content="2017-04-09T00:00:00Z" />
+<meta property="og:article:modified_time" content="2017-04-09T00:00:00Z" />
+
+  
+    
+<meta property="og:article:tag" content="biology">
+    
+  
+
+  
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@" />
+<meta name="twitter:creator" content="@" />
+<meta name="twitter:title" content="Graphing Bean Sprout Respiration with the Hadleyverse" />
+<meta name="twitter:description" content="" />
+<meta name="twitter:url" content="/2017/04/09/bean-sprout-respiration/" />
+<meta name="twitter:domain" content="/">
+  
+
+  
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "headline": "Graphing Bean Sprout Respiration with the Hadleyverse",
+    "author": {
+      "@type": "Person",
+      "name": "http://profiles.google.com/+?rel=author"
+    },
+    "datePublished": "2017-04-09",
+    "description": "",
+    "wordCount": 919
+  }
+</script>
+  
+
+
+
+<link rel="canonical" href="../../../../2017/04/09/bean-sprout-respiration/" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../../../touch-icon-144-precomposed.png">
+<link rel="icon" href="../../../../favicon.png">
+<meta name="generator" content="Hugo 0.24.1" />
+
+  <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+
+    <link rel="stylesheet" href="../../../../css/bootswatch/default/bootstrap.min.css">
+
+
+<link rel="stylesheet" href="../../../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../css/style.css">
+
+
+
+
+  <link rel="stylesheet" href="../../../../css/highlight/default.css">
+
+
+</head>
+<body data-ng-app="myapp" data-ng-controller="MyController" data-ng-mouseleave="MouseLeave($event)">
+    <header id="main-header">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        
+          
+          <a class="navbar-brand-img" href="../../../../">
+            <img alt="" src="">
+            
+          </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            
+            
+            <li class="">
+
+              <a href="../../../../" >
+                
+                Blog
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="../../../../about/" >
+                
+                About
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="https://www.linkedin.com/in/michael-ching-033a5029" >
+                
+                LinkedIn
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="https://twitter.com/mikec2a" >
+                
+                Twitter
+              </a>
+            </li>
+            
+            
+              
+          </ul>
+        </div>
+        
+      </div>
+    </nav>
+  </header>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+  <div class="text-center">
+
+    <h1>Graphing Bean Sprout Respiration with the Hadleyverse
+</h1>
+
+    <div class="metas">
+<small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2017-04-09">9 Apr, 2017</time>
+</small>
+
+
+  <small>
+    &middot; by Michael Ching
+  
+  &middot; Read in about 5 min
+  &middot; (919 words)
+  &middot; 
+<span class="share-box">Share this on:
+    <a href="https://www.facebook.com/sharer/sharer.php?u=%2f2017%2f04%2f09%2fbean-sprout-respiration%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-facebook-official "></i></a>
+
+    <a href="https://twitter.com/intent/tweet?text=Graphing%20Bean%20Sprout%20Respiration%20with%20the%20Hadleyverse&amp;url=%2f2017%2f04%2f09%2fbean-sprout-respiration%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-twitter"></i></a>
+
+    <a href="https://plus.google.com/share?url=%2f2017%2f04%2f09%2fbean-sprout-respiration%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-google-plus"></i></a>
+
+    <a href="http://www.reddit.com/submit?url=%2f2017%2f04%2f09%2fbean-sprout-respiration%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-reddit"></i></a>
+
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2f2017%2f04%2f09%2fbean-sprout-respiration%2f&amp;title=Graphing%20Bean%20Sprout%20Respiration%20with%20the%20Hadleyverse" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-linkedin"></i></a>
+
+    <a href="mailto:?subject=Graphing%20Bean%20Sprout%20Respiration%20with%20the%20Hadleyverse&amp;body=Check out this site %2f2017%2f04%2f09%2fbean-sprout-respiration%2f" data-proofer-ignore=""><i class="fa fa-envelope"></i></a>
+  </span>
+
+  </small>
+
+<div class="margin-10">
+  <i class="fa fa-tags"></i>
+  
+  <a href="../../../../tags/biology" class="label label-primary">biology</a>
+  
+
+
+</div>
+
+<br>
+</div>
+
+  </div>
+</div>
+
+      <div class="content">
+  <p>My wife’s high school biology students did a lab recently and had difficulty graphing the pooled data. One student allegedly took 2 hours to figure out how to do this in Excel. This seemed like it would be a nice exercise to try in the <a href="http://adolfoalvarez.cl/the-hitchhikers-guide-to-the-hadleyverse/">Hadleyverse</a>. To replicate this plot, I had to take her students’ <a href="https://docs.google.com/spreadsheets/d/1OTymer6lutVLNgZMhOq_LamKwXJpl41nAYSJ7MOC9f0/edit?usp=sharing">data in wide form</a>, tidy it up, calculate means for each group and time, and then plot these.</p>
+<div id="experiment-setup" class="section level2">
+<h2>Experiment Setup</h2>
+<p>The students had bean sprouts in a closed test tube. The tube was connected by an air-filled tube to a horizontal capillary tube with water inside. As the sprouts underwent cellular respiration, the water level in the capillary moved. The distance moved allegedly correlates with the amount of respiration that the sprouts underwent. The students compared the rate of respiration in “Young” and “Old” mung bean sprouts.</p>
+</div>
+<div id="analysis-plan" class="section level2">
+<h2>Analysis Plan</h2>
+<p>I used the <code>dplyr</code>, <code>tidyr</code>, and <code>ggplot2</code> packages for this analysis.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(tidyr)
+library(ggplot2)</code></pre>
+<div id="tidying-data" class="section level3">
+<h3>Tidying Data</h3>
+<p>I imported the data and gathered them into long form.</p>
+<pre class="r"><code>sprouts &lt;- read.csv(&quot;../datasets/respiration.csv&quot;)
+sprouts &lt;- tbl_df(sprouts)
+sprouts &lt;- gather(sprouts, &quot;minutes&quot;, &quot;distance&quot;, 4:7)
+sprouts$minutes &lt;- recode(sprouts$minutes, &quot;X5.min&quot; = 5, &quot;X10.min&quot; = 10,
+       &quot;X15.min&quot; = 15, &quot;X20.min&quot; = 20)
+sprouts</code></pre>
+<pre><code>## # A tibble: 680 × 6
+##    Teacher Period  Table    Age minutes distance
+##     &lt;fctr&gt;  &lt;int&gt; &lt;fctr&gt; &lt;fctr&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+## 1    Ching      1      a  Young       5       18
+## 2    Ching      1      b  Young       5      150
+## 3    Ching      1      c  Young       5       85
+## 4    Ching      1      d  Young       5      114
+## 5    Ching      1      e  Young       5       NA
+## 6    Ching      2      a  Young       5       88
+## 7    Ching      2      b  Young       5       59
+## 8    Ching      2      c  Young       5       71
+## 9    Ching      2      d  Young       5       69
+## 10   Ching      2      e  Young       5       NA
+## # ... with 670 more rows</code></pre>
+</div>
+<div id="calculating-summary-statistics" class="section level3">
+<h3>Calculating Summary Statistics</h3>
+<p>I calculated means and standard errors by time and age.</p>
+<pre class="r"><code>plot_data &lt;- sprouts %&gt;% group_by(minutes, Age) %&gt;% 
+  summarize(avg_dist = mean(distance, na.rm = T), 
+            se_dist = sd(distance, na.rm = T)/sqrt(sum(!is.na(distance))))
+
+plot_data</code></pre>
+<pre><code>## Source: local data frame [8 x 4]
+## Groups: minutes [?]
+## 
+##   minutes    Age  avg_dist   se_dist
+##     &lt;dbl&gt; &lt;fctr&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1       5    Old  38.51948  2.524241
+## 2       5  Young  73.00000  5.172839
+## 3      10    Old  74.76923  4.802707
+## 4      10  Young 140.24324  8.619536
+## 5      15    Old 109.75641  6.897758
+## 6      15  Young 201.18919 12.290029
+## 7      20    Old 143.44595  9.555449
+## 8      20  Young 255.94286 14.874994</code></pre>
+</div>
+<div id="data-visualization" class="section level3">
+<h3>Data Visualization</h3>
+<p>I plotted the mean and standard errors using <code>ggplot2</code>.</p>
+<pre class="r"><code>pd &lt;- position_dodge(0)
+ggplot(plot_data, aes(x=minutes, y = avg_dist, color = Age, group = Age)) +
+  geom_errorbar(aes(ymin=avg_dist-se_dist, ymax=avg_dist+se_dist), 
+                width=.1, position=pd) + 
+  geom_point(position=pd) +
+  ylab(&quot;distance (mm)&quot;) +
+  ggtitle(&quot;Mean (s.e.) Respiration of Young and Old Bean Sprouts&quot;) +
+  expand_limits(x = 0, y = 0) # to show the origin </code></pre>
+<p><img src="../../../../post/2017-04-09-Bean-respiration_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>The result was a strikingly linear relationship between distance and time for both age groups.</p>
+</div>
+<div id="model-of-age-effect-on-respiration-rate" class="section level3">
+<h3>Model of Age Effect on Respiration Rate</h3>
+<p>To fit a model to these, I used linear regression. I modeled this using an interaction of time and age.</p>
+<pre class="r"><code>model1 &lt;- lm(distance ~ minutes + Age + minutes * Age, data = sprouts)
+summary(model1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = distance ~ minutes + Age + minutes * Age, data = sprouts)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -182.183  -32.157   -8.183   20.874  216.890 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)        4.1723     8.2336   0.507    0.613    
+## minutes            6.9969     0.6049  11.567  &lt; 2e-16 ***
+## AgeYoung          10.8904    14.4759   0.752    0.452    
+## minutes:AgeYoung   5.2091     1.0648   4.892 1.39e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 58.86 on 449 degrees of freedom
+##   (227 observations deleted due to missingness)
+## Multiple R-squared:  0.5216, Adjusted R-squared:  0.5184 
+## F-statistic: 163.2 on 3 and 449 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>The model came out pretty nice! Here it is in algebraic form where <span class="math inline">\(a\)</span> is age (young corresponds to a = 1 and old corresponds to a = 0) and <span class="math inline">\(t\)</span> is time elapsed in minutes:</p>
+<p><span class="math display">\[distance = 4.2 + 7t + 10.9a + 5.2ta\]</span></p>
+<p>When Age = 0 (old sprouts), the equation changes to:</p>
+<p><span class="math display">\[distance_{old \space sprouts} = 4.2 + 7t \]</span></p>
+<p>When Age = 1 (young sprouts), the equation changes to:</p>
+<p><span class="math display">\[distance_{young \space sprouts} = 15.1 + 12.2t\]</span></p>
+<p>The model only explained about 50% of the variance as seen when we overlay the regression lines over the raw data.</p>
+<pre class="r"><code>ggplot(sprouts, aes(x=minutes, y=distance, color=Age)) +
+  geom_point(shape = 1, position=position_jitter(width=.5,height=0)) +
+  geom_smooth(method=lm,   # Add linear regression lines
+                se=FALSE) +
+  ggtitle(&quot;Respiration of Young and Old Bean Sprouts&quot;)</code></pre>
+<pre><code>## Warning: Removed 227 rows containing non-finite values (stat_smooth).</code></pre>
+<pre><code>## Warning: Removed 227 rows containing missing values (geom_point).</code></pre>
+<p><img src="../../../../post/2017-04-09-Bean-respiration_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+</div>
+<div id="discussion" class="section level2">
+<h2>Discussion</h2>
+<p>The Hadleyverse method for analyzing this dataset worked out very well with some nice techniques for converting the data from wide to long form and nice data visualizations.</p>
+<p>I probably should have forced the linear regression models to have intercepts at 0 because it doesn’t make sense for sprouts to have had any respiration at time 0.</p>
+<p>I should acknowledge that much of the code for the visualizations was based on the R cookbook for <code>ggplot2</code>.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Old bean sprouts have lower respiration than young bean sprouts although there is significant variability in the data.</p>
+</div>
+
+</div>
+
+
+      <footer>
+  
+<span class="share-box">Share this on:
+    <a href="https://www.facebook.com/sharer/sharer.php?u=%2f2017%2f04%2f09%2fbean-sprout-respiration%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-facebook-official "></i></a>
+
+    <a href="https://twitter.com/intent/tweet?text=Graphing%20Bean%20Sprout%20Respiration%20with%20the%20Hadleyverse&amp;url=%2f2017%2f04%2f09%2fbean-sprout-respiration%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-twitter"></i></a>
+
+    <a href="https://plus.google.com/share?url=%2f2017%2f04%2f09%2fbean-sprout-respiration%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-google-plus"></i></a>
+
+    <a href="http://www.reddit.com/submit?url=%2f2017%2f04%2f09%2fbean-sprout-respiration%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-reddit"></i></a>
+
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2f2017%2f04%2f09%2fbean-sprout-respiration%2f&amp;title=Graphing%20Bean%20Sprout%20Respiration%20with%20the%20Hadleyverse" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-linkedin"></i></a>
+
+    <a href="mailto:?subject=Graphing%20Bean%20Sprout%20Respiration%20with%20the%20Hadleyverse&amp;body=Check out this site %2f2017%2f04%2f09%2fbean-sprout-respiration%2f" data-proofer-ignore=""><i class="fa fa-envelope"></i></a>
+  </span>
+
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      
+  
+    <nav><ul class="pager">
+    
+        <li class="previous">
+          <a href="../../../../2017/03/31/baseball-team-season-saves/" title="Baseball Team Season Save Leaders with the Lowest Totals since 2000">
+            <span aria-hidden="true">&larr;</span>Previous
+          </a>
+        </li>
+    
+
+    
+      <li class="next">
+        <a href="../../../../2017/04/18/saves-and-runs-scored/" title="Effect of Runs and Other Factors on Team Saves in Major League Baseball">
+            Next <span aria-hidden="true">&rarr;</span>
+        </a>
+      </li>
+    
+    </ul> </nav>
+  
+
+
+</div>
+
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+  
+
+</div>
+
+</footer>
+
+    </div>
+    
+  </div>
+</div>
+    
+<footer class="footer hidden-print">
+  <div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+           <div class="pull-left">
+  <a class="toplink" href="javascript:" id="return-to-top">back to top</a>
+</div>
+<div class="pull-right">
+
+</div>
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+              
+    
+<div class="container footline">
+    <small>
+</small>
+</div>
+
+
+    
+
+
+        </div>
+    </div>
+  </div>
+</footer>
+
+    
+
+<script src="//s3.amazonaws.com/mailmunch/static/site.js" id="mailmunch-script" data-mailmunch-site-id="" async="async"></script>
+
+
+
+<script src="//load.sumome.com/" data-sumo-site-id="" async="async"></script>
+
+<script src="../../../../js/jquery.min.js"></script>
+<script src="../../../../js/bootstrap.min.js"></script>
+
+<script src="../../../../js/angular.min.js"></script>
+<script src="../../../../js/popover/angular-storage.min.js"></script>
+<script src="../../../../js/highlight.pack.js"></script>
+<script src="../../../../js/site.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script>
+var ENABLE_POPOVER = "", 
+EXPIRE_COOKIE = "", 
+SHOW_MODAL_TIMEOUT = "", 
+MOUSE_LEAVE = "", 
+MODAL_SIZE = "", 
+POST_URL = "", 
+SIGNUP_HEADER = "",
+HEADER_IMAGE = "",
+IMG_DESCRIPTION = "",
+SIGNUP_TEXT = "",
+INPUT_PLACEHOLDER = "",
+SUBMIT_BUTTON = "",
+SUCCESS_MESSAGE = "",
+ERROR_MESSAGE = "",
+OPTIN = "",
+COOKIE_NAME = "",
+CONTENTLANGUAGE = ""; 
+</script>
+
+<script src="../../../../js/popover/angular-modal-service.min.js"></script>
+<script src="../../../../js/angular-ismobile.min.js"></script>
+<script src="../../../../js/popover/popover.min.js"></script>
+
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax//MathJax.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax//config/TeX-AMS-MML_HTMLorMML.js"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    for(var all in MathJax.Hub.getAllJax()) {
+        all.SourceElement().parentNode.className += ' has-jax';
+
+    }
+});
+</script>
+
+
+
+
+
+
+  </body>
+</html>
+

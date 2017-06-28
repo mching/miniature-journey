@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Pitchers with More Saves than Strikeouts  &middot; Dripping Data</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="description" content="" />
+
+<meta name="keywords" content="baseball, sports, ">
+
+
+<meta property="og:title" content="Pitchers with More Saves than Strikeouts  &middot; Dripping Data ">
+<meta property="og:site_name" content="Dripping Data"/>
+<meta property="og:url" content="/2017/05/21/saves-vs-strikeouts/" />
+<meta property="og:locale" content="en-us">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:description" content=""/>
+<meta property="og:article:published_time" content="2017-05-21T00:00:00Z" />
+<meta property="og:article:modified_time" content="2017-05-21T00:00:00Z" />
+
+  
+    
+<meta property="og:article:tag" content="baseball">
+    
+<meta property="og:article:tag" content="sports">
+    
+  
+
+  
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@" />
+<meta name="twitter:creator" content="@" />
+<meta name="twitter:title" content="Pitchers with More Saves than Strikeouts" />
+<meta name="twitter:description" content="" />
+<meta name="twitter:url" content="/2017/05/21/saves-vs-strikeouts/" />
+<meta name="twitter:domain" content="/">
+  
+
+  
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "headline": "Pitchers with More Saves than Strikeouts",
+    "author": {
+      "@type": "Person",
+      "name": "http://profiles.google.com/+?rel=author"
+    },
+    "datePublished": "2017-05-21",
+    "description": "",
+    "wordCount": 511
+  }
+</script>
+  
+
+
+
+<link rel="canonical" href="../../../../2017/05/21/saves-vs-strikeouts/" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../../../touch-icon-144-precomposed.png">
+<link rel="icon" href="../../../../favicon.png">
+<meta name="generator" content="Hugo 0.24.1" />
+
+  <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+
+    <link rel="stylesheet" href="../../../../css/bootswatch/default/bootstrap.min.css">
+
+
+<link rel="stylesheet" href="../../../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../../../css/style.css">
+
+
+
+
+  <link rel="stylesheet" href="../../../../css/highlight/default.css">
+
+
+</head>
+<body data-ng-app="myapp" data-ng-controller="MyController" data-ng-mouseleave="MouseLeave($event)">
+    <header id="main-header">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        
+          
+          <a class="navbar-brand-img" href="../../../../">
+            <img alt="" src="">
+            
+          </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            
+            
+            <li class="">
+
+              <a href="../../../../" >
+                
+                Blog
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="../../../../about/" >
+                
+                About
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="https://www.linkedin.com/in/michael-ching-033a5029" >
+                
+                LinkedIn
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="https://twitter.com/mikec2a" >
+                
+                Twitter
+              </a>
+            </li>
+            
+            
+              
+          </ul>
+        </div>
+        
+      </div>
+    </nav>
+  </header>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+  <div class="text-center">
+
+    <h1>Pitchers with More Saves than Strikeouts
+</h1>
+
+    <div class="metas">
+<small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2017-05-21">21 May, 2017</time>
+</small>
+
+
+  <small>
+    &middot; by Mike Ching
+  
+  &middot; Read in about 3 min
+  &middot; (511 words)
+  &middot; 
+<span class="share-box">Share this on:
+    <a href="https://www.facebook.com/sharer/sharer.php?u=%2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-facebook-official "></i></a>
+
+    <a href="https://twitter.com/intent/tweet?text=Pitchers%20with%20More%20Saves%20than%20Strikeouts&amp;url=%2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-twitter"></i></a>
+
+    <a href="https://plus.google.com/share?url=%2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-google-plus"></i></a>
+
+    <a href="http://www.reddit.com/submit?url=%2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-reddit"></i></a>
+
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f&amp;title=Pitchers%20with%20More%20Saves%20than%20Strikeouts" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-linkedin"></i></a>
+
+    <a href="mailto:?subject=Pitchers%20with%20More%20Saves%20than%20Strikeouts&amp;body=Check out this site %2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f" data-proofer-ignore=""><i class="fa fa-envelope"></i></a>
+  </span>
+
+  </small>
+
+<div class="margin-10">
+  <i class="fa fa-tags"></i>
+  
+  <a href="../../../../tags/baseball" class="label label-primary">baseball</a>
+  
+  <a href="../../../../tags/sports" class="label label-primary">sports</a>
+  
+
+
+</div>
+
+<br>
+</div>
+
+  </div>
+</div>
+
+      <div class="content">
+  <p>On my favorite fantasy baseball podcast, the host mentioned the phenomenon of pitchers who had more saves than strikeouts. This seemed like it would be fairly uncommon since it seems that many closers are power pitchers (e.g., Aroldis Chapman). I decided to investigate further using the Lahman database.</p>
+<div id="methods" class="section level1">
+<h1>Methods</h1>
+<p>I used the Lahman database again, which is perfect for answering this kind of questions. It has a Pitching table that contains season long stats for every pitcher from 1871 to 2015 (as of this post).</p>
+<pre class="r"><code>library(Lahman)
+library(tidyverse)</code></pre>
+<pre><code>## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr</code></pre>
+<pre><code>## Conflicts with tidy packages ----------------------------------------------</code></pre>
+<pre><code>## filter(): dplyr, stats
+## lag():    dplyr, stats</code></pre>
+<pre class="r"><code>data(Pitching)
+data(Master)
+x &lt;- tbl_df(Pitching)</code></pre>
+<p>It was a simple enough query using the <code>tidyverse</code>. I decided to only look at the last 40 years since the modern closer is a relatively recent concept.</p>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<p>The list of pitchers with more saves than strikeouts encompassed 23 players, of whom four had only 2 saves in that particular season. Todd Jones had more saves than strikeouts 3 years in a row. The biggest discrepancy was Jim Johnson in 2012 who had 51 saves with only 41 strikeouts.</p>
+<p>This may be an increasingly rare phenomenon. In the last 6 years, there has only been one year where a pitcher had more saves than strikeouts.</p>
+<pre class="r"><code>x %&gt;% select(playerID, yearID, teamID, IPouts, SV, SO) %&gt;% 
+  filter(SV&gt;SO, yearID&gt;1977) %&gt;% 
+  mutate(IP = round(IPouts/3, 1)) %&gt;%
+  inner_join(Master) %&gt;% 
+  select(yearID, nameFirst, nameLast, teamID, IP, SO, SV) %&gt;%
+  as.data.frame()</code></pre>
+<pre><code>## Joining, by = &quot;playerID&quot;</code></pre>
+<pre><code>##    yearID nameFirst    nameLast teamID    IP SO SV
+## 1    1980       Don   Stanhouse    LAN  25.0  5  7
+## 2    1982      Dave     Gumpert    DET   2.0  0  1
+## 3    1983       Don      Carman    PHI   1.0  0  1
+## 4    1984       Dan Quisenberry    KCA 129.3 41 44
+## 5    1987      Gene      Garber    KCA  14.3  3  8
+## 6    1987    Dickie       Noles    DET   2.0  0  2
+## 7    1990      Rich      Garces    MIN   5.7  1  2
+## 8    1991      Dave       Smith    CHN  33.0 16 17
+## 9    2000       Bob     Wickman    CLE  26.7 11 14
+## 10   2002      Mike    Williams    PIT  61.3 43 46
+## 11   2003      Mike    Williams    PIT  37.3 20 25
+## 12   2004     Danny      Graves    CIN  68.3 40 41
+## 13   2004     Danny        Kolb    MIL  57.3 21 39
+## 14   2004      Jose        Mesa    PIT  69.3 37 43
+## 15   2005     Danny      Graves    CIN  18.3  8 10
+## 16   2005    Dustin   Hermanson    CHA  57.3 33 34
+## 17   2005    Braden      Looper    NYN  59.3 27 28
+## 18   2005       Bob     Wickman    CLE  62.0 41 45
+## 19   2006      Todd       Jones    DET  64.0 28 37
+## 20   2007      Todd       Jones    DET  61.3 33 38
+## 21   2008      Todd       Jones    DET  41.7 14 18
+## 22   2009     Brian     Fuentes    LAA  55.0 46 48
+## 23   2012       Jim     Johnson    BAL  68.7 41 51</code></pre>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>It isn’t common to have more saves than strikeouts. This has happened about 23 times in the last 40 years, or about once every other year.</p>
+</div>
+</div>
+
+</div>
+
+
+      <footer>
+  
+<span class="share-box">Share this on:
+    <a href="https://www.facebook.com/sharer/sharer.php?u=%2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-facebook-official "></i></a>
+
+    <a href="https://twitter.com/intent/tweet?text=Pitchers%20with%20More%20Saves%20than%20Strikeouts&amp;url=%2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-twitter"></i></a>
+
+    <a href="https://plus.google.com/share?url=%2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-google-plus"></i></a>
+
+    <a href="http://www.reddit.com/submit?url=%2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=900,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-reddit"></i></a>
+
+    <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f&amp;title=Pitchers%20with%20More%20Saves%20than%20Strikeouts" onclick="window.open(this.href, 'mywin',
+'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"><i class="fa fa-linkedin"></i></a>
+
+    <a href="mailto:?subject=Pitchers%20with%20More%20Saves%20than%20Strikeouts&amp;body=Check out this site %2f2017%2f05%2f21%2fsaves-vs-strikeouts%2f" data-proofer-ignore=""><i class="fa fa-envelope"></i></a>
+  </span>
+
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      
+  
+    <nav><ul class="pager">
+    
+        <li class="previous">
+          <a href="../../../../2017/05/11/iced-coffee/" title="Economical Iced Coffee">
+            <span aria-hidden="true">&larr;</span>Previous
+          </a>
+        </li>
+    
+
+    
+      <li class="next">
+        <a href="../../../../2017/05/26/king-tides-gis/" title="King Tides Citizen Science Project">
+            Next <span aria-hidden="true">&rarr;</span>
+        </a>
+      </li>
+    
+    </ul> </nav>
+  
+
+
+</div>
+
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+  
+
+</div>
+
+</footer>
+
+    </div>
+    
+  </div>
+</div>
+    
+<footer class="footer hidden-print">
+  <div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+           <div class="pull-left">
+  <a class="toplink" href="javascript:" id="return-to-top">back to top</a>
+</div>
+<div class="pull-right">
+
+</div>
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+              
+    
+<div class="container footline">
+    <small>
+</small>
+</div>
+
+
+    
+
+
+        </div>
+    </div>
+  </div>
+</footer>
+
+    
+
+<script src="//s3.amazonaws.com/mailmunch/static/site.js" id="mailmunch-script" data-mailmunch-site-id="" async="async"></script>
+
+
+
+<script src="//load.sumome.com/" data-sumo-site-id="" async="async"></script>
+
+<script src="../../../../js/jquery.min.js"></script>
+<script src="../../../../js/bootstrap.min.js"></script>
+
+<script src="../../../../js/angular.min.js"></script>
+<script src="../../../../js/popover/angular-storage.min.js"></script>
+<script src="../../../../js/highlight.pack.js"></script>
+<script src="../../../../js/site.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script>
+var ENABLE_POPOVER = "", 
+EXPIRE_COOKIE = "", 
+SHOW_MODAL_TIMEOUT = "", 
+MOUSE_LEAVE = "", 
+MODAL_SIZE = "", 
+POST_URL = "", 
+SIGNUP_HEADER = "",
+HEADER_IMAGE = "",
+IMG_DESCRIPTION = "",
+SIGNUP_TEXT = "",
+INPUT_PLACEHOLDER = "",
+SUBMIT_BUTTON = "",
+SUCCESS_MESSAGE = "",
+ERROR_MESSAGE = "",
+OPTIN = "",
+COOKIE_NAME = "",
+CONTENTLANGUAGE = ""; 
+</script>
+
+<script src="../../../../js/popover/angular-modal-service.min.js"></script>
+<script src="../../../../js/angular-ismobile.min.js"></script>
+<script src="../../../../js/popover/popover.min.js"></script>
+
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax//MathJax.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax//config/TeX-AMS-MML_HTMLorMML.js"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    for(var all in MathJax.Hub.getAllJax()) {
+        all.SourceElement().parentNode.className += ' has-jax';
+
+    }
+});
+</script>
+
+
+
+
+
+
+  </body>
+</html>
+

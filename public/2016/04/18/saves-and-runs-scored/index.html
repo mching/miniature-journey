@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <title>Effect of Runs and Other Factors on Team Saves in Major League Baseball | Dripping Data</title>
+    <link rel="stylesheet" href="../../../../css/style.css" />
+    <link rel="stylesheet" href="../../../../css/fonts.css" />
+    
+  </head>
+
+  <body>
+    <nav>
+    <ul class="menu">
+      
+      <li><a href="../../../../">Blog</a></li>
+      
+      <li><a href="../../../../about/">About</a></li>
+      
+      <li><a href="https://www.linkedin.com/in/michael-ching-033a5029">LinkedIn</a></li>
+      
+      <li><a href="https://twitter.com/mikec2a">Twitter</a></li>
+      
+    </ul>
+    <hr/>
+    </nav>
+
+<div class="article-meta">
+<h1><span class="title">Effect of Runs and Other Factors on Team Saves in Major League Baseball</span></h1>
+<h2 class="author">Michael Ching</h2>
+<h2 class="date">2016/04/18</h2>
+</div>
+
+<main>
+<p>From listening to <a href="http://www.espn.com/espnradio/podcast/archive/_/id/2544461">my favorite fantasy baseball podcast</a> it seems that there is a belief that teams that score lots of runs are not likely to produce saves. The idea seems to be that such teams would blow out their competitors and so have less opportunity for games to be saved. While it made sense, I wondered what the data said.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(Lahman)
+data(&quot;Teams&quot;)
+Teams &lt;- tbl_df(Teams)</code></pre>
+<div id="exploration-of-saves-over-time" class="section level2">
+<h2>Exploration of Saves over Time</h2>
+<p>Saves did not become an official statistic until 1969 (<a href="https://archive.is/20120708042304/http://findarticles.com/p/articles/mi_m0FCI/is_5_61/ai_84542687">source</a>). How have they evolved over the years? To figure this out, I decided to calculate the saves/team over that time frame.</p>
+<pre class="r"><code>Teams &lt;- filter(Teams, yearID &gt; 1968) %&gt;% 
+  select(yearID, lgID, teamID, franchID, G, R, W, L, RA, CG, SV) 
+
+SV_per_team &lt;- Teams %&gt;% 
+  group_by(yearID) %&gt;%
+  summarize(totalSV = sum(SV)/length(teamID)) 
+
+ggplot(SV_per_team, aes(x = yearID, y = totalSV)) + 
+  geom_point() + 
+  expand_limits(y = 0) +
+  ggtitle(&quot;Saves per Team 1969-2015&quot;) +
+  xlab(&quot;year&quot;) +
+  ylab(&quot;Saves per team&quot;)</code></pre>
+<p><img src="../../../../post/2017-04-18-saves-runs_files/figure-html/unnamed-chunk-2-1.png" width="672" /> Looking at the graph, it seemed that saves rose from 1969 to 1990 and have been stable since then. There were some outliers in this trend, most notably 1981 and 1994 when there were less than 30 saves per team that year. After searching for the reason for this, I discovered that there were labor strikes those years. I remembered <a href="https://www.usatoday.com/story/sports/mlb/2014/08/11/1994-mlb-strike/13912279/">the 1994 one</a> but had to look up <a href="https://en.wikipedia.org/wiki/1981_Major_League_Baseball_strike">the 1981 one</a>.</p>
+<p>To adjust for these work stoppages, I redrew the graph with rate of saves per team per 162 games.</p>
+<pre class="r"><code>Teams %&gt;% 
+  group_by(yearID) %&gt;%
+  summarize(totalSV = sum(SV)/length(teamID)/sum(G)*162*length(teamID)) %&gt;%
+  ggplot(aes(x = yearID, y = totalSV)) + 
+  geom_point() + 
+  expand_limits(y = 0) +
+  ggtitle(&quot;Saves per Team per 162 games 1969-2015&quot;) +
+  xlab(&quot;year&quot;) +
+  ylab(&quot;Saves per team&quot;)</code></pre>
+<p><img src="../../../../post/2017-04-18-saves-runs_files/figure-html/unnamed-chunk-3-1.png" width="672" /> That looked much better!</p>
+</div>
+<div id="runs-since-1969" class="section level2">
+<h2>Runs since 1969</h2>
+<p>Since I’m going to be looking at runs, I also decided to see if there was any trend in runs scored over that time period.</p>
+<pre class="r"><code>Teams %&gt;% group_by(yearID) %&gt;% summarize(R_avg = sum(R)/sum(G)) %&gt;%
+  ggplot(aes(x = yearID, y = R_avg)) + geom_point() +
+  expand_limits(y = 0) +
+  ylab(&quot;Average Runs per Team per Game&quot;) +
+  xlab(&quot;Year&quot;) +
+  ggtitle(&quot;Average Runs per Team per Game, 1969-2015&quot;)</code></pre>
+<p><img src="../../../../post/2017-04-18-saves-runs_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>While there was a declining trend in runs over the last 10 years, this may have been actually a correction as it became more difficult to use performance enhancing drugs in baseball. In any case, this seemed close enough for use in the analysis.</p>
+</div>
+<div id="association-between-runs-scored-and-saves" class="section level2">
+<h2>Association between Runs Scored and Saves</h2>
+<p>I decided to confine the analysis to 1990 and beyond. This seemed to be a period of modern closer usage that resulted in a fairly stable save total from year to year.</p>
+<p>First question then was what is the relationship between runs scored and saves. A graph to start.</p>
+<pre class="r"><code>filter(Teams, yearID &gt; 1989) %&gt;%
+  ggplot(aes(x = R, y = SV)) + geom_point(shape = 1) + geom_smooth(method = lm) +
+  expand_limits(y = 0) +
+  ggtitle(&quot;Relationship between Runs and Saves, 1990-2015&quot;) +
+  ylab(&quot;Saves&quot;) +
+  xlab(&quot;Runs&quot;)</code></pre>
+<p><img src="../../../../post/2017-04-18-saves-runs_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>The data are scattered but there does seem to be a statistically significant association between runs scored and saves (albeit in the opposite direction as hypothesized). Teams scoring more runs also have higher saves totals. I thought about this a bit, but then realized that teams scoring more runs are also more likely to win games, which is a prerequisite for a save. No win, no save!</p>
+</div>
+<div id="association-between-saves-per-win-and-runs-scored" class="section level2">
+<h2>Association between Saves per Win and Runs Scored</h2>
+<p>I thought maybe saves per win would adjust for this.</p>
+<pre class="r"><code>filter(Teams, yearID &gt; 1989) %&gt;% mutate(SV_per_win = SV/W) %&gt;% 
+  ggplot(aes(x = R, y = SV_per_win)) + geom_point(shape = 1) + geom_smooth(method = lm) +
+  expand_limits(y = 0) +
+  ggtitle(&quot;Association between Runs and Saves per Win, 1990-2015&quot;) +
+  ylab(&quot;Saves per win&quot;) +
+  xlab(&quot;Runs&quot;)</code></pre>
+<p><img src="../../../../post/2017-04-18-saves-runs_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>In this analysis, teams with more runs had fewer saves per win. The difference was fairly small though, with teams scoring double the runs (1000 vs 500) only have about 0.13 fewer saves per win. On a putative 81 win team, this is a difference of about 10 saves over the season.</p>
+</div>
+<div id="linear-regression-modeling" class="section level2">
+<h2>Linear Regression Modeling</h2>
+<div id="model-1-runs-vs.saves-per-win" class="section level3">
+<h3>Model 1: Runs vs. Saves per win</h3>
+<p>Here’s the actual linear regression model predicting saves per win to runs.</p>
+<pre class="r"><code>Teams &lt;- filter(Teams, yearID &gt; 1989) %&gt;% mutate(SV_per_win = SV/W)
+model1 &lt;- lm(SV_per_win ~ R, dat = Teams)
+summary(model1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = SV_per_win ~ R, data = Teams)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.237628 -0.044469  0.002096  0.045023  0.216810 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  7.056e-01  1.921e-02   36.73   &lt;2e-16 ***
+## R           -2.678e-04  2.594e-05  -10.32   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.06614 on 756 degrees of freedom
+## Multiple R-squared:  0.1236, Adjusted R-squared:  0.1224 
+## F-statistic: 106.6 on 1 and 756 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>This model suggests that for each additional 100 runs scored over the season, the team would be expected to have -0.0268 saves/win</p>
+<p><span class="math display">\[Saves \space per \space win = 0.7 - 0.000268 \times runs\]</span></p>
+<p>The model wasn’t that great at predicting save totals so I thought I might try my hand at a better model.</p>
+</div>
+<div id="model-2-wins-vs.saves" class="section level3">
+<h3>Model 2: Wins vs. Saves</h3>
+<p>I decided to try wins first to see what the linear relationship was between this and saves.</p>
+<pre class="r"><code>model2 &lt;- lm(SV ~ W, dat = Teams)
+summary(model2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = SV ~ W, data = Teams)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.6917  -3.9186   0.1329   3.8650  21.2158 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  5.11593    1.35355    3.78 0.000169 ***
+## W            0.44328    0.01678   26.41  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 5.565 on 756 degrees of freedom
+## Multiple R-squared:   0.48,  Adjusted R-squared:  0.4793 
+## F-statistic: 697.7 on 1 and 756 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>As would be expected wins were strongly correlated with saves, with each additional win predicting another 0.44 saves. This correlation by itself explains 48% of the variance!</p>
+</div>
+<div id="model-3-runs-scored-vs.saves" class="section level3">
+<h3>Model 3: Runs Scored vs. Saves</h3>
+<p>I looked at runs scored vs. saves since I had done so earlier, just to put some numbers to the model.</p>
+<pre class="r"><code>model3 &lt;- lm(SV ~ R, dat = Teams)
+summary(model3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = SV ~ R, data = Teams)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -19.2570  -5.3743   0.1563   4.6468  28.3946 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 28.452833   2.197662  12.947  &lt; 2e-16 ***
+## R            0.016353   0.002967   5.511 4.91e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 7.567 on 756 degrees of freedom
+## Multiple R-squared:  0.03862,    Adjusted R-squared:  0.03735 
+## F-statistic: 30.37 on 1 and 756 DF,  p-value: 4.906e-08</code></pre>
+<p>Runs had a much weaker positive association with saves (R squared = 0.039) compared to wins. Each additional run produced only about 0.016 extra saves.</p>
+</div>
+<div id="model-4-saves-predicted-by-runs-and-wins" class="section level3">
+<h3>Model 4: Saves Predicted by Runs and Wins</h3>
+<p>How about adjusting for wins and runs? I used multiple linear regression to create this model.</p>
+<pre class="r"><code>model4 &lt;- lm(SV ~ W + R, dat = Teams)
+summary(model4)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = SV ~ W + R, data = Teams)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.9550  -3.5748   0.2678   3.5023  18.3093 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 14.708496   1.593214   9.232   &lt;2e-16 ***
+## W            0.554289   0.019287  28.739   &lt;2e-16 ***
+## R           -0.025104   0.002508 -10.008   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 5.233 on 755 degrees of freedom
+## Multiple R-squared:  0.5409, Adjusted R-squared:  0.5397 
+## F-statistic: 444.7 on 2 and 755 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>This model turned the relationship between saves and runs on its head as would be expected from the saves/win figure above. Runs became negatively correlated with saves, as might be expected if a team blew out its opponent.</p>
+</div>
+<div id="multiple-linear-regression-final-model" class="section level3">
+<h3>Multiple Linear Regression: Final Model</h3>
+<p>Finally, I added in complete games and runs against. Complete games cannot end with a save, and higher runs against would suggest that the teams with poorer pitching would be in closer games.</p>
+<pre class="r"><code>model5 &lt;- lm(SV ~ W + R + CG + RA, dat = Teams)
+summary(model5)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = SV ~ W + R + CG + RA, data = Teams)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -13.6935  -3.4431   0.0788   2.9952  18.2820 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -3.144206   2.504947  -1.255     0.21    
+## W            0.793254   0.029610  26.790  &lt; 2e-16 ***
+## R           -0.056748   0.003950 -14.367  &lt; 2e-16 ***
+## CG          -0.190737   0.033148  -5.754 1.27e-08 ***
+## RA           0.031976   0.003341   9.572  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.8 on 753 degrees of freedom
+## Multiple R-squared:  0.6146, Adjusted R-squared:  0.6126 
+## F-statistic: 300.2 on 4 and 753 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>confint(model5)</code></pre>
+<pre><code>##                   2.5 %      97.5 %
+## (Intercept) -8.06171559  1.77330370
+## W            0.73512608  0.85138279
+## R           -0.06450155 -0.04899388
+## CG          -0.25580986 -0.12566445
+## RA           0.02541791  0.03853388</code></pre>
+<p>This turned out the best R-squared of the bunch. There are probably other factors that are involved in saves, but it was good enough for me to stop for now.</p>
+<p><span class="math display">\[ saves = -3.14 + 0.79\times wins - 0.057 \times runs \space scored + 
+   0.032 \times runs \space against -0.19 \times complete \space games  \]</span></p>
+</div>
+</div>
+<div id="discussion" class="section level2">
+<h2>Discussion</h2>
+<p>Some others have taken a crack at this question in the past and come up with some conflicting results. For example, <a href="http://www.fangraphs.com/fantasy/what-kinds-of-teams-provide-the-most-saves/">Eno Sarris on Fangraphs</a> found that there was no relationship between save opportunities and runs allowed. On the other hand he found there was a relationship between save opportunities and runs as well as between bullpen FIP and runs. I couldn’t look at bullpen FIP with this database, but I was able to recreate the runs finding. As noted above, it seems that increasing runs leads to more saves primarily because of more wins associated with the higher run totals.</p>
+<p>This is an example of confounding. Having more runs increases your chances of a win, and having more wins increases your chances of saves. In fact, when we controlled for wins, runs were actually inversely correlated with saves because more runs should mean more blowouts and fewer saves.</p>
+<p><a href="http://www.hardballtimes.com/are-saves-predictable/">Derek Carty of Hardball Times</a> also looked at this issue using data from 2004-2007. He found a correlation between wins and save opportunities. There was no correlation between runs scored and save opportunities, but there was a correlation between runs allowed and save opportunities. I replicated two out of these three findings, and it’s possible that he didn’t have enough data to find a significant association on the last one (runs scored vs. saves).</p>
+<p>I would have preferred to use save opportunities instead of saves but the Lahman database does not include this in its table. The correlation between saves and save opportunities seems pretty good but there may be non-random differences in the relationships between runs scored and saves or save ops that affect the findings.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Teams that score more runs seem to earn fewer saves when adjusting for wins. The magnitude of effect was about 5.7 (95% confidence interval 4.9-6.5) fewer saves per 100 more runs scored.</p>
+</div>
+
+</main>
+
+  <footer>
+  
+  
+  </footer>
+  </body>
+</html>
+

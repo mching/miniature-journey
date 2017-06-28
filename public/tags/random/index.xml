@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Random on Dripping Data</title>
+    <link>/tags/random/</link>
+    <description>Recent content in Random on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 09 Dec 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/random/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Simple Secret Santa Picker</title>
+      <link>/2016/12/09/simple-secret-santa-picker/</link>
+      <pubDate>Fri, 09 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/12/09/simple-secret-santa-picker/</guid>
+      <description>A post about automating Secret Santa assignments popped up in my Facebook feed the other day. This being the Christmas season, I took a look. It seemed a bit complex, and I wondered if I could make it more efficient.
+The original function took in a list of people (e.g., Ann, Bill, Chris). Using a nested while-for loop, it randomly picked a name (Bill), and matched it to the first person in the list (Ann:Bill).</description>
+    </item>
+    
+  </channel>
+</rss>

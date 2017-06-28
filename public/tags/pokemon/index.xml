@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pokemon on Dripping Data</title>
+    <link>/tags/pokemon/</link>
+    <description>Recent content in Pokemon on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 08 Jan 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/pokemon/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Pidgey Evolution: Effects on Combat Power and Hit Points (Updated)</title>
+      <link>/2017/01/08/pidgey-evolution-updated/</link>
+      <pubDate>Sun, 08 Jan 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/01/08/pidgey-evolution-updated/</guid>
+      <description>I was evolving some Pokemon in Pokemon Go and wondered how much the Pokemon’s attributes change after evolution. The attributes of interest were combat power (CP) and hit points (HP). I focused my analysis from Pidgeys because I had the most data points for this species.
+I collected data from a couple of days’ evolution, available for viewing here. Both times I was using a Lucky Egg.
+x &amp;lt;- read.csv(&amp;quot;../datasets/evolution2.csv&amp;quot;) x &amp;lt;- tbl_df(x) pidgeys &amp;lt;- filter(x, pokemon == &amp;quot;Pidgey&amp;quot;) pidgeys ## # A tibble: 55 × 7 ## pokemon CP_pre HP_pre kg_pre CP_post HP_post kg_post ## &amp;lt;fctr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; ## 1 Pidgey 270 NA NA 533 NA NA ## 2 Pidgey 267 NA NA 515 NA NA ## 3 Pidgey 259 NA NA 526 NA NA ## 4 Pidgey 212 NA NA 413 NA NA ## 5 Pidgey 209 43 2.</description>
+    </item>
+    
+    <item>
+      <title>Pidgey Evolution: Effects on Combat Power and Hit Points</title>
+      <link>/2016/12/14/pidgey-evolution/</link>
+      <pubDate>Wed, 14 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/12/14/pidgey-evolution/</guid>
+      <description>I was evolving some Pokemon in Pokemon Go today and wondered how much the Pokemon’s attributes change after evolution. The attributes of interest were combat power (CP) and hit points (HP). I focused my analysis from Pidgeys because I had the most data points for this species.
+I collected data from one day’s evolution, available for viewing here.
+x &amp;lt;- read.csv(&amp;quot;../datasets/evolution.csv&amp;quot;) x &amp;lt;- tbl_df(x) pidgeys &amp;lt;- filter(x, pokemon == &amp;quot;Pidgey&amp;quot;) pidgeys ## # A tibble: 12 × 7 ## pokemon CP_pre HP_pre kg_pre CP_post HP_post kg_post ## &amp;lt;fctr&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; &amp;lt;int&amp;gt; &amp;lt;int&amp;gt; &amp;lt;dbl&amp;gt; ## 1 Pidgey 270 NA NA 533 NA NA ## 2 Pidgey 267 NA NA 515 NA NA ## 3 Pidgey 259 NA NA 526 NA NA ## 4 Pidgey 212 NA NA 413 NA NA ## 5 Pidgey 209 43 2.</description>
+    </item>
+    
+  </channel>
+</rss>

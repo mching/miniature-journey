@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Prediction on Dripping Data</title>
+    <link>/tags/prediction/</link>
+    <description>Recent content in Prediction on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 25 Nov 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/prediction/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Convection vs. Conventional Electric Oven Speed in Roasting Turkey</title>
+      <link>/2016/11/25/turkey-graph/</link>
+      <pubDate>Fri, 25 Nov 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/11/25/turkey-graph/</guid>
+      <description>It’s the day after Thanksgiving, and we have data on another turkey. This year our electricity went out just before I was going to put the turkey in our old electric oven so I had to go to my parents’ house to cook the turkey. They just got a fancy new oven with convection roasting, and they claimed it would be faster. This called for an analysis!
+Methods Like last year, I took measurements of the probe thermomenter inserted into the deepest part of the breast.</description>
+    </item>
+    
+    <item>
+      <title>Predicting Flashcard Deck Size Using Linear Regression</title>
+      <link>/2016/07/22/flashcard-deck-size-prediction/</link>
+      <pubDate>Fri, 22 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/07/22/flashcard-deck-size-prediction/</guid>
+      <description>I’m studying for my pediatric recertification board exam right now, and to help me remember things, I’m making flashcards as I read an exam study book. Lately, I’ve been wondering how many flashcards I will have by the time I reach the end of the book.
+I average about 15 pages a day and about 45 flashcards a day, or 3 flashcards per day. The book itself is 849 pages long, with the real content starting on page 43.</description>
+    </item>
+    
+  </channel>
+</rss>

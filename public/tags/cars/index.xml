@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cars on Dripping Data</title>
+    <link>/tags/cars/</link>
+    <description>Recent content in Cars on Dripping Data</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 29 Dec 2016 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/cars/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Electric Vehicle Parking at Honolulu International Airport</title>
+      <link>/2016/12/29/electric-vehicle-parking-at-hnl/</link>
+      <pubDate>Thu, 29 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/12/29/electric-vehicle-parking-at-hnl/</guid>
+      <description>In Hawaii, electric cars park for free at state owned parking lots. This is a big benefit when we travel since the airport parking lot is normally $18 per day. I wondered how much money the state loses on the electric car parking at the airport. Because I travel to Maui every week for work, I was able to collect some data to try to answer this question.
+Methods I made video recordings of parked cars while driving through the Honolulu International Airport interisland parking structure between November 29, 2016 and December 28, 2016.</description>
+    </item>
+    
+    <item>
+      <title>Gas vs. Electric Car Operating Prices in Honolulu</title>
+      <link>/2016/09/11/electric-car-economy/</link>
+      <pubDate>Sun, 11 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/09/11/electric-car-economy/</guid>
+      <description>Our family has an electric car (Nissan Leaf) and a hybrid (Toyota Prius), and we often have to choose which one we will take out on the weekend. I wondered which one was cheaper to operate and which one was better for the environment.
+Wallet Impact The Leaf travels about 4.8 miles per kilowatt hour (kwh), and the Prius gets about 55 miles per gallon (mpg). Our electricity costs about $0.</description>
+    </item>
+    
+  </channel>
+</rss>

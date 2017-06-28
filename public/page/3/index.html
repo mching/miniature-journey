@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Dripping Data </title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="description" content="" />
+
+<meta name="keywords" content="">
+
+
+<meta property="og:title" content="Dripping Data ">
+<meta property="og:site_name" content="Dripping Data"/>
+<meta property="og:url" content="/" />
+<meta property="og:locale" content="en-us">
+
+
+<meta property="og:type" content="website" />
+
+
+
+<link href="../../index.xml" rel="alternate" type="application/rss+xml" title="Dripping Data" />
+
+<link rel="canonical" href="../../" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../touch-icon-144-precomposed.png">
+<link rel="icon" href="../../favicon.png">
+<meta name="generator" content="Hugo 0.24.1" />
+
+  <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+
+    <link rel="stylesheet" href="../../css/bootswatch/default/bootstrap.min.css">
+
+
+<link rel="stylesheet" href="../../css/font-awesome.min.css">
+<link rel="stylesheet" href="../../css/style.css">
+
+
+
+
+  <link rel="stylesheet" href="../../css/highlight/default.css">
+
+
+</head>
+<body data-ng-app="myapp" data-ng-controller="MyController" data-ng-mouseleave="MouseLeave($event)">
+    <header id="main-header">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        
+          
+          <a class="navbar-brand-img" href="../../">
+            <img alt="" src="">
+            
+          </a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            
+            
+            <li class="">
+
+              <a href="../../" >
+                
+                Blog
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="../../about/" >
+                
+                About
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="https://www.linkedin.com/in/michael-ching-033a5029" >
+                
+                LinkedIn
+              </a>
+            </li>
+            
+            <li class="">
+
+              <a href="https://twitter.com/mikec2a" >
+                
+                Twitter
+              </a>
+            </li>
+            
+            
+              
+          </ul>
+        </div>
+        
+      </div>
+    </nav>
+  </header>
+
+
+  <div class="container">
+    
+    <div class="row">
+      <div class="col-sm-12">
+        
+        
+          <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div>
+  <h2><a href="../../2016/11/06/scale-model-of-solar-system/">Scale Model of Solar System</a>
+</h2>
+
+  <div class="margin-10">
+    <small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-11-06">6 Nov, 2016</time>
+</small>
+
+    
+  <i class="fa fa-tags"></i>
+  
+  <a href="../../tags/astronomy" class="label label-primary">astronomy</a>
+  
+
+
+  </div>
+</div>
+
+    <p>
+  
+  
+    One of my son’s Cub Scout “adventures” requires him to create a scale model of the solar system. We sketched the calculations on the back of a receipt over lunch. We started with the distance we figured that we would use (length of our street, 387 feet) and then calculated the distances to each planet based on this. I figured it would be neat to create a function in R that would return a table of the relative distances based on a given model solar system radius.
+  
+
+
+</p>
+
+
+    <p class="lead"><a href="../../2016/11/06/scale-model-of-solar-system/" class="btn btn-default">Read more &rarr;</a></p>
+
+
+  </div>
+</div>
+
+        
+          <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div>
+  <h2><a href="../../2016/10/03/football-shutouts/">Most Yards of Offense by a College Football Team in a Shutout Loss</a>
+</h2>
+
+  <div class="margin-10">
+    <small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-10-03">3 Oct, 2016</time>
+</small>
+
+    
+  <i class="fa fa-tags"></i>
+  
+  <a href="../../tags/football" class="label label-primary">football</a>
+  
+  <a href="../../tags/sports" class="label label-primary">sports</a>
+  
+
+
+  </div>
+</div>
+
+    <p>
+  
+  
+    Introduction The purpose of this document is to explore the most yards in a shutout loss for a college football team. It was inspired after the University of Hawai`i gave up 462 yards in shutting out San Jose State on November 15, 2014. I wanted to see if I could use the dplyr package to explore this question.
+library(dplyr) ## ## Attaching package: &#39;dplyr&#39; ## The following objects are masked from &#39;package:stats&#39;: ## ## filter, lag ## The following objects are masked from &#39;package:base&#39;: ## ## intersect, setdiff, setequal, union  Data Source To obtain a source of data, I downloaded a database of football game statistics from 2000-2013, from http://www.
+  
+
+
+</p>
+
+
+    <p class="lead"><a href="../../2016/10/03/football-shutouts/" class="btn btn-default">Read more &rarr;</a></p>
+
+
+  </div>
+</div>
+
+        
+          <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div>
+  <h2><a href="../../2016/09/11/electric-car-economy/">Gas vs. Electric Car Operating Prices in Honolulu</a>
+</h2>
+
+  <div class="margin-10">
+    <small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-09-11">11 Sep, 2016</time>
+</small>
+
+    
+  <i class="fa fa-tags"></i>
+  
+  <a href="../../tags/cars" class="label label-primary">cars</a>
+  
+
+
+  </div>
+</div>
+
+    <p>
+  
+  
+    Our family has an electric car (Nissan Leaf) and a hybrid (Toyota Prius), and we often have to choose which one we will take out on the weekend. I wondered which one was cheaper to operate and which one was better for the environment.
+Wallet Impact The Leaf travels about 4.8 miles per kilowatt hour (kwh), and the Prius gets about 55 miles per gallon (mpg). Our electricity costs about $0.
+  
+
+
+</p>
+
+
+    <p class="lead"><a href="../../2016/09/11/electric-car-economy/" class="btn btn-default">Read more &rarr;</a></p>
+
+
+  </div>
+</div>
+
+        
+          <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div>
+  <h2><a href="../../2016/08/14/late-patients/">How Late Can My Patient Be</a>
+</h2>
+
+  <div class="margin-10">
+    <small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-08-14">14 Aug, 2016</time>
+</small>
+
+    
+  <i class="fa fa-tags"></i>
+  
+  <a href="../../tags/health" class="label label-primary">health</a>
+  
+
+
+  </div>
+</div>
+
+    <p>
+  
+  
+    When a patient doesn’t come to their developmental behavioral pediatrics appointment, it’s bad for my employer, but it’s an unexpected boon for me. Most of my patients seem to come early and only a few arrive later than 5-10 minutes past their appointment time. I wanted to know when I could start to give up on them and start doing something else. When would it be likely that a patient will no-show?
+  
+
+
+</p>
+
+
+    <p class="lead"><a href="../../2016/08/14/late-patients/" class="btn btn-default">Read more &rarr;</a></p>
+
+
+  </div>
+</div>
+
+        
+          <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div>
+  <h2><a href="../../2016/08/05/dinousaur-speed/">Work for Dinosaur Speed Geocache</a>
+</h2>
+
+  <div class="margin-10">
+    <small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-08-05">5 Aug, 2016</time>
+</small>
+
+    
+
+  </div>
+</div>
+
+    <p>
+  
+  
+    This is the work for the geocache we did today. The geocache description instructed us to measure the stride length and footprint length of some dinosaur tracks at the Dinosaur Ridge hike outside of Denver, Colorado. The kids and I looked at both the thinner Ornithomimus tracks and the thicker Iguanodontid tracks. Here’s the work, done in R:
+First, set up a table of the data. The units for stride length and footprint length are meters.
+  
+
+
+</p>
+
+
+    <p class="lead"><a href="../../2016/08/05/dinousaur-speed/" class="btn btn-default">Read more &rarr;</a></p>
+
+
+  </div>
+</div>
+
+        
+          <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div>
+  <h2><a href="../../2016/07/22/flashcard-deck-size-prediction/">Predicting Flashcard Deck Size Using Linear Regression</a>
+</h2>
+
+  <div class="margin-10">
+    <small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-07-22">22 Jul, 2016</time>
+</small>
+
+    
+  <i class="fa fa-tags"></i>
+  
+  <a href="../../tags/prediction" class="label label-primary">prediction</a>
+  
+
+
+  </div>
+</div>
+
+    <p>
+  
+  
+    I’m studying for my pediatric recertification board exam right now, and to help me remember things, I’m making flashcards as I read an exam study book. Lately, I’ve been wondering how many flashcards I will have by the time I reach the end of the book.
+I average about 15 pages a day and about 45 flashcards a day, or 3 flashcards per day. The book itself is 849 pages long, with the real content starting on page 43.
+  
+
+
+</p>
+
+
+    <p class="lead"><a href="../../2016/07/22/flashcard-deck-size-prediction/" class="btn btn-default">Read more &rarr;</a></p>
+
+
+  </div>
+</div>
+
+        
+          <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div>
+  <h2><a href="../../2016/07/14/reverse-parking/">Reverse-In Parking in Hawaii and California</a>
+</h2>
+
+  <div class="margin-10">
+    <small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-07-14">14 Jul, 2016</time>
+</small>
+
+    
+  <i class="fa fa-tags"></i>
+  
+  <a href="../../tags/parking" class="label label-primary">parking</a>
+  
+
+
+  </div>
+</div>
+
+    <p>
+  
+  
+    Introduction One of my mainland-born friends is annoyed that Hawaii drivers like to reverse their cars into parking stalls much more than the mainland. My wife, who is also from the mainland, agreed with him enthusiastically. Whether this is appropriate parking behavior or not, I had never noticed it before, so I figured it was something I could test with some observations. I had a trip coming up to the mainland, and I was able to collect some data to test whether the Hawaii drivers were really so different than their California counterparts.
+  
+
+
+</p>
+
+
+    <p class="lead"><a href="../../2016/07/14/reverse-parking/" class="btn btn-default">Read more &rarr;</a></p>
+
+
+  </div>
+</div>
+
+        
+          <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div>
+  <h2><a href="../../2016/06/13/sorting-photo-directories-with-r-and-exiftool/">Sorting photo directories with R and exiftool</a>
+</h2>
+
+  <div class="margin-10">
+    <small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-06-13">13 Jun, 2016</time>
+</small>
+
+    
+
+  </div>
+</div>
+
+    <p>
+  
+  
+    We were fans of Google&rsquo;s Picasa photo organization software, but when it was discontinued, I decided that I would like to transfer all my digital photos onto an external drive and then into Adobe Lightroom. To do so, however, my &ldquo;research&rdquo; told me that it would be best to group them into catalogs based on year, mainly because I have on the order of 10^5 photos.
+I had my pictures organized into about 300-400 directories by event.
+  
+
+
+</p>
+
+
+    <p class="lead"><a href="../../2016/06/13/sorting-photo-directories-with-r-and-exiftool/" class="btn btn-default">Read more &rarr;</a></p>
+
+
+  </div>
+</div>
+
+        
+          <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div>
+  <h2><a href="../../2016/05/30/monopoly-simulations/">Rolling 3 Doubles in Monopoly</a>
+</h2>
+
+  <div class="margin-10">
+    <small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-05-30">30 May, 2016</time>
+</small>
+
+    
+  <i class="fa fa-tags"></i>
+  
+  <a href="../../tags/simulation" class="label label-primary">simulation</a>
+  
+
+
+  </div>
+</div>
+
+    <p>
+  
+  
+    Tonight my two kids and I were playing Monopoly. It’s a terrible, brutal game that usually ends in bad feelings, but for some reason they always want to play it. One of the rules of the game is that if you roll a double (e.g., two 2s), you get another turn. However, if you roll doubles three times in a row, you are sent to jail.
+I wondered what was the probability of rolling 3 doubles in a row.
+  
+
+
+</p>
+
+
+    <p class="lead"><a href="../../2016/05/30/monopoly-simulations/" class="btn btn-default">Read more &rarr;</a></p>
+
+
+  </div>
+</div>
+
+        
+          <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div>
+  <h2><a href="../../2016/05/29/hello-world/">Up and running!</a>
+</h2>
+
+  <div class="margin-10">
+    <small>
+  <i class="fa fa-calendar"></i>
+  <time datetime="2016-05-29">29 May, 2016</time>
+</small>
+
+    
+
+  </div>
+</div>
+
+    <p>
+  
+  
+    This is the start of a new blog for me. I mostly completed the Data Science specialization on Coursera and I use some of these skills in work, but still I am just an amateur at this. I hope to use this site as a sort of notebook to document some of my thoughts and keep my already waning programming skills up. Without peer review, I can&rsquo;t vouch for the accuracy of anything I say here, so please don&rsquo;t take anything I write here too seriously!
+  
+
+
+</p>
+
+
+    <p class="lead"><a href="../../2016/05/29/hello-world/" class="btn btn-default">Read more &rarr;</a></p>
+
+
+  </div>
+</div>
+
+        
+        
+<nav>
+  <ul class="pagination">
+    
+
+
+<li >
+  <a aria-label="First" href="//">
+    <span aria-hidden="true">&laquo;&laquo;</span>
+  </a>
+</li>
+
+<li >
+  <a aria-label="Previous" href="//page/2/">
+    <span aria-hidden="true">&laquo;</span>
+    </a>
+</li>
+
+<li >
+  <a href="//">
+    1
+    </a>
+</li>
+
+<li >
+  <a href="//page/2/">
+    2
+    </a>
+</li>
+
+<li  class="active" >
+  <a href="//page/3/">
+    3
+    </a>
+</li>
+
+
+<li  class="disabled" >
+  <a aria-label="Next" href="#">
+    <span aria-hidden="true">&raquo;</span>
+    </a>
+</li>
+<li  class="disabled" >
+  <a aria-label="Last" href="//page/3/">
+    <span aria-hidden="true">&raquo;&raquo;</span>
+  </a>
+</li>
+
+
+  </ul>
+</nav>
+
+
+      </div>
+      
+    </div>
+
+  </div>
+
+    
+<footer class="footer hidden-print">
+  <div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+           <div class="pull-left">
+  <a class="toplink" href="javascript:" id="return-to-top">back to top</a>
+</div>
+<div class="pull-right">
+
+</div>
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+              
+    
+<div class="container footline">
+    <small>
+</small>
+</div>
+
+
+    
+
+
+        </div>
+    </div>
+  </div>
+</footer>
+
+    
+
+<script src="//s3.amazonaws.com/mailmunch/static/site.js" id="mailmunch-script" data-mailmunch-site-id="" async="async"></script>
+
+
+
+<script src="//load.sumome.com/" data-sumo-site-id="" async="async"></script>
+
+<script src="../../js/jquery.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+
+<script src="../../js/angular.min.js"></script>
+<script src="../../js/popover/angular-storage.min.js"></script>
+<script src="../../js/highlight.pack.js"></script>
+<script src="../../js/site.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script>
+var ENABLE_POPOVER = "", 
+EXPIRE_COOKIE = "", 
+SHOW_MODAL_TIMEOUT = "", 
+MOUSE_LEAVE = "", 
+MODAL_SIZE = "", 
+POST_URL = "", 
+SIGNUP_HEADER = "",
+HEADER_IMAGE = "",
+IMG_DESCRIPTION = "",
+SIGNUP_TEXT = "",
+INPUT_PLACEHOLDER = "",
+SUBMIT_BUTTON = "",
+SUCCESS_MESSAGE = "",
+ERROR_MESSAGE = "",
+OPTIN = "",
+COOKIE_NAME = "",
+CONTENTLANGUAGE = ""; 
+</script>
+
+<script src="../../js/popover/angular-modal-service.min.js"></script>
+<script src="../../js/angular-ismobile.min.js"></script>
+<script src="../../js/popover/popover.min.js"></script>
+
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax//MathJax.js"></script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax//config/TeX-AMS-MML_HTMLorMML.js"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    for(var all in MathJax.Hub.getAllJax()) {
+        all.SourceElement().parentNode.className += ' has-jax';
+
+    }
+});
+</script>
+
+
+
+
+
+
+  </body>
+</html>
+
