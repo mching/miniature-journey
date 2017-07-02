@@ -1,0 +1,151 @@
+---
+title: "King Tides Citizen Science Project"
+author: Mike Ching
+date: '2017-05-26'
+slug: king-tides-GIS
+categories:
+  - R
+tags:
+  - GIS
+draft: false
+---
+
+
+
+<p>I read in the <a href="http://www.staradvertiser.com/2017/05/22/hawaii-news/king-tides-summer-swells-and-high-sea-levels-could-imperil-coastal-areas/">newspaper</a> that the <a href="http://ccsr.seagrant.soest.hawaii.edu/king-tides">University of Hawaii</a> was recruiting “citizen scientists” to help document the impact of this week’s “<a href="http://ccsr.seagrant.soest.hawaii.edu/Hawaii%20Sea%20Level">king tides</a>” on our coastline. I uploaded some photos to <a href="https://getliquid.io">the website</a> but also found that we could download the dataset. I took this as an opportunity to learn something about geographic information systems (GIS) and R, and the end result was a pretty nice map of all the places that were photographed this week.</p>
+<div id="gis-in-r" class="section level2">
+<h2>GIS in R</h2>
+<p>I knew nothing about GIS before starting this but there were some excellent articles on the web about it. One tutorial used the <a href="https://journal.r-project.org/archive/2013-1/kahle-wickham.pdf"><code>ggmap</code></a> package. I just wanted to plot points on a map, and my prior experience with <code>ggplot2</code> and this <a href="https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/ggmap/ggmapCheatsheet.pdf">cheatsheet</a> made it pretty easy.</p>
+<p>The hardest part was all the installation requirements, specifically GDAL. There’s a lot of information on the web on how to install this, but it was a lot of googling that finally got it to work on Fedora. MacOS GDAL requires you to use packages available <a href="http://www.kyngchaos.com/software/frameworks">here</a>.</p>
+</div>
+<div id="making-a-map-of-oahu" class="section level2">
+<h2>Making a Map of Oahu</h2>
+<p>First I wanted a map of Oahu. This couldn’t be easier using <code>ggmap</code>. This produces a pretty watercolor looking map from <a href="https://stamen.com">Stamen.com</a>.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr</code></pre>
+<pre><code>## Conflicts with tidy packages ----------------------------------------------</code></pre>
+<pre><code>## filter(): dplyr, stats
+## lag():    dplyr, stats</code></pre>
+<pre class="r"><code>library(ggmap)
+myLocation &lt;- &quot;Oahu&quot;
+myMap &lt;- get_map(location = myLocation,
+                 source = &quot;stamen&quot;,
+                 maptype = &quot;watercolor&quot;, 
+                 crop = FALSE,
+                 zoom = 10)</code></pre>
+<pre><code>## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Oahu&amp;zoom=10&amp;size=640x640&amp;scale=2&amp;maptype=terrain&amp;sensor=false</code></pre>
+<pre><code>## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Oahu&amp;sensor=false</code></pre>
+<pre><code>## Map from URL : http://tile.stamen.com/watercolor/10/61/448.jpg</code></pre>
+<pre><code>## Map from URL : http://tile.stamen.com/watercolor/10/62/448.jpg</code></pre>
+<pre><code>## Map from URL : http://tile.stamen.com/watercolor/10/63/448.jpg</code></pre>
+<pre><code>## Map from URL : http://tile.stamen.com/watercolor/10/61/449.jpg</code></pre>
+<pre><code>## Map from URL : http://tile.stamen.com/watercolor/10/62/449.jpg</code></pre>
+<pre><code>## Map from URL : http://tile.stamen.com/watercolor/10/63/449.jpg</code></pre>
+<pre><code>## Map from URL : http://tile.stamen.com/watercolor/10/61/450.jpg</code></pre>
+<pre><code>## Map from URL : http://tile.stamen.com/watercolor/10/62/450.jpg</code></pre>
+<pre><code>## Map from URL : http://tile.stamen.com/watercolor/10/63/450.jpg</code></pre>
+<pre class="r"><code>ggmap(myMap)</code></pre>
+<p><img src="/post/2017-05-26-GIS-citizen-scientist-tides_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>Then I wanted to put the points on the map. The dataset was in comma separated values format (albeit with this <code>latin1</code> file encoding when I did this post first in Fedora). It was easy to load the dataset.</p>
+<pre class="r"><code>dat &lt;- read.csv(&quot;../datasets/tides_20170526.csv&quot;, 
+                # fileEncoding = &quot;latin1&quot;, 
+                colClasses = &quot;character&quot;)
+dat &lt;- tbl_df(dat)</code></pre>
+<p>The file needed some cleaning for convenient use in the <code>ggmap</code> package.</p>
+<pre class="r"><code>dat</code></pre>
+<pre><code>## # A tibble: 818 x 20
+##                                                     Dataset.Name
+##                                                            &lt;chr&gt;
+##  1 Hawai&#39;i and Pacific Islands King Tides Project (HI Sea Grant)
+##  2 Hawai&#39;i and Pacific Islands King Tides Project (HI Sea Grant)
+##  3 Hawai&#39;i and Pacific Islands King Tides Project (HI Sea Grant)
+##  4 Hawai&#39;i and Pacific Islands King Tides Project (HI Sea Grant)
+##  5 Hawai&#39;i and Pacific Islands King Tides Project (HI Sea Grant)
+##  6 Hawai&#39;i and Pacific Islands King Tides Project (HI Sea Grant)
+##  7 Hawai&#39;i and Pacific Islands King Tides Project (HI Sea Grant)
+##  8 Hawai&#39;i and Pacific Islands King Tides Project (HI Sea Grant)
+##  9 Hawai&#39;i and Pacific Islands King Tides Project (HI Sea Grant)
+## 10 Hawai&#39;i and Pacific Islands King Tides Project (HI Sea Grant)
+## # ... with 808 more rows, and 19 more variables: Dataset.Owner &lt;chr&gt;,
+## #   User &lt;chr&gt;, Submission.Latitude &lt;chr&gt;, Submission.Longitude &lt;chr&gt;,
+## #   Date.Created &lt;chr&gt;, Record &lt;chr&gt;,
+## #   Hawai.iSea.Grant.King.Tides.Photo.Database &lt;chr&gt;,
+## #   Location..tap.arrow.to.input.exact.location....Latitude &lt;chr&gt;,
+## #   Location..tap.arrow.to.input.exact.location....Longitude &lt;chr&gt;,
+## #   Share.your.image. &lt;chr&gt;, Island.s. &lt;chr&gt;, Location.Description &lt;chr&gt;,
+## #   Orientation..check.your.compass.. &lt;chr&gt;, Date &lt;chr&gt;, Time &lt;chr&gt;,
+## #   Tell.us.something.about.your.photo. &lt;chr&gt;, Photographer.s.Name &lt;chr&gt;,
+## #   By.uploading.an.image.you.irrevocably.consent.that.it.may.be.used.for.educational..research..outreach.and.promotional.purposes..in.any.medium..in.perpetuity. &lt;chr&gt;,
+## #   X &lt;chr&gt;</code></pre>
+<pre class="r"><code># Rename latitute and longitude columns for more convenient reference
+names(dat)[9] &lt;- &quot;latitude&quot;
+names(dat)[10] &lt;- &quot;longitude&quot;
+
+# Make latitude and longitude numeric
+dat$latitude &lt;- as.numeric(dat$latitude)</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>dat$longitude &lt;- as.numeric(dat$longitude)</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code># Convert date and time columns into POSIX format
+dat$date_time &lt;- paste(dat$Date, dat$Time)
+dat$date_time &lt;- strptime(dat$date_time, &quot;%m/%d/%y %H:%M&quot;)
+dat$date_time &lt;- as.POSIXct(dat$date_time)
+dat$LatLong &lt;- paste0(dat$latitude, &quot;:&quot;, dat$longitude)</code></pre>
+<p>I just wanted to see where people had been active in the last two days so I filtered the dataset by date.</p>
+<pre class="r"><code>minidat &lt;- dat %&gt;% filter(date_time &gt; as.POSIXct(&quot;2017-05-25&quot;)) %&gt;% 
+  select(latitude, longitude, date_time, LatLong)</code></pre>
+<p>The resulting map was pretty sweet.</p>
+<pre class="r"><code>ggmap(myMap) + geom_point(aes(x = longitude, y = latitude), data = minidat, color = &quot;black&quot;, alpha = 0.3)</code></pre>
+<pre><code>## Warning: Removed 81 rows containing missing values (geom_point).</code></pre>
+<p><img src="/post/2017-05-26-GIS-citizen-scientist-tides_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>I got virtually the same map using the <code>qmap</code> function. This function uses a Google Maps terrain map to create its base image.</p>
+<pre class="r"><code>qmap(&quot;Oahu&quot;) + geom_point(aes(x = longitude, y = latitude), data = minidat, color = &quot;red&quot;, alpha = 0.3)</code></pre>
+<pre><code>## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=Oahu&amp;zoom=10&amp;size=640x640&amp;scale=2&amp;maptype=terrain&amp;language=en-EN&amp;sensor=false</code></pre>
+<pre><code>## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=Oahu&amp;sensor=false</code></pre>
+<pre><code>## Warning: `panel.margin` is deprecated. Please use `panel.spacing` property
+## instead</code></pre>
+<pre><code>## Warning: Removed 82 rows containing missing values (geom_point).</code></pre>
+<p><img src="/post/2017-05-26-GIS-citizen-scientist-tides_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>The resulting images from <code>ggmap</code> were pretty nice but I wanted more. Nowadays it’s customary to be able to pan and zoom like in Google Maps. The <code>ggmap</code> method produces a static map which is nice to look at, but it would be nice to see what points were taken on other islands. Or how about that blob of points on the south shore. Could we zoom in to see more readily where those points are?</p>
+</div>
+<div id="googlevis-version" class="section level2">
+<h2><code>googleVis</code> version</h2>
+<p>I did some more research and found the <code>gvisMap</code> function from the <code>googleVis</code> package could provide a solution to this problem. Inspiration for how to do this came from <a href="https://pakillo.github.io/R-GIS-tutorial/#googlevis">this tutorial</a>.</p>
+<p>The special thing about <code>gvisMap</code> is that it requires you to feed it a variable containing latitude and longitude values in a specific latitude:longitude format. That’s why I did this above in the data cleaning steps.</p>
+<p>It also allows you to write a label for each point. I just used the date and time label but if I were to spend a little more time on this, it would be simple to write a label that gave the record number, the time, and some brief description.</p>
+<pre class="r"><code>library(googleVis)</code></pre>
+<pre><code>## Creating a generic function for &#39;toJSON&#39; from package &#39;jsonlite&#39; in package &#39;googleVis&#39;</code></pre>
+<pre><code>## 
+## Welcome to googleVis version 0.6.2
+## 
+## Please read Google&#39;s Terms of Use
+## before you start using the package:
+## https://developers.google.com/terms/
+## 
+## Note, the plot method of googleVis will by default use
+## the standard browser to display its output.
+## 
+## See the googleVis package vignettes for more details,
+## or visit http://github.com/mages/googleVis.
+## 
+## To suppress this message use:
+## suppressPackageStartupMessages(library(googleVis))</code></pre>
+<pre class="r"><code>M1 &lt;- gvisMap(minidat, &quot;LatLong&quot;, tipvar = &quot;date_time&quot;, 
+              options=list(showTip=TRUE, showLine=F, enableScrollWheel=TRUE, 
+                           mapType=&#39;satellite&#39;, useMapTypeControl=TRUE, width=800,height=800))</code></pre>
+<p>The next command should be <code>plot(M1)</code> but this launches a javascript based map running locally. I have to figure out how to integrate this into a Jekyll blog like this one, but for the time being, you can see the result <a href="https://www2.hawaii.edu/~mslching/map_20170526.html">here</a>. I copied the code from running <code>print(M1, 'chart')</code> onto an html page and voila, <a href="https://www2.hawaii.edu/~mslching/map_20170526.html">the map</a> works just like it should!</p>
+</div>
+<div id="discussion" class="section level2">
+<h2>Discussion</h2>
+<p>It wasn’t too hard to plot points on a map. If I’m going to do more of this, I think the <code>googleVis</code> is probably better for dynamic presentation than <code>ggmap</code> but the <code>ggmap</code> might be nicer for static presentation.</p>
+<p>Looking at the actual results, it comes as no surprise that urban Honolulu is well documented. There are lots of people living here and so Waikiki and Hawaii Kai were covered pretty well. Rural areas were much less well documented, so that’s something for the project to work on!</p>
+</div>
+<div id="conclusions" class="section level2">
+<h2>Conclusions</h2>
+<p>GIS in R is feasible for a relative newbie to GIS. Citizen scientists on the King Tides Project documented the urban Honolulu area better than rural areas.</p>
+</div>

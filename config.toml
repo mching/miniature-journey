@@ -1,11 +1,12 @@
 baseurl = "/"
+publishDir = "../mching.github.io"
 relativeurls = true
 languageCode = "en-us"
 # baseurl = "https://username.github.io"
 DefaultContentLanguage = "en"
 #DefaultContentLanguage = "ja"
 title = "Dripping Data"
-theme = "hugo-xmin"
+theme = "beautifulhugo"
 metaDataFormat = "yaml"
 pygmentsUseClasses = true
 pygmentCodeFences = true
@@ -15,7 +16,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [Params]
   subtitle = "My numbers blog. It's not quite Flowing."
-  logo = "images/4506820.jpg"
+  logo = "img/minihead.jpg"
   favicon = "img/favicon.ico"
   dateFormat = "January 2, 2006"
   commit = false
