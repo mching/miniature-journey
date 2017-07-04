@@ -7,29 +7,56 @@ categories:
   - R
 tags:
   - textmining
-draft: true
 ---
 
 I wanted to try my hand at some text mining using the tidytext package, and I was wondering what I could look at. I love the podcast Security Now! by Steve Gibson and Leo Laporte, and I've always wondered if there was a way to build a good index of their podcast.
 
-
+I used the **tidyverse** packages and **tidytext** by David Robinson. He and Julia Silge wrote [the book](http://tidytextmining.com/) from which most of these methods came from.
 
 ```{r}
 library(dplyr)
 library(tidytext)
 library(ggplot2)
 library(tidyr)
+```
 
+I downloaded the episode transcripts from GRC.com. 
+
+## Obtaining Text
+```
 DIRECTORY <- "/Volumes/WD_6GB_Chings/media/Books/securitynow/shows/"
-list.files(DIRECTORY)
+
+# change the i to go from the first show number you want to the last show number. As of 1 July 2017, the most recent show is #618.
+
+for(i in 500:599) {
+  shortname <- paste0("sn-", i, ".txt")
+  showname <- paste0("https://www.grc.com/sn/", shortname)
+  print(shortname)
+  download.file(showname, destfile = paste0(DIRECTORY, shortname), method = "curl")
+}
+```
+
+I loaded an example file and put it into a [tibble.](https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html)
+```{r}
+DIRECTORY <- "/Volumes/WD_6GB_Chings/media/Books/securitynow/shows/"
+# list.files(DIRECTORY)
 sn_500 <- readLines(paste0(DIRECTORY, "sn-500.txt"))
 sn_500_df <- data_frame(linenumber = 1:length(sn_500), text = sn_500, episode = 500L)
+```
 
+
+## Most Commonly Used Words
+
+Then I loaded the stop words data (words like "the", "of" that are commonly used but not very meaningful). I added on Leo and Steve's names and the word yeah which seemed to be used a lot.
+```{r}
 data("stop_words")
 custom_stop_words <- bind_rows(data_frame(word = c("leo", "steve", "yeah"), 
                                           lexicon = rep("custom", 3)), 
                                stop_words)
+```
 
+Then I used the `unnest_tokens()` function to separate the lines into words, removed the stop words, and counted the most commmon words. The result was the figure below showing the most common words in this episode.
+```{r}
 sn_500_df %>% unnest_tokens(word, text) %>%
   anti_join(custom_stop_words) %>% 
   count(word, sort = TRUE) %>% 
@@ -38,9 +65,15 @@ sn_500_df %>% unnest_tokens(word, text) %>%
   ggplot(aes(x = word, y = n)) +
   geom_col()  +
   xlab(NULL) +
-  coord_flip()
+  coord_flip() +
+  ggtitle("Most commonly used words in Security Now, Episode 500")
+```
 
+## Sentiment Analysis
 
+Sentiment Analysis looks at the number of positive words and negative words used in a section of text. This can vary over the course of the text. I performed a sentiment analysis on the episode.
+
+```{r}
 sn_500_df %>% unnest_tokens(word, text) %>%
   anti_join(custom_stop_words) %>% 
   inner_join(get_sentiments("bing")) %>%
@@ -48,21 +81,24 @@ sn_500_df %>% unnest_tokens(word, text) %>%
   spread(sentiment, n, fill = 0) %>%
   mutate(netsentiment = positive - negative) %>%
   ggplot(aes(x = index, y = netsentiment)) +
-  geom_col()
-
-
+  geom_col() +
+  labs(title = "Sentiment Analysis of Episode 500 by 10 Line Sections",
+       y = "Net Sentiment")
 ```
 
+
+I also looked at the most used positive and negative words. First I assigned sentiments then counted how often they were used. Some words do not have sentiments associated with them so this is only a partial list of the words used in the episode.
 ```{r}
-bing_word_counts <- sn_500_df %>% unnest_tokens(word, text) %>%
-  anti_join(stop_words) %>% 
-  anti_join(data_frame(word = c("leo", "steve", "yeah"))) %>% 
+bing_word_counts <- sn_500_df %>% 
+  unnest_tokens(word, text) %>%
+  anti_join(custom_stop_words, by = "word") %>% 
   arrange(linenumber) %>% 
-  inner_join(get_sentiments("bing")) %>%
+  inner_join(get_sentiments("bing"), by = "word") %>%
   count(word, sentiment, sort = TRUE) %>%
   ungroup()
 ```
 
+Then I plotted the most commonly used sentiments by positive or negative sentiment.
 ```{r}
 bing_word_counts %>%
   group_by(sentiment) %>%
@@ -77,13 +113,17 @@ bing_word_counts %>%
   coord_flip()
 ```
 
-Next step is to pull many episodes and compare them.
+# Discussion
+This episode was mostly about Windows Secure Boot, so it's no surprise that UEFI and Windows were among the top words. It's also possibly the reason secure was one of the most commonly used words but the show is about computer security, so I would guess that this is a commonly used word anyway.
+
+The sentiment analysis showed that the episode varies in sentiment as it goes along and can be sometimes very positive. Here's the part from 420-430 that has the peak positive sentiment. He's explaining the history of the UEFI BIOS and how it's so powerful.
+
 ```{r}
-sn_500_df %>% unnest_tokens(character, text, token = "characters") %>%
-  count(character, sort = T) %>% mutate(total_chars = sum(n)) %>%
-  mutate(prop_chars = n/total_chars) %>%
-  arrange(character) %>%
-  ggplot(aes(x = character, y = prop_chars)) +
-  geom_col()
+sn_500[420:430]
 ```
 
+### Next Steps
+I'd like to take a larger sample of episodes and re-run this analysis to see how things vary over time. He does some Listener Feedback episodes, and I wonder if the sentiment is different during those episodes?
+
+## Conclusion
+Not much takeaway here yet since I only looked at one episode. The **tidytext** package does make it very easy to do natural language processing and analysis.

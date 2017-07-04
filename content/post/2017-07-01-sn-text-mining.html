@@ -13,6 +13,7 @@ draft: true
 
 
 <p>I wanted to try my hand at some text mining using the tidytext package, and I was wondering what I could look at. I love the podcast Security Now! by Steve Gibson and Leo Laporte, and I’ve always wondered if there was a way to build a good index of their podcast.</p>
+<p>I used the <strong>tidyverse</strong> packages and <strong>tidytext</strong> by David Robinson. He and Julia Silge wrote <a href="http://tidytextmining.com/">the book</a> from which most of these methods came from.</p>
 <pre class="r"><code>library(dplyr)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
@@ -24,79 +25,30 @@ draft: true
 ##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>library(tidytext)
 library(ggplot2)
-library(tidyr)
+library(tidyr)</code></pre>
+<p>I downloaded the episode transcripts from GRC.com.</p>
+<pre><code>DIRECTORY &lt;- &quot;/Volumes/WD_6GB_Chings/media/Books/securitynow/shows/&quot;
 
-DIRECTORY &lt;- &quot;/Volumes/WD_6GB_Chings/media/Books/securitynow/shows/&quot;
-list.files(DIRECTORY)</code></pre>
-<pre><code>##   [1] &quot;archive_sn-500-618.zip&quot; &quot;sn-500.txt&quot;            
-##   [3] &quot;sn-501.txt&quot;             &quot;sn-502.txt&quot;            
-##   [5] &quot;sn-503.txt&quot;             &quot;sn-504.txt&quot;            
-##   [7] &quot;sn-505.txt&quot;             &quot;sn-506.txt&quot;            
-##   [9] &quot;sn-507.txt&quot;             &quot;sn-508.txt&quot;            
-##  [11] &quot;sn-509.txt&quot;             &quot;sn-510.txt&quot;            
-##  [13] &quot;sn-511.txt&quot;             &quot;sn-512.txt&quot;            
-##  [15] &quot;sn-513.txt&quot;             &quot;sn-514.txt&quot;            
-##  [17] &quot;sn-515.txt&quot;             &quot;sn-516.txt&quot;            
-##  [19] &quot;sn-517.txt&quot;             &quot;sn-518.txt&quot;            
-##  [21] &quot;sn-519.txt&quot;             &quot;sn-520.txt&quot;            
-##  [23] &quot;sn-521.txt&quot;             &quot;sn-522.txt&quot;            
-##  [25] &quot;sn-523.txt&quot;             &quot;sn-524.txt&quot;            
-##  [27] &quot;sn-525.txt&quot;             &quot;sn-526.txt&quot;            
-##  [29] &quot;sn-527.txt&quot;             &quot;sn-528.txt&quot;            
-##  [31] &quot;sn-529.txt&quot;             &quot;sn-530.txt&quot;            
-##  [33] &quot;sn-531.txt&quot;             &quot;sn-532.txt&quot;            
-##  [35] &quot;sn-533.txt&quot;             &quot;sn-534.txt&quot;            
-##  [37] &quot;sn-535.txt&quot;             &quot;sn-536.txt&quot;            
-##  [39] &quot;sn-537.txt&quot;             &quot;sn-538.txt&quot;            
-##  [41] &quot;sn-539.txt&quot;             &quot;sn-540.txt&quot;            
-##  [43] &quot;sn-541.txt&quot;             &quot;sn-542.txt&quot;            
-##  [45] &quot;sn-543.txt&quot;             &quot;sn-544.txt&quot;            
-##  [47] &quot;sn-545.txt&quot;             &quot;sn-546.txt&quot;            
-##  [49] &quot;sn-547.txt&quot;             &quot;sn-548.txt&quot;            
-##  [51] &quot;sn-549.txt&quot;             &quot;sn-550.txt&quot;            
-##  [53] &quot;sn-551.txt&quot;             &quot;sn-552.txt&quot;            
-##  [55] &quot;sn-553.txt&quot;             &quot;sn-554.txt&quot;            
-##  [57] &quot;sn-555.txt&quot;             &quot;sn-556.txt&quot;            
-##  [59] &quot;sn-557.txt&quot;             &quot;sn-558.txt&quot;            
-##  [61] &quot;sn-559.txt&quot;             &quot;sn-560.txt&quot;            
-##  [63] &quot;sn-561.txt&quot;             &quot;sn-562.txt&quot;            
-##  [65] &quot;sn-563.txt&quot;             &quot;sn-564.txt&quot;            
-##  [67] &quot;sn-565.txt&quot;             &quot;sn-566.txt&quot;            
-##  [69] &quot;sn-567.txt&quot;             &quot;sn-568.txt&quot;            
-##  [71] &quot;sn-569.txt&quot;             &quot;sn-570.txt&quot;            
-##  [73] &quot;sn-571.txt&quot;             &quot;sn-572.txt&quot;            
-##  [75] &quot;sn-573.txt&quot;             &quot;sn-574.txt&quot;            
-##  [77] &quot;sn-575.txt&quot;             &quot;sn-576.txt&quot;            
-##  [79] &quot;sn-577.txt&quot;             &quot;sn-578.txt&quot;            
-##  [81] &quot;sn-579.txt&quot;             &quot;sn-580.txt&quot;            
-##  [83] &quot;sn-581.txt&quot;             &quot;sn-582.txt&quot;            
-##  [85] &quot;sn-583.txt&quot;             &quot;sn-584.txt&quot;            
-##  [87] &quot;sn-585.txt&quot;             &quot;sn-586.txt&quot;            
-##  [89] &quot;sn-587.txt&quot;             &quot;sn-588.txt&quot;            
-##  [91] &quot;sn-589.txt&quot;             &quot;sn-590.txt&quot;            
-##  [93] &quot;sn-591.txt&quot;             &quot;sn-592.txt&quot;            
-##  [95] &quot;sn-593.txt&quot;             &quot;sn-594.txt&quot;            
-##  [97] &quot;sn-595.txt&quot;             &quot;sn-596.txt&quot;            
-##  [99] &quot;sn-597.txt&quot;             &quot;sn-598.txt&quot;            
-## [101] &quot;sn-599.txt&quot;             &quot;sn-600.txt&quot;            
-## [103] &quot;sn-601.txt&quot;             &quot;sn-602.txt&quot;            
-## [105] &quot;sn-603.txt&quot;             &quot;sn-604.txt&quot;            
-## [107] &quot;sn-605.txt&quot;             &quot;sn-606.txt&quot;            
-## [109] &quot;sn-607.txt&quot;             &quot;sn-608.txt&quot;            
-## [111] &quot;sn-609.txt&quot;             &quot;ssn-610.txt&quot;           
-## [113] &quot;ssn-611.txt&quot;            &quot;ssn-612.txt&quot;           
-## [115] &quot;ssn-613.txt&quot;            &quot;ssn-614.txt&quot;           
-## [117] &quot;ssn-615.txt&quot;            &quot;ssn-616.txt&quot;           
-## [119] &quot;ssn-617.txt&quot;            &quot;ssn-618.txt&quot;</code></pre>
-<pre class="r"><code>sn_500 &lt;- readLines(paste0(DIRECTORY, &quot;sn-500.txt&quot;))
-sn_500_df &lt;- data_frame(linenumber = 1:length(sn_500), text = sn_500, episode = 500L)
+# change the i to go from the first show number you want to the last show number. As of 1 July 2017, the most recent show is #618.
 
-data(&quot;stop_words&quot;)
+for(i in 500:599) {
+  shortname &lt;- paste0(&quot;sn-&quot;, i, &quot;.txt&quot;)
+  showname &lt;- paste0(&quot;https://www.grc.com/sn/&quot;, shortname)
+  print(shortname)
+  download.file(showname, destfile = paste0(DIRECTORY, shortname), method = &quot;curl&quot;)
+}</code></pre>
+<p>I loaded an example file and put it into a <a href="https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html">tibble.</a></p>
+<pre class="r"><code>DIRECTORY &lt;- &quot;/Volumes/WD_6GB_Chings/media/Books/securitynow/shows/&quot;
+# list.files(DIRECTORY)
+sn_500 &lt;- readLines(paste0(DIRECTORY, &quot;sn-500.txt&quot;))
+sn_500_df &lt;- data_frame(linenumber = 1:length(sn_500), text = sn_500, episode = 500L)</code></pre>
+<p>Then I loaded the stop words data (words like “the”, “of” that are commonly used but not very meaningful). I added on Leo and Steve’s names and the word yeah which seemed to be used a lot.</p>
+<pre class="r"><code>data(&quot;stop_words&quot;)
 custom_stop_words &lt;- bind_rows(data_frame(word = c(&quot;leo&quot;, &quot;steve&quot;, &quot;yeah&quot;), 
                                           lexicon = rep(&quot;custom&quot;, 3)), 
-                               stop_words)
-
-sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
+                               stop_words)</code></pre>
+<p>Then I used the</p>
+<pre class="r"><code>sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
   anti_join(custom_stop_words) %&gt;% 
   count(word, sort = TRUE) %&gt;% 
   filter(n&gt;20) %&gt;%
@@ -106,7 +58,7 @@ sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
   xlab(NULL) +
   coord_flip()</code></pre>
 <pre><code>## Joining, by = &quot;word&quot;</code></pre>
-<p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <pre class="r"><code>sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
   anti_join(custom_stop_words) %&gt;% 
   inner_join(get_sentiments(&quot;bing&quot;)) %&gt;%
@@ -115,9 +67,9 @@ sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
   mutate(netsentiment = positive - negative) %&gt;%
   ggplot(aes(x = index, y = netsentiment)) +
   geom_col()</code></pre>
-<pre><code>## Joining, by = &quot;word&quot;</code></pre>
-<pre><code>## Joining, by = &quot;word&quot;</code></pre>
-<p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-1-2.png" width="672" /></p>
+<pre><code>## Joining, by = &quot;word&quot;
+## Joining, by = &quot;word&quot;</code></pre>
+<p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <pre class="r"><code>bing_word_counts &lt;- sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
   anti_join(stop_words) %&gt;% 
   anti_join(data_frame(word = c(&quot;leo&quot;, &quot;steve&quot;, &quot;yeah&quot;))) %&gt;% 
@@ -140,7 +92,7 @@ sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
        x = NULL) +
   coord_flip()</code></pre>
 <pre><code>## Selecting by n</code></pre>
-<p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Next step is to pull many episodes and compare them.</p>
 <pre class="r"><code>sn_500_df %&gt;% unnest_tokens(character, text, token = &quot;characters&quot;) %&gt;%
   count(character, sort = T) %&gt;% mutate(total_chars = sum(n)) %&gt;%
@@ -148,4 +100,4 @@ sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
   arrange(character) %&gt;%
   ggplot(aes(x = character, y = prop_chars)) +
   geom_col()</code></pre>
-<p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
