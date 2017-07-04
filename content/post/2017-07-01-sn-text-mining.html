@@ -7,7 +7,6 @@ categories:
   - R
 tags:
   - textmining
-draft: true
 ---
 
 
@@ -27,6 +26,8 @@ draft: true
 library(ggplot2)
 library(tidyr)</code></pre>
 <p>I downloaded the episode transcripts from GRC.com.</p>
+<div id="obtaining-text" class="section level2">
+<h2>Obtaining Text</h2>
 <pre><code>DIRECTORY &lt;- &quot;/Volumes/WD_6GB_Chings/media/Books/securitynow/shows/&quot;
 
 # change the i to go from the first show number you want to the last show number. As of 1 July 2017, the most recent show is #618.
@@ -42,12 +43,15 @@ for(i in 500:599) {
 # list.files(DIRECTORY)
 sn_500 &lt;- readLines(paste0(DIRECTORY, &quot;sn-500.txt&quot;))
 sn_500_df &lt;- data_frame(linenumber = 1:length(sn_500), text = sn_500, episode = 500L)</code></pre>
+</div>
+<div id="most-commonly-used-words" class="section level2">
+<h2>Most Commonly Used Words</h2>
 <p>Then I loaded the stop words data (words like “the”, “of” that are commonly used but not very meaningful). I added on Leo and Steve’s names and the word yeah which seemed to be used a lot.</p>
 <pre class="r"><code>data(&quot;stop_words&quot;)
 custom_stop_words &lt;- bind_rows(data_frame(word = c(&quot;leo&quot;, &quot;steve&quot;, &quot;yeah&quot;), 
                                           lexicon = rep(&quot;custom&quot;, 3)), 
                                stop_words)</code></pre>
-<p>Then I used the</p>
+<p>Then I used the <code>unnest_tokens()</code> function to separate the lines into words, removed the stop words, and counted the most commmon words. The result was the figure below showing the most common words in this episode.</p>
 <pre class="r"><code>sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
   anti_join(custom_stop_words) %&gt;% 
   count(word, sort = TRUE) %&gt;% 
@@ -56,9 +60,14 @@ custom_stop_words &lt;- bind_rows(data_frame(word = c(&quot;leo&quot;, &quot;ste
   ggplot(aes(x = word, y = n)) +
   geom_col()  +
   xlab(NULL) +
-  coord_flip()</code></pre>
+  coord_flip() +
+  ggtitle(&quot;Most commonly used words in Security Now, Episode 500&quot;)</code></pre>
 <pre><code>## Joining, by = &quot;word&quot;</code></pre>
 <p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="sentiment-analysis" class="section level2">
+<h2>Sentiment Analysis</h2>
+<p>Sentiment Analysis looks at the number of positive words and negative words used in a section of text. This can vary over the course of the text. I performed a sentiment analysis on the episode.</p>
 <pre class="r"><code>sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
   anti_join(custom_stop_words) %&gt;% 
   inner_join(get_sentiments(&quot;bing&quot;)) %&gt;%
@@ -66,20 +75,21 @@ custom_stop_words &lt;- bind_rows(data_frame(word = c(&quot;leo&quot;, &quot;ste
   spread(sentiment, n, fill = 0) %&gt;%
   mutate(netsentiment = positive - negative) %&gt;%
   ggplot(aes(x = index, y = netsentiment)) +
-  geom_col()</code></pre>
+  geom_col() +
+  labs(title = &quot;Sentiment Analysis of Episode 500 by 10 Line Sections&quot;,
+       y = &quot;Net Sentiment&quot;)</code></pre>
 <pre><code>## Joining, by = &quot;word&quot;
 ## Joining, by = &quot;word&quot;</code></pre>
 <p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<pre class="r"><code>bing_word_counts &lt;- sn_500_df %&gt;% unnest_tokens(word, text) %&gt;%
-  anti_join(stop_words) %&gt;% 
-  anti_join(data_frame(word = c(&quot;leo&quot;, &quot;steve&quot;, &quot;yeah&quot;))) %&gt;% 
+<p>I also looked at the most used positive and negative words. First I assigned sentiments then counted how often they were used. Some words do not have sentiments associated with them so this is only a partial list of the words used in the episode.</p>
+<pre class="r"><code>bing_word_counts &lt;- sn_500_df %&gt;% 
+  unnest_tokens(word, text) %&gt;%
+  anti_join(custom_stop_words, by = &quot;word&quot;) %&gt;% 
   arrange(linenumber) %&gt;% 
-  inner_join(get_sentiments(&quot;bing&quot;)) %&gt;%
+  inner_join(get_sentiments(&quot;bing&quot;), by = &quot;word&quot;) %&gt;%
   count(word, sentiment, sort = TRUE) %&gt;%
   ungroup()</code></pre>
-<pre><code>## Joining, by = &quot;word&quot;
-## Joining, by = &quot;word&quot;
-## Joining, by = &quot;word&quot;</code></pre>
+<p>Then I plotted the most commonly used sentiments by positive or negative sentiment.</p>
 <pre class="r"><code>bing_word_counts %&gt;%
   group_by(sentiment) %&gt;%
   top_n(10) %&gt;%
@@ -93,11 +103,29 @@ custom_stop_words &lt;- bind_rows(data_frame(word = c(&quot;leo&quot;, &quot;ste
   coord_flip()</code></pre>
 <pre><code>## Selecting by n</code></pre>
 <p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p>Next step is to pull many episodes and compare them.</p>
-<pre class="r"><code>sn_500_df %&gt;% unnest_tokens(character, text, token = &quot;characters&quot;) %&gt;%
-  count(character, sort = T) %&gt;% mutate(total_chars = sum(n)) %&gt;%
-  mutate(prop_chars = n/total_chars) %&gt;%
-  arrange(character) %&gt;%
-  ggplot(aes(x = character, y = prop_chars)) +
-  geom_col()</code></pre>
-<p><img src="/post/2017-07-01-sn-text-mining_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>This episode was mostly about Windows Secure Boot, so it’s no surprise that UEFI and Windows were among the top words. It’s also possibly the reason secure was one of the most commonly used words but the show is about computer security, so I would guess that this is a commonly used word anyway.</p>
+<p>The sentiment analysis showed that the episode varies in sentiment as it goes along and can be sometimes very positive. Here’s the part from 420-430 that has the peak positive sentiment. He’s explaining the history of the UEFI BIOS and how it’s so powerful.</p>
+<pre class="r"><code>sn_500[420:430]</code></pre>
+<pre><code>##  [1] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+##  [2] &quot;STEVE:  Right, right.  And so in Lotus I remember they were programming the video RAM directly because they just couldn&#39;t afford the overhead of the BIOS.  The BIOS could have allowed them to do it.  But the things they wanted to do, scrolling quickly, horizontally and vertically; moving, like, highlight bars around the screen.  It just couldn&#39;t do that.  So they had to bypass the BIOS and go direct.&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+##  [3] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+##  [4] &quot;So many older systems are still BIOS based.  The BIOSes have lived for decades, mostly because you could bypass it.  You would use the BIOS to essentially power the system up.  It would initialize the hardware.  It would sort of settle things down.  Then it would look through a list of possible boot devices, checking them in sequence for a sector that said it had access to a bootable partition, and it would go and see if it could boot the partition.  If so, it would run that code, and off you&#39;d go.  The operating system then, rather than using the BIOS - for example, DOS actually did use the BIOS.  But the first thing Windows did was say, okay, fine, get out of the way.  And Windows brought its own drivers, essentially to talk directly to the hardware.&quot;                                                                                                     
+##  [5] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+##  [6] &quot;So this was the situation up until probably, what, the mid-1990s or so, when the BIOS began to show its age.  Systems were evolving.  We were beginning to want much more capability.  People wanted to be able to boot their system over the network remotely.  They wanted, corporate IT wanted to be able to do an inventory of what was plugged into the motherboard without even talking to the operating system, actually have the motherboard be smart enough.  Motherboards started to want to be able to monitor the voltages of their power supplies, and the current.  They had multiple fans, and so they wanted to control temperature in various areas.  They had fancy RAID arrays that they needed to support.&quot;                                                                                                                                                                 
+##  [7] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+##  [8] &quot;Essentially, the very modest platform that the PC XT originally was, that the BIOS was able to service, that platform just exploded.  So we needed something new.  And so the so-called EFI then became the unified extensible firmware interface, UEFI, which is now the state of the art in firmware.  Some people say the \&quot;UEFI BIOS,\&quot; although technically that&#39;s not right because the BIOS is the BIOS, and UEFI is a different firmware than the BIOS firmware.  But today&#39;s UEFI offers a vast array of services.  There&#39;s essentially almost an operating system within the motherboard to manage the modern complexity of all the peripherals.  There&#39;s an ACPI which is the power control that allows various power-down states.  And all that has to be communicated and coordinated with the hardware so that the motherboard understands how to do that to all of its hardware.&quot;
+##  [9] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+## [10] &quot;So you still need sort of a central point of responsibility.  And as I mentioned, there&#39;s fans and voltage and current monitoring, remote network booting, just all the chassis management and everything.  So the UEFI has just exploded in size.  It&#39;s really left the original BIOS way behind.  So it got to the point where it was time to talk about security.  And the UEFI has gone through a number of versions.  It was at 2.2 that we first really got what was known as \&quot;Secure Boot.\&quot;  And in the same way that the iPhone depends upon its hardware in order to provide absolute security, the Secure Boot is the same way.&quot;                                                                                                                                                                                                                                                    
+## [11] &quot;&quot;</code></pre>
+<div id="next-steps" class="section level3">
+<h3>Next Steps</h3>
+<p>I’d like to take a larger sample of episodes and re-run this analysis to see how things vary over time. He does some Listener Feedback episodes, and I wonder if the sentiment is different during those episodes?</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Not much takeaway here yet since I only looked at one episode. The <strong>tidytext</strong> package does make it very easy to do natural language processing and analysis.</p>
+</div>
+</div>
