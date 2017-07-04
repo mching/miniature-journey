@@ -1,0 +1,100 @@
+---
+title: "AJ Mass’s Rule of Sevens"
+author: "Michael Ching"
+date: "2017-07-03"
+slug: rule-of-sevens
+categories:
+  - R
+tags:
+  - baseball
+  - fantasy
+---
+
+On the baseball podcast I listen to, guest host AJ Mass proposed that a rule of thumb for a top 20 pitcher would be someone with an ERA < 3.5 and a K/BB ratio of > 3.5 (3.5 + 3.5 = 7). I wondered if this was actually the case (i.e., how many pitchers achieve this mark each season).
+
+## Methods
+
+I turned as usual to the Lahman database and the **tidyverse** packages.
+
+```{r}
+library(Lahman)
+library(dplyr)
+library(ggplot2)
+library(hrbrthemes)
+```
+
+Conceptually we want to know how many players reach this plateau each year. Ideally we'd want qualifying pitchers, which means they pitched 162 innings since the season went to this long in 1962 for both leagues.
+
+```{r}
+data(Pitching)
+```
+
+I filtered the pitching list by years after 1961. I then created a K/BB variable. After this I filtered by the Rule of Sevens rules, ERA < 3.5 and K/BB > 3.5 and qualifying pitchers (IP > 162). Finally I grouped by year and saw how many pitchers fit this mark.
+
+## Results
+
+The code for the analysis yielded the following plot. There have been an increasing number of pitchers meeting these criteria since the 1990s. I overlaid a loess smoothing line over the points.
+```{r}
+Pitching %>% filter(yearID > 1961) %>%
+  mutate(K_BB = SO/(BB + IBB)) %>%
+  filter(ERA < 3.5 & K_BB > 3.5 & IPouts > 162*3) %>% 
+  group_by(yearID) %>% 
+  summarize(Rule_of_7s_players = n_distinct(playerID)) %>% 
+  ggplot(aes(x = yearID, y = Rule_of_7s_players)) + 
+  geom_point() + 
+  geom_smooth(method = "loess") + 
+  theme_ipsum() +
+  labs(y = "Number of players",
+         x = "Year",
+         title = "Rule of 7s Players")
+```
+
+Who are these great pitchers? I looked at the 2015 players to get a sense. These were some pretty amazing seasons. As a Mets fan it was sad to see how fast Matt Harvey went from being one of the top pitchers in the game to virtually out of the big leagues. And what got into Wei-Yin Chen that year?!
+```{r}
+data(Master)
+
+Pitching %>% filter(yearID == 2015) %>%
+  mutate(K_BB = SO/(BB + IBB)) %>%
+  filter(ERA < 3.5 & K_BB > 3.5 & IPouts > 162*3) %>% inner_join(Master) %>%
+  select(nameFirst, nameLast, IPouts, ERA, BB, SO) %>% arrange(ERA) %>%
+  as.data.frame()
+
+```
+
+How about the 2005 players? Other than Carlos Silva's unreal control year (1.6 walks per 100 outs!), it was the usual suspects.
+
+```{r}
+Pitching %>% filter(yearID == 2005) %>%
+  mutate(K_BB = SO/(BB + IBB)) %>%
+  filter(ERA < 3.5 & K_BB > 3.5 & IPouts > 162*3) %>% inner_join(Master) %>%
+  select(nameFirst, nameLast, IPouts, ERA, BB, SO) %>% arrange(ERA) %>%
+  as.data.frame()
+
+```
+
+In the 1990s the number of pitchers meeting Mass's criteria were much fewer. I looked at 1995 for an example. Greg Maddux and Randy Johnson were dominant, but what a year for Shane Reynolds!
+
+```{r}
+Pitching %>% filter(yearID == 1995) %>%
+  mutate(K_BB = SO/(BB + IBB)) %>%
+  filter(ERA < 3.5 & K_BB > 3.5 & IPouts > 162*3) %>% inner_join(Master) %>%
+  select(nameFirst, nameLast, IPouts, ERA, BB, SO) %>% arrange(ERA) %>%
+  as.data.frame()
+
+```
+
+Finally which pitcher has the most seasons where he met AJ Mass's criteria?
+
+```{r}
+Pitching %>% filter(yearID > 1961) %>%
+  mutate(K_BB = SO/(BB + IBB)) %>%
+  filter(ERA < 3.5 & K_BB > 3.5 & IPouts > 162*3) %>%
+  count(playerID) %>% arrange(desc(n)) %>% inner_join(Master) %>%
+  select(nameFirst, nameLast, n ) %>% filter(n > 2) %>%
+  as.data.frame()
+```
+
+This list demonstrates the sustained excellence for Randy Johnson, Greg Maddux, and Pedro Martinez (and even the sometime greatness of Kevin Brown). 
+
+## Conclusions
+AJ Mass's rule of 7s is pretty good for the last few years, but before this decade, you would have to be a truly elite top 10 player to meet both criteria.
