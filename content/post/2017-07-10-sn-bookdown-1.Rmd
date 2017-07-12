@@ -1,0 +1,94 @@
+---
+title: "Using Bookdown to create a Security Now Ebook"
+author: Mike Ching
+date: "2017-07-10"
+slug: securitynow-ebook
+categories:
+  - R
+tags:
+  - bookdown
+  - securitynow
+---
+
+Recently I have been exploring the **blogdown** package to redo my website using [Hugo](https://gohugo.io), and it resurrected an old idea that I had. Security Now, one of my favorite podcasts, has transcriptions of each episode, and I thought it would be neat to put them into an e-book and read the old episodes that way. I tried using Calibre, but while it did work, I wasn't able to figure out how to format it nicely. The creator of **blogdown**, Yihui Xue, has also written a packages called **bookdown** which looked like it had the right features to make a proper looking e-book. 
+
+```{r}
+library(bookdown)
+library(dplyr)
+```
+
+I downloaded the episode transcripts from GRC.com. 
+
+## Obtaining Text
+```
+DIRECTORY <- "../datasets/sn501/"
+
+# change the i to go from the first show number you want to the last show number. As of 1 July 2017, the most recent show is #618.
+
+for(i in 500:599) {
+  shortname <- paste0("sn-", i, ".txt")
+  showname <- paste0("https://www.grc.com/sn/", shortname)
+  print(shortname)
+  download.file(showname, destfile = paste0(DIRECTORY, shortname), method = "curl")
+}
+```
+
+I loaded an example file and put it into a [tibble.](https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html)
+```{r}
+DIRECTORY <- "../datasets/sn501/"
+# list.files(DIRECTORY)
+episode <- readLines(paste0(DIRECTORY, "sn-501.txt"))
+episode[1:17]
+```
+
+From what I could tell, the first 13 lines appear to be formatted as metadata. These would be helpful for formatting as header text for bookdown to work on.
+
+Bookdown requires the first line of the file to be a chapter title with a first level heading. I think a useful format would be the title. Other metadata like Series and Archive could be discarded since would probably be the same for every file.
+
+Conceptually for each transcript, I had to discard lines 1-3 and 9, and move the title to the top. The rest would probably be ok to stay for now. But what if episodes were not identically formatted like this? I should use regular expressions.
+
+```{r}
+line_grc <- grep("^GIBSON", episode)
+line_series <- grep("^SERIES", episode)
+line_archive <- grep("^ARCHIVE", episode)
+
+episode <- episode[-c(line_grc, line_series, line_archive)]
+
+line_title <- grep("^TITLE", episode)
+episode_length <- length(episode)
+episode <- episode[c(line_title, 1:episode_length)]
+episode <- episode[-(line_title + 1)]
+
+episode <- gsub("\t", " ", episode)
+episode <- sub("TITLE:  ", "# ", episode)
+head(episode)
+```
+
+```{r}
+writeLines(episode, paste0(DIRECTORY, "sn-501.Rmd"))
+```
+
+So that's the process for one episode, how 'bout 501-600?
+
+```
+for(i in 501:599) {
+  episode <- readLines(paste0(DIRECTORY, "sn-", i, ".txt"))
+  
+  line_grc <- grep("^GIBSON", episode)
+  line_series <- grep("^SERIES", episode)
+  line_archive <- grep("^ARCHIVE", episode)
+
+  episode <- episode[-c(line_grc, line_series, line_archive)]
+
+  line_title <- grep("^TITLE", episode)
+  episode_length <- length(episode)
+  episode <- episode[c(line_title, 1:episode_length)]
+  episode <- episode[-(line_title + 1)]
+
+  episode <- gsub("\t", " ", episode)
+  episode <- sub("TITLE:  ", "# ", episode)
+
+  writeLines(episode, paste0(DIRECTORY, "sn-", i, ".Rmd"))
+}
+```
+
