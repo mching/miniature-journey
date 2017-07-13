@@ -1,0 +1,74 @@
+---
+title: "Interisland vs. Overseas Electric Car Parking"
+author: "Michael Ching"
+date: "2017-07-12"
+slug: interisland-vs-overseas-electric-car
+categories:
+  - R
+tags:
+  - parking
+  - electriccar
+---
+
+
+
+<p>The last time I went to the mainland I noticed that it seemed like there were a lot more electric cars parked in the overseas terminal parking lot than the interisland one. I wondered if it was a fluke or if there was a real difference. I collected some data to investigate!</p>
+<div id="methods" class="section level2">
+<h2>Methods</h2>
+<p>I had two trips back to back, my weekly interisland trip for work and my annual district meeting for my professional society. I drove around the interisland terminal around 4:30 on a Tuesday and the overseas around 6:30 on the following day. I videoed the two drives and counted the number of electric cars out loud as I saw them. I went back and reviewed the tapes to get the number of total cars in each lot.</p>
+<p>I used a Fisher exact test to calculate the probability of seeing the distribution of electric cars in each lot if they were actually drawn from the same population. I used the epi.2by2() function from the <strong>epiR</strong> package to get an estimate of the prevalence ratio and 95% confidence intervals.</p>
+</div>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<p>Out of 213 cars in the interisland sample, 14 were electric (6.6%). This compared to 21/172 (12.2%) in the overseas lot.</p>
+<pre class="r"><code>fisher.test(matrix(c(14, 21, 213-14, 172-21), 2))</code></pre>
+<pre><code>## 
+##  Fisher&#39;s Exact Test for Count Data
+## 
+## data:  matrix(c(14, 21, 213 - 14, 172 - 21), 2)
+## p-value = 0.07366
+## alternative hypothesis: true odds ratio is not equal to 1
+## 95 percent confidence interval:
+##  0.2301819 1.0841911
+## sample estimates:
+## odds ratio 
+##   0.506761</code></pre>
+<p>I wasn’t able to reject the null hypothesis, but it was very close!</p>
+<pre class="r"><code>library(epiR)</code></pre>
+<pre><code>## Warning: package &#39;epiR&#39; was built under R version 3.4.1</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## Package epiR 0.9-87 is loaded</code></pre>
+<pre><code>## Type help(epi.about) for summary information</code></pre>
+<pre><code>## </code></pre>
+<pre class="r"><code>epi.2by2(as.table(matrix(c(14, 21, 213-14, 172-21), 2)), method = &quot;cross.sectional&quot;)</code></pre>
+<pre><code>##              Outcome +    Outcome -      Total        Prevalence *
+## Exposed +           14          199        213                6.57
+## Exposed -           21          151        172               12.21
+## Total               35          350        385                9.09
+##                  Odds
+## Exposed +      0.0704
+## Exposed -      0.1391
+## Total          0.1000
+## 
+## Point estimates and 95 % CIs:
+## -------------------------------------------------------------------
+## Prevalence ratio                             0.54 (0.28, 1.03)
+## Odds ratio                                   0.51 (0.25, 1.03)
+## Attrib prevalence *                          -5.64 (-11.55, 0.28)
+## Attrib prevalence in population *            -3.12 (-8.79, 2.55)
+## Attrib fraction in exposed (%)              -85.76 (-254.30, 2.61)
+## Attrib fraction in population (%)           -34.30 (-74.20, -3.54)
+## -------------------------------------------------------------------
+##  X2 test statistic: 3.658 p-value: 0.056
+##  Wald confidence limits
+##  * Outcomes per 100 population units</code></pre>
+</div>
+<div id="discussion" class="section level2">
+<h2>Discussion</h2>
+<p>I did not have enough power to detect a difference between the two lots but it seems quite unlikely that the two lots are drawn from the same population. If I had more cars, this would probably be significant at the p = 0.05 level.</p>
+<p>I would guess that the reason that there are more electric cars in the overseas terminal is because (1) it’s more expensive to fly overseas and people with more money can afford electric cars, (2) more of the interisland terminal consists of commuters whose workplace pays for their parking, and (3) the trip durations are longer in the overseas terminal, making it more cost savings to park your electric car there than in the inter-island terminal. There are probably some other possibilities for why there were more electric cars in the overseas terminal.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>While this study did not find a statistically significant result, it is likely that more data could produce such a result. There appears to be a higher proportion of electric cars in the overseas parking structure than the inter-island structure.</p>
+</div>

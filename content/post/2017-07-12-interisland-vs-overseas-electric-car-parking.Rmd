@@ -1,0 +1,41 @@
+---
+title: "Interisland vs. Overseas Electric Car Parking"
+author: "Michael Ching"
+date: "2017-07-12"
+slug: interisland-vs-overseas-electric-car
+categories:
+  - R
+tags:
+  - parking
+  - electriccar
+---
+
+The last time I went to the mainland I noticed that it seemed like there were a lot more electric cars parked in the overseas terminal parking lot than the interisland one. I wondered if it was a fluke or if there was a real difference. I collected some data to investigate!
+
+## Methods
+I had two trips back to back, my weekly interisland trip for work and my annual district meeting for my professional society. I drove around the interisland terminal around 4:30 on a Tuesday and the overseas around 6:30 on the following day. I videoed the two drives and counted the number of electric cars out loud as I saw them. I went back and reviewed the tapes to get the number of total cars in each lot. 
+
+I used a Fisher exact test to calculate the probability of seeing the distribution of electric cars in each lot if they were actually drawn from the same population. I used the epi.2by2() function from the **epiR** package to get an estimate of the prevalence ratio and 95% confidence intervals.
+
+## Results
+Out of 213 cars in the interisland sample, 14 were electric (6.6%). This compared to 21/172 (12.2%) in the overseas lot.
+
+```{r}
+fisher.test(matrix(c(14, 21, 213-14, 172-21), 2))
+```
+
+I wasn't able to reject the null hypothesis, but it was very close!
+
+```{r}
+library(epiR)
+epi.2by2(as.table(matrix(c(14, 21, 213-14, 172-21), 2)), method = "cross.sectional")
+```
+
+## Discussion
+
+I did not have enough power to detect a difference between the two lots but it seems quite unlikely that the two lots are drawn from the same population. If I had more cars, this would probably be significant at the p = 0.05 level. 
+
+I would guess that the reason that there are more electric cars in the overseas terminal is because (1) it's more expensive to fly overseas and people with more money can afford electric cars, (2) more of the interisland terminal consists of commuters whose workplace pays for their parking, and (3) the trip durations are longer in the overseas terminal, making it more cost savings to park your electric car there than in the inter-island terminal. There are probably some other possibilities for why there were more electric cars in the overseas terminal.
+
+## Conclusion
+While this study did not find a statistically significant result, it is likely that more data could produce such a result. There appears to be a higher proportion of electric cars in the overseas parking structure than the inter-island structure.
