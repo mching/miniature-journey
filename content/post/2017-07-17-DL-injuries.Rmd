@@ -1,0 +1,183 @@
+---
+title: "Exploring Disabled List Data from Major League Baseball"
+author: "Michael Ching"
+date: "2017-07-17"
+slug: DL-data-exploration
+categories:
+  - R
+tags:
+  - baseball
+  - sports
+---
+
+I was interested in the duration of certain injuries for baseball players. It's difficult to get data on this although I discovered a series of Google Sheets that documented disabled list (DL) stays over the years. I combined these sheets and cleaned these up manually. I entered these into R and crunched the data.
+
+## Methods
+
+I downloaded the data from Google and used the tidyverse to look at them.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(lubridate)
+DL <- read.csv("../datasets/DL2010_2016.csv")
+DL <- tbl_df(DL)
+```
+
+I converted the dates into Date class for later manipulation. The **lubridate** package makes this simple.
+```{r}
+DL$on_DL <- ymd(DL$on_DL)
+DL$off_DL <- ymd(DL$off_DL)
+```
+
+First look at DL length was via summary().
+```{r}
+summary(DL$days)
+```
+
+This returned negative DL days. I looked those up...
+```{r}
+which(DL$days < 0)
+DL[which(DL$days < 0),]
+```
+
+Some googling showed what happened with these DL stints. Russell Branyan started 2010 on the DL with a herniated disk ([source](http://waitingfornextyear.com/2010/03/russell-branyan-to-start-season-on-dl/)) and came off the DL around April 20 ([source](https://www.youtube.com/watch?v=1xrkb5elJnY)). Milton Bradley ended this season on DL after being placed on it in July for knee injury. Hairston was injured in September with a fractured right tibia. I manually recoded Branyan's off DL date to April 20 and the others to the end of the season.
+
+```{r}
+DL %>% filter(Season == 2010) %>% summarize(max(off_DL))
+```
+
+```{r}
+DL$off_DL[which(DL$days <0)] <- ymd(c("2010-04-20", "2010-10-03", "2010-10-03"))
+DL$days[which(DL$days <0)] <- as.integer(DL$off_DL[which(DL$days <0)] - DL$on_DL[which(DL$days <0)])
+```
+
+## DL Stay by Injury Location
+I summarized the length of DL stay by anatomical location. 
+```{r}
+DL %>% filter(censored_right == F) %>% 
+  group_by(Location_recode) %>% 
+  filter(length(days) > 2) %>% 
+  summarize(n = length(Location_recode), median_days = median(days), 
+            mean_days = mean(days), sd_days = sd(days)) %>%
+  filter(n >= 10) %>%
+  arrange(desc(median_days)) %>%
+  as.data.frame()
+```
+
+Injury to the latissiums dorsi was the longest median injury, requiring more time out than extremity injuries. 
+
+```{r}
+DL %>% filter(censored_right == F) %>% 
+  filter(Location_recode == "latissimus dorsi" | Location_recode == "rotator cuff") %>%
+  ggplot(aes(x = Location_recode, y = days)) + 
+  geom_boxplot() +
+  ggtitle("Days on DL for Latissimus Dorsi vs Rotator Cuff Injuries")
+```
+
+## DL Stay by Injury Type
+Here is the summary by injury type.
+
+```{r}
+DL %>% filter(censored_right == F) %>% 
+  group_by(Injury_type_recode) %>% 
+  filter(length(days) > 2) %>% 
+  summarize(n = length(Location_recode), median_days = median(days), 
+            mean_days = mean(days), sd_days = sd(days)) %>%  
+  filter(n >= 10) %>%
+  arrange(desc(median_days)) %>% 
+  as.data.frame()
+```
+
+It looked like Tommy John was the longest time out (although I did not include people who had season ending surgeries). This group must have been the people who came back in the season from a prior year's Tommy John.
+
+Fractures took 6.5 weeks on average to return. Sprains were similar at about a month!
+
+```{r}
+DL %>% filter(censored_right == F) %>% 
+  filter(Injury_type_recode == "fracture" | Injury_type_recode == "sprain") %>%
+  ggplot(aes(x = Injury_type_recode, y = days)) + 
+  geom_boxplot() +
+  ggtitle("Days on DL for Fractures vs. Sprains")
+```
+
+## DL Stay by Injury Location and Type
+### Calf Strains
+I was interested in calf strains because I just had one myself. I was running intervals with my son and felt a stab in my calf. I limped around for a day or two then started running again after a few more days. This was too soon, and I strained it again. I'm no major league baseball player, but I thought maybe seeing how long they stayed out from a calf strain could help guide my recovery.
+
+I calculated some summary statistics for calf strain.
+```{r}
+DL %>% filter(censored_right == F) %>%
+  filter(Injury_type_recode == "strain" & Location_recode == "calf") %>% 
+  summarize(n = length(Injury_type_recode), median(days), mean(days), sd(days))
+```
+
+The median time off was 3 weeks. The mean was considerably longer (1 week more), which suggested the presence of outliers. I plotted the distribution to look at this more closely.
+
+```{r}
+DL %>% filter(censored_right == F) %>%
+  filter(Injury_type_recode == "strain" & Location_recode == "calf") %>% 
+  ggplot(aes(x = Injury_type_recode, y = days)) + 
+  geom_boxplot() +
+  ggtitle("Days on DL for Calf Strain")
+```
+
+
+### Oblique Strain for Pitchers
+The other injury type often discussed on my favorite baseball podcast is the "oblique strain" for pitchers. This was supposed to be 4-6 weeks according to the podcast's injury expert, Stephania Bell. I decided to see if my data supported this statement.
+
+```{r}
+DL %>% filter(censored_right == F) %>% 
+  filter(Position_recode == "P" | 
+           Position_recode == "LHP" | 
+           Position_recode == "RHP") %>%
+  filter(Injury_type_recode == "strain" & Location_recode == "oblique") %>%
+  summarize(n = length(Injury_type_recode), 
+            median_days = median(days), 
+            mean_days = mean(days, na.rm = T), 
+            sd_days = sd(days, na.rm = T))
+
+```
+
+The median was indeed within the 4-6 week (28-42 day) window. I plotted out the distribution to see this graphically.
+
+```{r}
+DL %>% filter(censored_right == F) %>% 
+  filter(Position_recode == "P" | 
+           Position_recode == "LHP" | 
+           Position_recode == "RHP") %>%
+  filter(Injury_type_recode == "strain" & Location_recode == "oblique") %>% 
+  ggplot(aes(x = Injury_type_recode, y = days)) + 
+  geom_boxplot() + 
+  ggtitle("DL Days for Oblique Strain in Pitchers")
+```
+
+In this case it does look like most people are taking between 3 and 6 weeks to come back.
+
+Incidentally, I had originally plotted all of these plots above using histograms, but the data were sparse enough that I thought boxplots looked better. Here's the data for 58 oblique strains. Which do you think does a better job of summarizing the data: the boxplot above or the histogram below?
+
+```{r}
+DL %>% filter(censored_right == F) %>% 
+  filter(Position_recode == "P" | 
+           Position_recode == "LHP" | 
+           Position_recode == "RHP") %>%
+  filter(Injury_type_recode == "strain" & Location_recode == "oblique") %>%
+  ggplot(aes(x = days)) + 
+  geom_histogram(bins = 10) +
+  ggtitle("Days on DL for Oblique Strain in Pitchers")
+
+```
+
+In this case it looks like maybe there is a bimodal distribution rather than a normal one with a long tail. The histogram uncovers this while the boxplot cannot.
+
+## Discussion
+This work introduced my concatenation of several DL datasets. This allowed me to determine DL length for certain injuries, such as my calf strain or the infamous oblique strain in pitchers. 
+
+Boxplots seemed to do a better job of describing the distribution than the histograms in several of these situations. There are definitely limitations to boxplots since many people may not understand the quantiles that are involved in creating such a plot. A histogram seems more intuitive to me, and when a specific number of bins were selected,  the underlying distribution may emerge better.
+
+### Limitations
+One limitation was that some of the injuries were season-ending. That is, if someone broke their ankle three weeks before the end of the season, they were taken off of the DL at the end of the season, even though they were not ready to come back to play.
+
+## Conclusion
+Time on the disabled list varies by injury and location. A boxplot may do a nicer job of summarizing sparse data than a histogram but may miss some variation in the data.

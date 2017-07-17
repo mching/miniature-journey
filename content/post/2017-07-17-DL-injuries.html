@@ -1,0 +1,236 @@
+---
+title: "Exploring Disabled List Data from Major League Baseball"
+author: "Michael Ching"
+date: "2017-07-17"
+slug: DL-data-exploration
+categories:
+  - R
+tags:
+  - baseball
+  - sports
+---
+
+
+
+<p>I was interested in the duration of certain injuries for baseball players. It’s difficult to get data on this although I discovered a series of Google Sheets that documented disabled list (DL) stays over the years. I combined these sheets and cleaned these up manually. I entered these into R and crunched the data.</p>
+<div id="methods" class="section level2">
+<h2>Methods</h2>
+<p>I downloaded the data from Google and used the tidyverse to look at them.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## Warning: Installed Rcpp (0.12.12) different from Rcpp used to build dplyr (0.12.11).
+## Please reinstall dplyr to avoid random crashes or undefined behavior.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(tidyr)
+library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     date</code></pre>
+<pre class="r"><code>DL &lt;- read.csv(&quot;../datasets/DL2010_2016.csv&quot;)
+DL &lt;- tbl_df(DL)</code></pre>
+<p>I converted the dates into Date class for later manipulation. The <strong>lubridate</strong> package makes this simple.</p>
+<pre class="r"><code>DL$on_DL &lt;- ymd(DL$on_DL)
+DL$off_DL &lt;- ymd(DL$off_DL)</code></pre>
+<p>First look at DL length was via summary().</p>
+<pre class="r"><code>summary(DL$days)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  -87.00   20.00   36.00   56.63   74.00  185.00</code></pre>
+<p>This returned negative DL days. I looked those up…</p>
+<pre class="r"><code>which(DL$days &lt; 0)</code></pre>
+<pre><code>## [1]   5 331 428</code></pre>
+<pre class="r"><code>DL[which(DL$days &lt; 0),]</code></pre>
+<pre><code>## # A tibble: 3 x 19
+##   Last_name First_name            Name DL_type Season   Team Position
+##      &lt;fctr&gt;     &lt;fctr&gt;          &lt;fctr&gt;   &lt;int&gt;  &lt;int&gt; &lt;fctr&gt;   &lt;fctr&gt;
+## 1   Branyan    Russell Russell Branyan      15   2010               I
+## 2   Bradley     Milton  Milton Bradley      15   2010               O
+## 3  Hairston      Jerry  Jerry Hairston      15   2010               I
+## # ... with 12 more variables: on_DL &lt;date&gt;, off_DL &lt;date&gt;, days &lt;int&gt;,
+## #   censored_right &lt;lgl&gt;, Location &lt;fctr&gt;, Injury_type &lt;fctr&gt;,
+## #   Side &lt;fctr&gt;, PlayerId &lt;fctr&gt;, Location_recode &lt;fctr&gt;,
+## #   Injury_type_recode &lt;fctr&gt;, Side_recode &lt;fctr&gt;, Position_recode &lt;fctr&gt;</code></pre>
+<p>Some googling showed what happened with these DL stints. Russell Branyan started 2010 on the DL with a herniated disk (<a href="http://waitingfornextyear.com/2010/03/russell-branyan-to-start-season-on-dl/">source</a>) and came off the DL around April 20 (<a href="https://www.youtube.com/watch?v=1xrkb5elJnY">source</a>). Milton Bradley ended this season on DL after being placed on it in July for knee injury. Hairston was injured in September with a fractured right tibia. I manually recoded Branyan’s off DL date to April 20 and the others to the end of the season.</p>
+<pre class="r"><code>DL %&gt;% filter(Season == 2010) %&gt;% summarize(max(off_DL))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `max(off_DL)`
+##          &lt;date&gt;
+## 1    2010-10-03</code></pre>
+<pre class="r"><code>DL$off_DL[which(DL$days &lt;0)] &lt;- ymd(c(&quot;2010-04-20&quot;, &quot;2010-10-03&quot;, &quot;2010-10-03&quot;))
+DL$days[which(DL$days &lt;0)] &lt;- as.integer(DL$off_DL[which(DL$days &lt;0)] - DL$on_DL[which(DL$days &lt;0)])</code></pre>
+</div>
+<div id="dl-stay-by-injury-location" class="section level2">
+<h2>DL Stay by Injury Location</h2>
+<p>I summarized the length of DL stay by anatomical location.</p>
+<pre class="r"><code>DL %&gt;% filter(censored_right == F) %&gt;% 
+  group_by(Location_recode) %&gt;% 
+  filter(length(days) &gt; 2) %&gt;% 
+  summarize(n = length(Location_recode), median_days = median(days), 
+            mean_days = mean(days), sd_days = sd(days)) %&gt;%
+  filter(n &gt;= 10) %&gt;%
+  arrange(desc(median_days)) %&gt;%
+  as.data.frame()</code></pre>
+<pre><code>##     Location_recode   n median_days mean_days  sd_days
+## 1  latissimus dorsi  27        49.0  57.96296 37.42118
+## 2      rotator cuff  26        43.5  54.34615 44.19316
+## 3             elbow 239        39.0  58.84519 45.36024
+## 4              hand  61        38.0  39.47541 18.32904
+## 5              foot  53        35.0  39.75472 24.85257
+## 6             wrist  84        35.0  43.08333 28.67399
+## 7            finger  65        33.0  37.95385 25.22612
+## 8             ankle  71        32.0  40.39437 28.04969
+## 9          achilles  14        31.5  37.57143 23.04415
+## 10             knee 157        31.0  40.71975 31.43631
+## 11         shoulder 337        31.0  43.38576 31.80736
+## 12            thumb  69        31.0  37.37681 24.47033
+## 13          triceps  22        31.0  36.45455 24.26781
+## 14          forearm  74        29.0  36.59459 24.66594
+## 15           biceps  37        28.0  33.51351 24.27118
+## 16          oblique 169        28.0  31.43787 17.71158
+## 17        abdominal  19        26.0  34.73684 24.20478
+## 18              hip  36        26.0  37.05556 31.04738
+## 19       quadriceps  56        25.0  32.67857 20.14232
+## 20             calf  56        24.0  31.41071 24.99729
+## 21             ribs  38        24.0  30.26316 20.64459
+## 22              toe  19        24.0  30.57895 19.03014
+## 23             back 154        22.5  35.34416 31.94038
+## 24            groin  88        22.5  29.70455 20.04659
+## 25      intercostal  34        22.5  35.85294 34.36536
+## 26        hamstring 240        22.0  29.22083 19.91292
+## 27         internal  20        22.0  24.45000 13.75146
+## 28             neck  30        22.0  25.83333 16.82175
+## 29             head  89        13.0  24.95506 26.81032</code></pre>
+<p>Injury to the latissiums dorsi was the longest median injury, requiring more time out than extremity injuries.</p>
+<pre class="r"><code>DL %&gt;% filter(censored_right == F) %&gt;% 
+  filter(Location_recode == &quot;latissimus dorsi&quot; | Location_recode == &quot;rotator cuff&quot;) %&gt;%
+  ggplot(aes(x = Location_recode, y = days)) + 
+  geom_boxplot() +
+  ggtitle(&quot;Days on DL for Latissimus Dorsi vs Rotator Cuff Injuries&quot;)</code></pre>
+<p><img src="/post/2017-07-17-DL-injuries_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="dl-stay-by-injury-type" class="section level2">
+<h2>DL Stay by Injury Type</h2>
+<p>Here is the summary by injury type.</p>
+<pre class="r"><code>DL %&gt;% filter(censored_right == F) %&gt;% 
+  group_by(Injury_type_recode) %&gt;% 
+  filter(length(days) &gt; 2) %&gt;% 
+  summarize(n = length(Location_recode), median_days = median(days), 
+            mean_days = mean(days), sd_days = sd(days)) %&gt;%  
+  filter(n &gt;= 10) %&gt;%
+  arrange(desc(median_days)) %&gt;% 
+  as.data.frame()</code></pre>
+<pre><code>##    Injury_type_recode    n median_days mean_days   sd_days
+## 1  Tommy John surgery   49        96.0 101.38776 43.736339
+## 2              injury   64        53.5  58.04688 35.894214
+## 3                torn   17        51.0  60.64706 43.223173
+## 4             surgery  101        50.0  64.49505 47.340812
+## 5            fracture  178        40.5  46.00000 27.478805
+## 6          discomfort   10        34.0  44.60000 32.249720
+## 7             fatigue   13        30.0  39.07692 32.683996
+## 8              sprain  180        30.0  37.19444 24.686209
+## 9          tendinitis   99        30.0  37.78788 25.041709
+## 10          tightness   32        30.0  33.59375 17.119804
+## 11           bursitis   13        28.0  35.00000 28.801042
+## 12   plantar faciitis   13        28.0  34.53846 16.470253
+## 13       inflammation  228        26.0  38.07456 29.987496
+## 14             strain 1018        26.0  32.93811 23.575004
+## 15        impingement   21        25.0  40.47619 30.874940
+## 16          stiffness   13        25.0  25.15385 11.929279
+## 17               sore   76        24.5  40.64474 36.694306
+## 18            blister   11        23.0  26.00000  8.625543
+## 19          contusion   41        22.0  30.00000 18.845424
+## 20             spasms   15        19.0  33.20000 31.124634
+## 21            bruised   38        17.5  26.36842 18.626371
+## 22         laceration   16        16.0  19.87500  8.405355
+## 23         concussion   86        13.0  23.65116 26.224716</code></pre>
+<p>It looked like Tommy John was the longest time out (although I did not include people who had season ending surgeries). This group must have been the people who came back in the season from a prior year’s Tommy John.</p>
+<p>Fractures took 6.5 weeks on average to return. Sprains were similar at about a month!</p>
+<pre class="r"><code>DL %&gt;% filter(censored_right == F) %&gt;% 
+  filter(Injury_type_recode == &quot;fracture&quot; | Injury_type_recode == &quot;sprain&quot;) %&gt;%
+  ggplot(aes(x = Injury_type_recode, y = days)) + 
+  geom_boxplot() +
+  ggtitle(&quot;Days on DL for Fractures vs. Sprains&quot;)</code></pre>
+<p><img src="/post/2017-07-17-DL-injuries_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="dl-stay-by-injury-location-and-type" class="section level2">
+<h2>DL Stay by Injury Location and Type</h2>
+<div id="calf-strains" class="section level3">
+<h3>Calf Strains</h3>
+<p>I was interested in calf strains because I just had one myself. I was running intervals with my son and felt a stab in my calf. I limped around for a day or two then started running again after a few more days. This was too soon, and I strained it again. I’m no major league baseball player, but I thought maybe seeing how long they stayed out from a calf strain could help guide my recovery.</p>
+<p>I calculated some summary statistics for calf strain.</p>
+<pre class="r"><code>DL %&gt;% filter(censored_right == F) %&gt;%
+  filter(Injury_type_recode == &quot;strain&quot; &amp; Location_recode == &quot;calf&quot;) %&gt;% 
+  summarize(n = length(Injury_type_recode), median(days), mean(days), sd(days))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##       n `median(days)` `mean(days)` `sd(days)`
+##   &lt;int&gt;          &lt;int&gt;        &lt;dbl&gt;      &lt;dbl&gt;
+## 1    51             24     31.07843   24.89164</code></pre>
+<p>The median time off was 3 weeks. The mean was considerably longer (1 week more), which suggested the presence of outliers. I plotted the distribution to look at this more closely.</p>
+<pre class="r"><code>DL %&gt;% filter(censored_right == F) %&gt;%
+  filter(Injury_type_recode == &quot;strain&quot; &amp; Location_recode == &quot;calf&quot;) %&gt;% 
+  ggplot(aes(x = Injury_type_recode, y = days)) + 
+  geom_boxplot() +
+  ggtitle(&quot;Days on DL for Calf Strain&quot;)</code></pre>
+<p><img src="/post/2017-07-17-DL-injuries_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="oblique-strain-for-pitchers" class="section level3">
+<h3>Oblique Strain for Pitchers</h3>
+<p>The other injury type often discussed on my favorite baseball podcast is the “oblique strain” for pitchers. This was supposed to be 4-6 weeks according to the podcast’s injury expert, Stephania Bell. I decided to see if my data supported this statement.</p>
+<pre class="r"><code>DL %&gt;% filter(censored_right == F) %&gt;% 
+  filter(Position_recode == &quot;P&quot; | 
+           Position_recode == &quot;LHP&quot; | 
+           Position_recode == &quot;RHP&quot;) %&gt;%
+  filter(Injury_type_recode == &quot;strain&quot; &amp; Location_recode == &quot;oblique&quot;) %&gt;%
+  summarize(n = length(Injury_type_recode), 
+            median_days = median(days), 
+            mean_days = mean(days, na.rm = T), 
+            sd_days = sd(days, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##       n median_days mean_days  sd_days
+##   &lt;int&gt;       &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1    58        30.5  34.67241 18.29523</code></pre>
+<p>The median was indeed within the 4-6 week (28-42 day) window. I plotted out the distribution to see this graphically.</p>
+<pre class="r"><code>DL %&gt;% filter(censored_right == F) %&gt;% 
+  filter(Position_recode == &quot;P&quot; | 
+           Position_recode == &quot;LHP&quot; | 
+           Position_recode == &quot;RHP&quot;) %&gt;%
+  filter(Injury_type_recode == &quot;strain&quot; &amp; Location_recode == &quot;oblique&quot;) %&gt;% 
+  ggplot(aes(x = Injury_type_recode, y = days)) + 
+  geom_boxplot() + 
+  ggtitle(&quot;DL Days for Oblique Strain in Pitchers&quot;)</code></pre>
+<p><img src="/post/2017-07-17-DL-injuries_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>In this case it does look like most people are taking between 3 and 6 weeks to come back.</p>
+<p>Incidentally, I had originally plotted all of these plots above using histograms, but the data were sparse enough that I thought boxplots looked better. Here’s the data for 58 oblique strains. Which do you think does a better job of summarizing the data: the boxplot above or the histogram below?</p>
+<pre class="r"><code>DL %&gt;% filter(censored_right == F) %&gt;% 
+  filter(Position_recode == &quot;P&quot; | 
+           Position_recode == &quot;LHP&quot; | 
+           Position_recode == &quot;RHP&quot;) %&gt;%
+  filter(Injury_type_recode == &quot;strain&quot; &amp; Location_recode == &quot;oblique&quot;) %&gt;%
+  ggplot(aes(x = days)) + 
+  geom_histogram(bins = 10) +
+  ggtitle(&quot;Days on DL for Oblique Strain in Pitchers&quot;)</code></pre>
+<p><img src="/post/2017-07-17-DL-injuries_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>In this case it looks like maybe there is a bimodal distribution rather than a normal one with a long tail. The histogram uncovers this while the boxplot cannot.</p>
+</div>
+</div>
+<div id="discussion" class="section level2">
+<h2>Discussion</h2>
+<p>This work introduced my concatenation of several DL datasets. This allowed me to determine DL length for certain injuries, such as my calf strain or the infamous oblique strain in pitchers.</p>
+<p>Boxplots seemed to do a better job of describing the distribution than the histograms in several of these situations. There are definitely limitations to boxplots since many people may not understand the quantiles that are involved in creating such a plot. A histogram seems more intuitive to me, and when a specific number of bins were selected, the underlying distribution may emerge better.</p>
+<div id="limitations" class="section level3">
+<h3>Limitations</h3>
+<p>One limitation was that some of the injuries were season-ending. That is, if someone broke their ankle three weeks before the end of the season, they were taken off of the DL at the end of the season, even though they were not ready to come back to play.</p>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Time on the disabled list varies by injury and location. A boxplot may do a nicer job of summarizing sparse data than a histogram but may miss some variation in the data.</p>
+</div>
