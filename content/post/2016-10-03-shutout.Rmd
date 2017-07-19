@@ -20,7 +20,7 @@ library(dplyr)
 ## Data Source
 To obtain a source of data, I downloaded a database of football game statistics from 2000-2013, from http://www.repole.com/sun4cast/data.html. I unzipped this to the working directory.
 
-```{r, cache=TRUE}
+```{r, cache=F}
 if(!file.exists("../datasets/cfb/cfbstats.zip")) {
   download_url <- "http://www.repole.com/sun4cast/stats/cfbstats.zip"
   download.file(download_url, "../datasets/cfb/cfbstats.zip")

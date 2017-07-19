@@ -1,0 +1,107 @@
+---
+title: "Using Bookdown to create a Security Now Ebook"
+author: Mike Ching
+date: "2017-07-10"
+slug: securitynow-ebook
+categories:
+  - R
+tags:
+  - bookdown
+  - securitynow
+---
+
+
+
+<p>Recently I have been exploring the <strong>blogdown</strong> package to redo my website using <a href="https://gohugo.io">Hugo</a>, and it resurrected an old idea that I had. Security Now, one of my favorite podcasts, has transcriptions of each episode, and I thought it would be neat to put them into an e-book and read the old episodes that way. I tried using Calibre, but while it did work, I wasn’t able to figure out how to format it nicely. The creator of <strong>blogdown</strong>, Yihui Xue, has also written a packages called <strong>bookdown</strong> which looked like it had the right features to make a proper looking e-book.</p>
+<pre class="r"><code>library(bookdown)
+library(dplyr)</code></pre>
+<pre><code>## Warning: Installed Rcpp (0.12.12) different from Rcpp used to build dplyr (0.12.11).
+## Please reinstall dplyr to avoid random crashes or undefined behavior.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<p>I downloaded the episode transcripts from GRC.com.</p>
+<div id="obtaining-text" class="section level2">
+<h2>Obtaining Text</h2>
+<pre><code>DIRECTORY &lt;- &quot;../datasets/sn501/&quot;
+
+# change the i to go from the first show number you want to the last show number. As of 1 July 2017, the most recent show is #618.
+
+for(i in 500:599) {
+  shortname &lt;- paste0(&quot;sn-&quot;, i, &quot;.txt&quot;)
+  showname &lt;- paste0(&quot;https://www.grc.com/sn/&quot;, shortname)
+  print(shortname)
+  download.file(showname, destfile = paste0(DIRECTORY, shortname), method = &quot;curl&quot;)
+}</code></pre>
+<p>I loaded an example file and put it into a <a href="https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html">tibble.</a></p>
+<pre class="r"><code>DIRECTORY &lt;- &quot;../datasets/sn501/&quot;
+# list.files(DIRECTORY)
+episode &lt;- readLines(paste0(DIRECTORY, &quot;sn-501.txt&quot;))
+episode[1:17]</code></pre>
+<pre><code>##  [1] &quot;GIBSON RESEARCH CORPORATION\t\thttps://www.GRC.com/&quot;                                                                                                                                                                                                                                                                                                                                                                  
+##  [2] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                     
+##  [3] &quot;SERIES:\t\tSecurity Now!&quot;                                                                                                                                                                                                                                                                                                                                                                                             
+##  [4] &quot;EPISODE:\t#501&quot;                                                                                                                                                                                                                                                                                                                                                                                                       
+##  [5] &quot;DATE:\t\tMarch 31, 2015&quot;                                                                                                                                                                                                                                                                                                                                                                                              
+##  [6] &quot;TITLE:\t\tListener Feedback #209&quot;                                                                                                                                                                                                                                                                                                                                                                                     
+##  [7] &quot;HOSTS:\tSteve Gibson &amp; Leo Laporte&quot;                                                                                                                                                                                                                                                                                                                                                                                   
+##  [8] &quot;SOURCE:\thttp://media.GRC.com/sn/SN-501.mp3&quot;                                                                                                                                                                                                                                                                                                                                                                          
+##  [9] &quot;ARCHIVE:\thttp://www.GRC.com/securitynow.htm &quot;                                                                                                                                                                                                                                                                                                                                                                        
+## [10] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                     
+## [11] &quot;DESCRIPTION:  Leo and I discuss the week&#39;s major security events and discuss questions and comments from listeners of previous episodes.  We tie up loose ends, explore a wide range of topics that are too small to fill their own episode, clarify any confusion from previous installments, and present real world application notes for any of the security technologies and issues we have previously discussed.&quot;
+## [12] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                     
+## [13] &quot;SHOW TEASE:  It&#39;s time for Security Now!.  Steve Gibson is here.  I&#39;m here.  We&#39;re going to talk about the latest security news.  Yes, another survey of bad passwords coming up.  And then 10 great questions from you, our audience members.  Stay tuned.  Security Now! is next.&quot;                                                                                                                                  
+## [14] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                     
+## [15] &quot;LEO LAPORTE:  This is Security Now! with Steve Gibson, Episode 501, recorded Tuesday, March 31st, 2015:  Your questions, Steve&#39;s answers, #209.&quot;                                                                                                                                                                                                                                                                      
+## [16] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                     
+## [17] &quot;It&#39;s time for Security Now!, the show where we protect you and your loved ones online, your privacy, your security, with this guy right here, the Explainer in Chief, Steven \&quot;Tiberius\&quot; Gibson.  And he is here once again to both put us all on edge, and then make to us feel better about...&quot;</code></pre>
+<p>From what I could tell, the first 13 lines appear to be formatted as metadata. These would be helpful for formatting as header text for bookdown to work on.</p>
+<p>Bookdown requires the first line of the file to be a chapter title with a first level heading. I think a useful format would be the title. Other metadata like Series and Archive could be discarded since would probably be the same for every file.</p>
+<p>Conceptually for each transcript, I had to discard lines 1-3 and 9, and move the title to the top. The rest would probably be ok to stay for now. But what if episodes were not identically formatted like this? I should use regular expressions.</p>
+<pre class="r"><code>line_grc &lt;- grep(&quot;^GIBSON&quot;, episode)
+line_series &lt;- grep(&quot;^SERIES&quot;, episode)
+line_archive &lt;- grep(&quot;^ARCHIVE&quot;, episode)
+
+episode &lt;- episode[-c(line_grc, line_series, line_archive)]
+
+line_title &lt;- grep(&quot;^TITLE&quot;, episode)
+episode_length &lt;- length(episode)
+episode &lt;- episode[c(line_title, 1:episode_length)]
+episode &lt;- episode[-(line_title + 1)]
+
+episode &lt;- gsub(&quot;\t&quot;, &quot; &quot;, episode)
+episode &lt;- sub(&quot;TITLE:  &quot;, &quot;# &quot;, episode)
+head(episode)</code></pre>
+<pre><code>## [1] &quot;# Listener Feedback #209&quot;                  
+## [2] &quot;&quot;                                          
+## [3] &quot;EPISODE: #501&quot;                             
+## [4] &quot;DATE:  March 31, 2015&quot;                     
+## [5] &quot;HOSTS: Steve Gibson &amp; Leo Laporte&quot;         
+## [6] &quot;SOURCE: http://media.GRC.com/sn/SN-501.mp3&quot;</code></pre>
+<pre class="r"><code>writeLines(episode, paste0(DIRECTORY, &quot;sn-501.Rmd&quot;))</code></pre>
+<p>So that’s the process for one episode, how ’bout 501-600?</p>
+<pre><code>for(i in 501:599) {
+  episode &lt;- readLines(paste0(DIRECTORY, &quot;sn-&quot;, i, &quot;.txt&quot;))
+  
+  line_grc &lt;- grep(&quot;^GIBSON&quot;, episode)
+  line_series &lt;- grep(&quot;^SERIES&quot;, episode)
+  line_archive &lt;- grep(&quot;^ARCHIVE&quot;, episode)
+
+  episode &lt;- episode[-c(line_grc, line_series, line_archive)]
+
+  line_title &lt;- grep(&quot;^TITLE&quot;, episode)
+  episode_length &lt;- length(episode)
+  episode &lt;- episode[c(line_title, 1:episode_length)]
+  episode &lt;- episode[-(line_title + 1)]
+
+  episode &lt;- gsub(&quot;\t&quot;, &quot; &quot;, episode)
+  episode &lt;- sub(&quot;TITLE:  &quot;, &quot;# &quot;, episode)
+
+  writeLines(episode, paste0(DIRECTORY, &quot;sn-&quot;, i, &quot;.Rmd&quot;))
+}</code></pre>
+</div>
