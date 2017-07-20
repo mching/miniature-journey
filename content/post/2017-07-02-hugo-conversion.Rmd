@@ -9,13 +9,13 @@ tags:
   - hugo
 ---
 
-I've decided to convert this website from Github Pages/Jekyll to Hugo. Th inspiration for this came when I saw the website that [Roger Peng](http://www.biostat.jhsph.edu/~rpeng/) put up for his live data analysis screencasts, and there was a big Hugo logo on the bottom. After learning more about this and discovering the **blogdown** package by Yihue Xie that is based on Hugo, I decided to take the leap in converting my Jekyll Github Pages site to Hugo (hosted on Github Pages).
+I've decided to convert this website from Github Pages/Jekyll to [Hugo](https://gohugo.io/). Th inspiration for this came when I saw the [website](http://analystmindset.com/) that [Roger Peng](http://www.biostat.jhsph.edu/~rpeng/) put up for his [live data analysis screencasts](http://analystmindset.com/), and there was a big [Hugo](https://gohugo.io/) logo on the bottom. After learning more about this and discovering the **blogdown** package by [Yihui Xie](https://yihui.name/en/) that is based on Hugo, I decided to take the leap in converting my Jekyll Github Pages site to [Hugo](https://gohugo.io/) (hosted on Github Pages).
 
 The rough outline of conversion steps went like this:
 
 ## Install Software
-1. Install devtools (I never really needed it before) 
-2. Install blogdown
+1. Install [devtools](https://github.com/hadley/devtools) (I never really needed it before) 
+2. Install [blogdown](https://bookdown.org/yihui/blogdown/)
 2. Install Hugo (via handy dandy blogdown function)
 
 ## Create New Hugo Site
@@ -24,7 +24,7 @@ The rough outline of conversion steps went like this:
 3. Transfer the Rmd files from my old Github Pages site to the content/posts directory
 4. Edit all the yaml headers into the appropriate format for Hugo
 4. Build/serve site (RStudio Addins butto)
-5. Play around with many Hugo themes before settling on one (beautiful-hugo)
+5. Play around with many Hugo themes before settling on one ([Beautiful Hugo](https://themes.gohugo.io/beautifulhugo/))
 6. Create new Github (non-Pages) repository for the new Hugo site code and push local files to Github
 
 ## Convert Github Pages Jekyll Site to Hugo
@@ -42,7 +42,7 @@ The built-in web server on Hugo also allows me to preview pages much faster than
 ## Issues
 The biggest issue with the change over was editing the yaml headers. I had a year's worth of files to go through so it took me a little while. I could have made a script for some of the conversions, but because each file could have certain tags, I had to go through manually and add these anyway.
 
-The other issue was the conversion of the theme. My current theme (beautiful-hugo) is a port of the old Jekyll theme (Beautiful Jekyll), but it suffers from the fact that the little teaser/abstract under each headline is pulling too much text. It will add markdown and code to the abstract, whereas the old Jekyll theme could figure out where to stop. I'm sure there's a way that it decides how much text to add, but I haven't gotten around to fixing this myself.
+The other issue was the conversion of the theme. My current theme ([beautifulhugo](https://themes.gohugo.io/beautifulhugo/)) is a port of the Jekyll theme used on my old site ([Beautiful Jekyll](http://deanattali.com/beautiful-jekyll/)), but it suffers from the fact that the little teaser/abstract under each headline is pulling too much text. It will add uninterpreted markdown and code to the abstract, whereas the old Jekyll theme could figure out where to stop. I'm sure there's a way that it decides how much text to add, but I haven't gotten around to fixing this myself.
 
 The last issue has been making sure that my various computers are all set up the same way as far as the data locations and packages. In the past, with static markdown files, I could have data on one computer and edit the markdown file from another computer. I would be able to push the markdown changes without re-running the analysis. With Hugo, because the pages are rebuilt every time they are edited, this makes it important that the computers are all set up the same way. Packages are not always easy to install everywhere (**Rgdal** being a particularly hairy one). However this hasn't been a big problem because re-editing doesn't happen too often and I can always wait to use the right computer for the right page.
 
