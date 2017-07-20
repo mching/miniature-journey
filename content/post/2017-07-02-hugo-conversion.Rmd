@@ -9,7 +9,7 @@ tags:
   - hugo
 ---
 
-I've decided to convert this website from Github Pages/Jekyll to Hugo. Th inspiration for this came when I saw the website that Roger Peng put up for his live data analysis screencasts, and there was a big Hugo logo on the bottom. After learning more about this and discovering the **blogdown** package by Yihue Xie that is based on Hugo, I decided to take the leap in converting my Jekyll Github Pages site to Hugo (hosted on Github Pages).
+I've decided to convert this website from Github Pages/Jekyll to Hugo. Th inspiration for this came when I saw the website that [Roger Peng](http://www.biostat.jhsph.edu/~rpeng/) put up for his live data analysis screencasts, and there was a big Hugo logo on the bottom. After learning more about this and discovering the **blogdown** package by Yihue Xie that is based on Hugo, I decided to take the leap in converting my Jekyll Github Pages site to Hugo (hosted on Github Pages).
 
 The rough outline of conversion steps went like this:
 
