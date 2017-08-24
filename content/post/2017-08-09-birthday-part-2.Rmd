@@ -14,7 +14,7 @@ My family went on a cruise this month for 10 days, and in the dining room, it se
 
 Now, there's probably a math way to figure this out using probability theory, but it seems to be much more complicated than the traditional birthday probability problem. I decided to run a simulation.
 
-The cruise held 2650 people, with 3 dining rooms, and 2 seatings per night. I figured that meant there were about 440 people in my dining room (2650 divided by 3 divided by 2).
+The cruise held about 2650 people, with 3 dining rooms, and 2 seatings per night. I figured that meant there were about 440 people in my dining room (2650 divided by 3 divided by 2).
 
 The dates of the cruise were from the end of July to early August, which I just estimated here to be the 220th to 229th days of the year. 
 
@@ -55,7 +55,7 @@ for(i in 1:10000) {
 mean(out)
 ```
 
-The result was 2.9% of the time. I thought there was a birthday every night, but it turns out that this is unlikely. Either I remembered wrong or some people were not telling the truth. There's also a possibility that some people  choose a certain week to go on a cruise because it is their birthday. In addition I seem to recall that birthdays are not exactly evenly distributed around the calendar.
+The result was 2.9% of the time. I thought there was a birthday every night, but it turns out that this is unlikely. Either I remembered wrong, or some people were not telling the truth. There's also a possibility that some people  choose a certain week to go on a cruise because it is their birthday. In addition I seem to recall that birthdays are not exactly evenly distributed around the calendar.
 
 ## Distribution of the Estimated Number of Birthdays
 The next question was to identify the variance of the estimate. I ran a 10000 simulations of 10 day cruises to find out the distribution of possible results.
@@ -95,3 +95,10 @@ ggplot(data.frame(days = year_bdays/365), aes(x = days)) +
   labs(title = "Percentage of Year Covered by Birthdays for 440 People")
 ```
 
+For this number of people, only about 70% of the year would be represented with birthdays.
+
+## Discussion
+This is probably a good place to stop since this is getting pretty long. There are some other things we could look at like how many people do you need to have to have a 95% probability of there being a birthday on that day? Or how many people do you need to have to have a 95% probability that every birthday is covered? Maybe I'll come back to this in another post.
+
+## Conclusion
+Assuming a uniform random distribution of birthdays in the room, there was only a ~3% chance that my cruise dining room should have celebrated a birthday every day during the cruise. 

@@ -14,23 +14,22 @@ tags:
 
 <p>My family went on a cruise this month for 10 days, and in the dining room, it seemed that the waiters sang Happy Birthday to someone every night. The room was pretty full of people, but it struck me that some people might be lying to get the waiters to sing to them. This called for an analysis. What was the probability of a roomful of people having birthdays on each of 10 days in a row?</p>
 <p>Now, there’s probably a math way to figure this out using probability theory, but it seems to be much more complicated than the traditional birthday probability problem. I decided to run a simulation.</p>
-<p>The cruise held 2650 people, with 3 dining rooms, and 2 seatings per night. I figured that meant there were about 440 people in my dining room (2650 divided by 3 divided by 2).</p>
+<p>The cruise held about 2650 people, with 3 dining rooms, and 2 seatings per night. I figured that meant there were about 440 people in my dining room (2650 divided by 3 divided by 2).</p>
 <p>The dates of the cruise were from the end of July to early August, which I just estimated here to be the 220th to 229th days of the year.</p>
+<div id="probability-of-dining-room-having-a-birthday-every-day" class="section level2">
+<h2>Probability of Dining Room Having a Birthday Every Day</h2>
 <p>I first wrote a function to generate birthdays for the 440 people. It creates a vector of 440 random numbers between 1 and 365 (e.g., 1 is January 1 and 365 is December 31) then extracts just the ones that happen to fall between those dates (220 to 229).</p>
-<pre class="r"><code>gen_rand_bdays &lt;- function(sample_size = 440, firstday = 220, lastday = 229) {
+<pre class="r"><code>library(ggplot2)
+gen_rand_bdays &lt;- function(sample_size = 440, firstday = 220, lastday = 229) {
   rand_bdays &lt;- sample(1:365, sample_size, replace = TRUE)
   rand_bdays[which(rand_bdays &gt;= firstday &amp; rand_bdays &lt;= lastday)]
 }
 
 gen_rand_bdays()</code></pre>
-<pre><code>## [1] 221 225 226 226 222 221 229 228 220</code></pre>
-<p>I then wrote a function that checks to see if all the birthdays from 220 to 229 are represented in the random birthdays.</p>
-<pre class="r"><code>check_bdays &lt;- function(x, firstday = 220, lastday = 229) {
-  for(i in firstday:lastday) {
-    if(i %in% x) next 
-    else return(FALSE)
-  }
-  return(TRUE)
+<pre><code>## [1] 221 224 226 228 223 223 222 228 228</code></pre>
+<p>I then wrote a function that checks to see if all the birthdays from 220 to 229 are represented in the random birthdays. One way to do this is to identify the unique values the list of random birthdays and see if the length is the desired number.</p>
+<pre class="r"><code>check_bdays &lt;- function(rand_bdays, firstday = 220, lastday = 229) {
+  return(length(unique(rand_bdays)) == lastday - firstday + 1)
 }
 
 set.seed(1)
@@ -49,5 +48,45 @@ for(i in 1:10000) {
 
 mean(out)</code></pre>
 <pre><code>## [1] 0.029</code></pre>
-<p>The result was 2.9% of the time. I thought there was a birthday every night, but it turns out that this is unlikely. Either I remembered wrong or some people were not telling the truth. There’s also a possibility that some people choose a certain week to go on a cruise because it is their birthday. In addition I seem to recall that birthdays are not exactly evenly distributed around the calendar.</p>
-<p>There’s a lot more that could have been done with this. For example, how often are there birthdays on 9/10 nights? How about 8/10, etc.?</p>
+<p>The result was 2.9% of the time. I thought there was a birthday every night, but it turns out that this is unlikely. Either I remembered wrong, or some people were not telling the truth. There’s also a possibility that some people choose a certain week to go on a cruise because it is their birthday. In addition I seem to recall that birthdays are not exactly evenly distributed around the calendar.</p>
+</div>
+<div id="distribution-of-the-estimated-number-of-birthdays" class="section level2">
+<h2>Distribution of the Estimated Number of Birthdays</h2>
+<p>The next question was to identify the variance of the estimate. I ran a 10000 simulations of 10 day cruises to find out the distribution of possible results.</p>
+<pre class="r"><code>set.seed(2)
+nbdays &lt;- NA
+for(i in 1:10000) {
+  nbdays[i] &lt;- length(unique(gen_rand_bdays()))
+}</code></pre>
+<p>The mean and standard deviation for the number of birthdays expected using this simulation were as follows. The expected number of birthdays over a 10 day period was 7 birthdays with a standard error of 1.4.</p>
+<pre class="r"><code>mean(nbdays)</code></pre>
+<pre><code>## [1] 7.0187</code></pre>
+<pre class="r"><code>sd(nbdays)</code></pre>
+<pre><code>## [1] 1.448365</code></pre>
+<p>Here’s a histogram of the distribution.</p>
+<pre class="r"><code>ggplot(data.frame(nbdays), aes(x = nbdays)) + 
+  geom_histogram(bins = 10) + 
+  labs(title = &quot;Birthdays Expected for 440 People over a 10 Day Period&quot;)</code></pre>
+<p><img src="/post/2017-08-09-birthday-part-2_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>A related question is how many birthdays are observed in one year for this sample. That is, with a sample of 440 people, what fraction of the year is covered by birthdays?</p>
+<pre class="r"><code>year_bdays &lt;- rep(NA, 10000)
+set.seed(1)
+year_bdays &lt;- sapply(year_bdays, function(x) length(unique(sample(1:365, 440, replace = T))))
+mean(year_bdays)/365</code></pre>
+<pre><code>## [1] 0.7010203</code></pre>
+<pre class="r"><code>sd(year_bdays)/365</code></pre>
+<pre><code>## [1] 0.01668154</code></pre>
+<pre class="r"><code>ggplot(data.frame(days = year_bdays/365), aes(x = days)) +
+  geom_histogram(bins = 20) + 
+  labs(title = &quot;Percentage of Year Covered by Birthdays for 440 People&quot;)</code></pre>
+<p><img src="/post/2017-08-09-birthday-part-2_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>For this number of people, only about 70% of the year would be represented with birthdays.</p>
+</div>
+<div id="discussion" class="section level2">
+<h2>Discussion</h2>
+<p>This is probably a good place to stop since this is getting pretty long. There are some other things we could look at like how many people do you need to have to have a 95% probability of there being a birthday on that day? Or how many people do you need to have to have a 95% probability that every birthday is covered? Maybe I’ll come back to this in another post.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>Assuming a uniform random distribution of birthdays in the room, there was only a ~3% chance that my cruise dining room should have celebrated a birthday every day during the cruise.</p>
+</div>
