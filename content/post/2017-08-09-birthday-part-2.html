@@ -1,0 +1,53 @@
+---
+title: "Birthday Problem Part 2"
+author: "Michael Ching"
+date: "2017-08-09"
+slug: birthday-part-2
+categories:
+  - R
+tags:
+  - probability
+  - simulation
+---
+
+
+
+<p>My family went on a cruise this month for 10 days, and in the dining room, it seemed that the waiters sang Happy Birthday to someone every night. The room was pretty full of people, but it struck me that some people might be lying to get the waiters to sing to them. This called for an analysis. What was the probability of a roomful of people having birthdays on each of 10 days in a row?</p>
+<p>Now, there’s probably a math way to figure this out using probability theory, but it seems to be much more complicated than the traditional birthday probability problem. I decided to run a simulation.</p>
+<p>The cruise held 2650 people, with 3 dining rooms, and 2 seatings per night. I figured that meant there were about 440 people in my dining room (2650 divided by 3 divided by 2).</p>
+<p>The dates of the cruise were from the end of July to early August, which I just estimated here to be the 220th to 229th days of the year.</p>
+<p>I first wrote a function to generate birthdays for the 440 people. It creates a vector of 440 random numbers between 1 and 365 (e.g., 1 is January 1 and 365 is December 31) then extracts just the ones that happen to fall between those dates (220 to 229).</p>
+<pre class="r"><code>gen_rand_bdays &lt;- function(sample_size = 440, firstday = 220, lastday = 229) {
+  rand_bdays &lt;- sample(1:365, sample_size, replace = TRUE)
+  rand_bdays[which(rand_bdays &gt;= firstday &amp; rand_bdays &lt;= lastday)]
+}
+
+gen_rand_bdays()</code></pre>
+<pre><code>## [1] 221 225 226 226 222 221 229 228 220</code></pre>
+<p>I then wrote a function that checks to see if all the birthdays from 220 to 229 are represented in the random birthdays.</p>
+<pre class="r"><code>check_bdays &lt;- function(x, firstday = 220, lastday = 229) {
+  for(i in firstday:lastday) {
+    if(i %in% x) next 
+    else return(FALSE)
+  }
+  return(TRUE)
+}
+
+set.seed(1)
+test1 &lt;- gen_rand_bdays()
+test1</code></pre>
+<pre><code>## [1] 221 220 225 221 221 227 229</code></pre>
+<pre class="r"><code>check_bdays(test1)</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<p>Finally I ran the simulation 10000 times to see how many times a birthday should be celebrated 10 days in a row on a given cruise.</p>
+<pre class="r"><code>set.seed(1)
+out &lt;- NA
+for(i in 1:10000) {
+  x &lt;- gen_rand_bdays(sample_size = 440, firstday = 220, lastday = 229)
+  out[i] &lt;- check_bdays(x, firstday = 220, lastday = 229)
+}
+
+mean(out)</code></pre>
+<pre><code>## [1] 0.029</code></pre>
+<p>The result was 2.9% of the time. I thought there was a birthday every night, but it turns out that this is unlikely. Either I remembered wrong or some people were not telling the truth. There’s also a possibility that some people choose a certain week to go on a cruise because it is their birthday. In addition I seem to recall that birthdays are not exactly evenly distributed around the calendar.</p>
+<p>There’s a lot more that could have been done with this. For example, how often are there birthdays on 9/10 nights? How about 8/10, etc.?</p>
