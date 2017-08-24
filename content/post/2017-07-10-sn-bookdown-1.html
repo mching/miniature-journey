@@ -39,6 +39,7 @@ for(i in 500:599) {
   download.file(showname, destfile = paste0(DIRECTORY, shortname), method = &quot;curl&quot;)
 }</code></pre>
 <p>I loaded an example file and put it into a <a href="https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html">tibble.</a></p>
+<<<<<<< Updated upstream
 <pre class="r"><code>DIRECTORY &lt;- &quot;../datasets/sn501/&quot;
 # list.files(DIRECTORY)
 episode &lt;- readLines(paste0(DIRECTORY, &quot;sn-501.txt&quot;))
@@ -60,6 +61,29 @@ episode[1:17]</code></pre>
 ## [15] &quot;LEO LAPORTE:  This is Security Now! with Steve Gibson, Episode 501, recorded Tuesday, March 31st, 2015:  Your questions, Steve&#39;s answers, #209.&quot;                                                                                                                                                                                                                                                                      
 ## [16] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                     
 ## [17] &quot;It&#39;s time for Security Now!, the show where we protect you and your loved ones online, your privacy, your security, with this guy right here, the Explainer in Chief, Steven \&quot;Tiberius\&quot; Gibson.  And he is here once again to both put us all on edge, and then make to us feel better about...&quot;</code></pre>
+=======
+<pre class="r"><code>DIRECTORY &lt;- &quot;~/Dropbox/Mike/securitynow/shows/&quot;
+# list.files(DIRECTORY)
+episode &lt;- readLines(paste0(DIRECTORY, &quot;sn-400.txt&quot;))
+episode[1:17]</code></pre>
+<pre><code>##  [1] &quot;GIBSON RESEARCH CORPORATION\t\thttp://www.GRC.com/&quot;                                                                                                                                                                                                                                                                   
+##  [2] &quot;&quot;                                                                                                                                                                                                                                                                                                                     
+##  [3] &quot;SERIES:\t\tSecurity Now!&quot;                                                                                                                                                                                                                                                                                             
+##  [4] &quot;EPISODE:\t#400\t&quot;                                                                                                                                                                                                                                                                                                     
+##  [5] &quot;DATE:\t\tApril 17, 2013&quot;                                                                                                                                                                                                                                                                                              
+##  [6] &quot;TITLE:\t\tVPN Solutions&quot;                                                                                                                                                                                                                                                                                              
+##  [7] &quot;SPEAKERS:\tSteve Gibson &amp; Leo Laporte&quot;                                                                                                                                                                                                                                                                                
+##  [8] &quot;SOURCE FILE:\thttp://media.GRC.com/sn/SN-400.mp3&quot;                                                                                                                                                                                                                                                                     
+##  [9] &quot;FILE ARCHIVE:\thttp://www.GRC.com/securitynow.htm &quot;                                                                                                                                                                                                                                                                   
+## [10] &quot;&quot;                                                                                                                                                                                                                                                                                                                     
+## [11] &quot;DESCRIPTION:  After catching up with a wild week of security events, we revisit a topic from the earliest episodes of the Security Now podcast:  Virtual Private Networks.  This coincides with the introduction of a new sponsor on the TWIT network, proXPN, a VPN provider that truly looks like the right choice.&quot;
+## [12] &quot;&quot;                                                                                                                                                                                                                                                                                                                     
+## [13] &quot;SHOW TEASE:  It&#39;s time for Security Now!, our 400th episode.  Let&#39;s celebrate with Steve, talk about Java - yes, there&#39;s another update - talk about security and a little intro to VPN systems.  It&#39;s all coming up next on Security Now!.&quot;                                                                          
+## [14] &quot;&quot;                                                                                                                                                                                                                                                                                                                     
+## [15] &quot;LEO LAPORTE:  This is Security Now! with Steve Gibson, Episode 400, recorded April 17th, 2013:  VPN Solutions.&quot;                                                                                                                                                                                                       
+## [16] &quot;&quot;                                                                                                                                                                                                                                                                                                                     
+## [17] &quot;It&#39;s time for Security Now!, the show that protects you, your loved ones, and your privacy online.  And it&#39;s all thanks to this man here, the Explainer in Chief, Steve Gibson of GRC.com.  Steve joins us every week.  Hi, Steve.&quot;</code></pre>
+>>>>>>> Stashed changes
 <p>From what I could tell, the first 13 lines appear to be formatted as metadata. These would be helpful for formatting as header text for bookdown to work on.</p>
 <p>Bookdown requires the first line of the file to be a chapter title with a first level heading. I think a useful format would be the title. Other metadata like Series and Archive could be discarded since would probably be the same for every file.</p>
 <p>Conceptually for each transcript, I had to discard lines 1-3 and 9, and move the title to the top. The rest would probably be ok to stay for now. But what if episodes were not identically formatted like this? I should use regular expressions.</p>
@@ -77,6 +101,7 @@ episode &lt;- episode[-(line_title + 1)]
 episode &lt;- gsub(&quot;\t&quot;, &quot; &quot;, episode)
 episode &lt;- sub(&quot;TITLE:  &quot;, &quot;# &quot;, episode)
 head(episode)</code></pre>
+<<<<<<< Updated upstream
 <pre><code>## [1] &quot;# Listener Feedback #209&quot;                  
 ## [2] &quot;&quot;                                          
 ## [3] &quot;EPISODE: #501&quot;                             
@@ -86,6 +111,17 @@ head(episode)</code></pre>
 <pre class="r"><code>writeLines(episode, paste0(DIRECTORY, &quot;sn-501.Rmd&quot;))</code></pre>
 <p>So that’s the process for one episode, how ’bout 501-600?</p>
 <pre><code>for(i in 501:599) {
+=======
+<pre><code>## [1] &quot;# VPN Solutions&quot;                                
+## [2] &quot;&quot;                                               
+## [3] &quot;EPISODE: #400 &quot;                                 
+## [4] &quot;DATE:  April 17, 2013&quot;                          
+## [5] &quot;SPEAKERS: Steve Gibson &amp; Leo Laporte&quot;           
+## [6] &quot;SOURCE FILE: http://media.GRC.com/sn/SN-400.mp3&quot;</code></pre>
+<pre class="r"><code>writeLines(episode, paste0(DIRECTORY, &quot;sn-400.Rmd&quot;))</code></pre>
+<p>So that’s the process for one episode, how ’bout 501-600?</p>
+<pre><code>for(i in 400:410) {
+>>>>>>> Stashed changes
   episode &lt;- readLines(paste0(DIRECTORY, &quot;sn-&quot;, i, &quot;.txt&quot;))
   
   line_grc &lt;- grep(&quot;^GIBSON&quot;, episode)

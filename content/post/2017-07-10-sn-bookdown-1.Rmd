@@ -35,9 +35,9 @@ for(i in 500:599) {
 
 I loaded an example file and put it into a [tibble.](https://cran.r-project.org/web/packages/tibble/vignettes/tibble.html)
 ```{r}
-DIRECTORY <- "../datasets/sn501/"
+DIRECTORY <- "~/Dropbox/Mike/securitynow/shows/"
 # list.files(DIRECTORY)
-episode <- readLines(paste0(DIRECTORY, "sn-501.txt"))
+episode <- readLines(paste0(DIRECTORY, "sn-400.txt"))
 episode[1:17]
 ```
 
@@ -65,13 +65,13 @@ head(episode)
 ```
 
 ```{r}
-writeLines(episode, paste0(DIRECTORY, "sn-501.Rmd"))
+writeLines(episode, paste0(DIRECTORY, "sn-400.Rmd"))
 ```
 
 So that's the process for one episode, how 'bout 501-600?
 
 ```
-for(i in 501:599) {
+for(i in 400:410) {
   episode <- readLines(paste0(DIRECTORY, "sn-", i, ".txt"))
   
   line_grc <- grep("^GIBSON", episode)
