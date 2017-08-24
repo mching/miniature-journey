@@ -11,13 +11,13 @@ tags:
 
 
 
-<p>I’ve decided to convert this website from Github Pages/Jekyll to Hugo. Th inspiration for this came when I saw the website that Roger Peng put up for his live data analysis screencasts, and there was a big Hugo logo on the bottom. After learning more about this and discovering the <strong>blogdown</strong> package by Yihue Xie that is based on Hugo, I decided to take the leap in converting my Jekyll Github Pages site to Hugo (hosted on Github Pages).</p>
+<p>I’ve decided to convert this website from Github Pages/Jekyll to <a href="https://gohugo.io/">Hugo</a>. Th inspiration for this came when I saw the <a href="http://analystmindset.com/">website</a> that <a href="http://www.biostat.jhsph.edu/~rpeng/">Roger Peng</a> put up for his <a href="http://analystmindset.com/">live data analysis screencasts</a>, and there was a big <a href="https://gohugo.io/">Hugo</a> logo on the bottom. After learning more about this and discovering the <strong>blogdown</strong> package by <a href="https://yihui.name/en/">Yihui Xie</a> that is based on Hugo, I decided to take the leap in converting my Jekyll Github Pages site to <a href="https://gohugo.io/">Hugo</a> (hosted on Github Pages).</p>
 <p>The rough outline of conversion steps went like this:</p>
 <div id="install-software" class="section level2">
 <h2>Install Software</h2>
 <ol style="list-style-type: decimal">
-<li>Install devtools (I never really needed it before)</li>
-<li>Install blogdown</li>
+<li>Install <a href="https://github.com/hadley/devtools">devtools</a> (I never really needed it before)</li>
+<li>Install <a href="https://bookdown.org/yihui/blogdown/">blogdown</a></li>
 <li>Install Hugo (via handy dandy blogdown function)</li>
 </ol>
 </div>
@@ -29,7 +29,7 @@ tags:
 <li>Transfer the Rmd files from my old Github Pages site to the content/posts directory</li>
 <li>Edit all the yaml headers into the appropriate format for Hugo</li>
 <li>Build/serve site (RStudio Addins butto)</li>
-<li>Play around with many Hugo themes before settling on one (beautiful-hugo)</li>
+<li>Play around with many Hugo themes before settling on one (<a href="https://themes.gohugo.io/beautifulhugo/">Beautiful Hugo</a>)</li>
 <li>Create new Github (non-Pages) repository for the new Hugo site code and push local files to Github</li>
 </ol>
 </div>
@@ -50,7 +50,7 @@ tags:
 <div id="issues" class="section level2">
 <h2>Issues</h2>
 <p>The biggest issue with the change over was editing the yaml headers. I had a year’s worth of files to go through so it took me a little while. I could have made a script for some of the conversions, but because each file could have certain tags, I had to go through manually and add these anyway.</p>
-<p>The other issue was the conversion of the theme. My current theme (beautiful-hugo) is a port of the old Jekyll theme (Beautiful Jekyll), but it suffers from the fact that the little teaser/abstract under each headline is pulling too much text. It will add markdown and code to the abstract, whereas the old Jekyll theme could figure out where to stop. I’m sure there’s a way that it decides how much text to add, but I haven’t gotten around to fixing this myself.</p>
+<p>The other issue was the conversion of the theme. My current theme (<a href="https://themes.gohugo.io/beautifulhugo/">beautifulhugo</a>) is a port of the Jekyll theme used on my old site (<a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>), but it suffers from the fact that the little teaser/abstract under each headline is pulling too much text. It will add uninterpreted markdown and code to the abstract, whereas the old Jekyll theme could figure out where to stop. I’m sure there’s a way that it decides how much text to add, but I haven’t gotten around to fixing this myself.</p>
 <p>The last issue has been making sure that my various computers are all set up the same way as far as the data locations and packages. In the past, with static markdown files, I could have data on one computer and edit the markdown file from another computer. I would be able to push the markdown changes without re-running the analysis. With Hugo, because the pages are rebuilt every time they are edited, this makes it important that the computers are all set up the same way. Packages are not always easy to install everywhere (<strong>Rgdal</strong> being a particularly hairy one). However this hasn’t been a big problem because re-editing doesn’t happen too often and I can always wait to use the right computer for the right page.</p>
 </div>
 <div id="conclusion" class="section level2">
