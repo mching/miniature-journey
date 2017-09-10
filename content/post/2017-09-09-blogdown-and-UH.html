@@ -1,0 +1,31 @@
+---
+title: "Publishing Hugo Page to UH Server"
+author: "Michael Ching"
+date: "2017-09-09"
+slug: blogdown_and_UH
+categories:
+  - R
+tags:
+  - website
+---
+
+
+
+<p>I’ve been happy with Hugo to publish my blog, and I thought it would be cool to use it to revamp my personal webpage at the University of Hawaii. It turned out it wasn’t as easy as I thought it would be.</p>
+<p>I created a new site using blogdown and the <a href="https://themes.gohugo.io/hugo-identity-theme/">hugo_identity_theme</a>.</p>
+<pre><code>new_site(theme = &quot;aerohub/hugo-identity-theme&quot;))</code></pre>
+<p>After playing around with the config.toml, I was ready to push the page to the university server. I discovered <a href="https://gohugo.io/hosting-and-deployment/deployment-with-rsync/">a method to do this using rsync.</a></p>
+<p>The basic idea is that you can use SSH’s public key functionality to login without repeated logins. You enable that and then use <code>rsync</code> to synchronize the public directory with the web server directory.</p>
+<p>Here’s the bash script from the documentation that performs the sync.</p>
+<pre><code>#!/bin/sh
+USER=my-user
+HOST=my-server.com
+DIR=my/directory/to/topologix.fr/   # might sometimes be empty!
+
+hugo &amp;&amp; rsync -avz --delete public/ ${USER}@${HOST}:~/${DIR}
+
+exit 0</code></pre>
+<p>It turned out to be pretty straightforward, although I had some issues with finding the path to hugo. Because blogdown builds the site using hugo, I just got rid of the <code>hugo &amp;&amp;</code> and it synced just fine, and the permissions were all set to go.</p>
+<p>The only problem was that I discovered that the fancy Hugo site doesn’t appear to be compatible with the university website permissions. I’m no HTML genius but it appears that there’s something wrong with the site scripting. After a while, I gave up trying to figure out how to make it work, but I did like that rsync script.</p>
+<p>I ended up using a version of this script to easily push a very basic homepage to the university server. Here’s the <a href="https://www2.hawaii.edu/~mslching">link</a>.</p>
+<p>Lessons learned–rsync works nicely with ssh on my university website. Maybe if I can figure out the scripting, I’ll try to get the Hugo site working.</p>

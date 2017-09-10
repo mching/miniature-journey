@@ -1,0 +1,43 @@
+---
+title: "Publishing Hugo Page to UH Server"
+author: "Michael Ching"
+date: "2017-09-09"
+slug: blogdown_and_UH
+categories:
+  - R
+tags:
+  - website
+---
+
+I've been happy with Hugo to publish my blog, and I thought it would be cool to use it to revamp my personal webpage at the University of Hawaii. It turned out it wasn't as easy as I thought it would be.
+
+I created a new site using blogdown and the [hugo_identity_theme](https://themes.gohugo.io/hugo-identity-theme/).
+
+```
+new_site(theme = "aerohub/hugo-identity-theme"))
+```
+
+After playing around with the config.toml, I was ready to push the page to the university server. I discovered [a method to do this using rsync.](https://gohugo.io/hosting-and-deployment/deployment-with-rsync/) 
+
+The basic idea is that you can use SSH's public key functionality to login without repeated logins. You enable that and then use `rsync` to synchronize the public directory with the web server directory. 
+
+Here's the bash script from the documentation that performs the sync. 
+
+```
+#!/bin/sh
+USER=my-user
+HOST=my-server.com
+DIR=my/directory/to/topologix.fr/   # might sometimes be empty!
+
+hugo && rsync -avz --delete public/ ${USER}@${HOST}:~/${DIR}
+
+exit 0
+```
+
+It turned out to be pretty straightforward, although I had some issues with finding the path to hugo. Because blogdown builds the site using hugo, I just got rid of the `hugo &&` and it synced just fine, and the permissions were all set to go.
+
+The only problem was that I discovered that the fancy Hugo site doesn't appear to be compatible with the university website permissions. I'm no HTML genius but it appears that there's something wrong with the site scripting. After a while, I gave up trying to figure out how to make it work, but I did like that rsync script.
+
+I ended up using a version of this script to easily push a very basic homepage to the university server. Here's the [link](https://www2.hawaii.edu/~mslching). 
+
+Lessons learned--rsync works nicely with ssh on my university website. Maybe if I can figure out the scripting, I'll try to get the Hugo site working.
