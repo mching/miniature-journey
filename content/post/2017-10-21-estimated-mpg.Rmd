@@ -1,0 +1,43 @@
+---
+title: "Estimated Prius Gas Mileage"
+author: "Michael Ching"
+date: "2017-10-21"
+slug: estimated-prius-gas-mileage
+categories:
+  - R
+tags:
+  - mpg
+  - car
+---
+I've seen some posts online suggesting that the [miles per gallon estimates](https://auto.howstuffworks.com/fuel-efficiency/hybrid-technology/instant-mpg-readout.htm) that your car provides are [not accurate](https://blog.caranddriver.com/why-your-trip-computer-isnt-giving-accurate-mpg-readings-and-how-to-fix-it/). I collected a few observations to see if this was true for my car.
+
+## Methods
+
+Each time I filled up the gas tank, I collected the number of gallons that were dispensed until the first automatic shutoff. I wrote down the estimated mpg, the trip odometer reading since the last fill-up, and the overall odometer reading. I calculated the mpg and mpg difference from the estimated mpg. I used a paired t test to see if there was a difference between the estimated and actual mpg. 
+
+```{r}
+library(dplyr)
+x <- read.csv("../datasets/mpg.csv")
+x <- tbl_df(x)
+x
+```
+
+## Results
+
+```{r}
+x <- x %>% mutate(mpg_calc = miles_trip/gallons) %>% mutate(mpg_diff = mpg_calc - mpg_est)
+
+x %>% select(date, mpg_est, mpg_calc, mpg_diff)
+```
+
+From looking at the data, the estimated mpg from the car's dashboard was higher than the calculated mpg based on the odometer and gallons readout on four out of five occasions. It's not clear why that first one was different, but I included it since I didn't have a good reason to throw it out. 
+
+The results of the paired t-test are as follows.
+
+```{r}
+t.test(x$mpg_diff)
+```
+
+## Discussion
+There was not a significant difference between the estimated and calculated mpgs. If the first data point is removed, then there is a significant difference. Because other sources on the internet suggest that there is a quite significant difference, I'll  keep collecting more data and update the analysis in a few months. 
+
