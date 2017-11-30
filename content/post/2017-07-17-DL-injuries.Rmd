@@ -10,11 +10,11 @@ tags:
   - sports
 ---
 
-I was interested in the duration of certain injuries for baseball players. It's difficult to get data on this although I discovered a series of Google Sheets that documented disabled list (DL) stays over the years. I combined these sheets and cleaned these up manually. I entered these into R and crunched the data.
+I was interested in the duration of certain injuries for baseball players. It's difficult to get data on this although I discovered a series of [Google Sheets](http://www.baseballheatmaps.com/disabled-list-data/) that documented disabled list (DL) stays over the years. I combined these sheets and cleaned these up manually. I entered these into R and crunched the data.
 
 ## Methods
 
-I downloaded the data from Google and used the tidyverse to look at them.
+I downloaded the data from Google and used the **tidyverse** tools to look at them.
 
 ```{r}
 library(dplyr)
@@ -125,7 +125,7 @@ DL %>% filter(censored_right == F) %>%
 
 
 ### Oblique Strain for Pitchers
-The other injury type often discussed on my favorite baseball podcast is the "oblique strain" for pitchers. This was supposed to be 4-6 weeks according to the podcast's injury expert, Stephania Bell. I decided to see if my data supported this statement.
+The other injury type often discussed on [my favorite baseball podcast](http://www.espn.com/espnradio/podcast/archive/_/id/2544461) is the "oblique strain" for pitchers. This was supposed to be 4-6 weeks according to the podcast's injury expert, [Stephania Bell](https://twitter.com/stephania_espn). I decided to see if my data supported this statement.
 
 ```{r}
 DL %>% filter(censored_right == F) %>% 

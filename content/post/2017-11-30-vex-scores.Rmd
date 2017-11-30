@@ -1,0 +1,34 @@
+---
+title: VEX Scores
+author: ~
+date: '2017-11-30'
+slug: vex-scores
+categories:
+  - R
+tags:
+  - robotics
+  - runchart
+  - qualitycontrol
+---
+
+```{r}
+library(qcc)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+x <- read.csv("../datasets/vex.csv")
+str(x)
+
+x$Points
+
+summary(x$Points)
+
+ggplot(dat = x, aes(x = Run, y = Points, color = Date)) + geom_line() + geom_point() + 
+  ggtitle("Points Scored over Time")
+
+ggplot(dat = x, aes(x = Points)) + geom_histogram(binwidth = 20)
+boxplot(x$Points)
+```
+
