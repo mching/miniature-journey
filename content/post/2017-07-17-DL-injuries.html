@@ -12,10 +12,10 @@ tags:
 
 
 
-<p>I was interested in the duration of certain injuries for baseball players. It’s difficult to get data on this although I discovered a series of Google Sheets that documented disabled list (DL) stays over the years. I combined these sheets and cleaned these up manually. I entered these into R and crunched the data.</p>
+<p>I was interested in the duration of certain injuries for baseball players. It’s difficult to get data on this although I discovered a series of <a href="http://www.baseballheatmaps.com/disabled-list-data/">Google Sheets</a> that documented disabled list (DL) stays over the years. I combined these sheets and cleaned these up manually. I entered these into R and crunched the data.</p>
 <div id="methods" class="section level2">
 <h2>Methods</h2>
-<p>I downloaded the data from Google and used the tidyverse to look at them.</p>
+<p>I downloaded the data from Google and used the <strong>tidyverse</strong> tools to look at them.</p>
 <pre class="r"><code>library(dplyr)</code></pre>
 <pre><code>## Warning: Installed Rcpp (0.12.12) different from Rcpp used to build dplyr (0.12.11).
 ## Please reinstall dplyr to avoid random crashes or undefined behavior.</code></pre>
@@ -183,7 +183,7 @@ DL$days[which(DL$days &lt;0)] &lt;- as.integer(DL$off_DL[which(DL$days &lt;0)] -
 </div>
 <div id="oblique-strain-for-pitchers" class="section level3">
 <h3>Oblique Strain for Pitchers</h3>
-<p>The other injury type often discussed on my favorite baseball podcast is the “oblique strain” for pitchers. This was supposed to be 4-6 weeks according to the podcast’s injury expert, Stephania Bell. I decided to see if my data supported this statement.</p>
+<p>The other injury type often discussed on <a href="http://www.espn.com/espnradio/podcast/archive/_/id/2544461">my favorite baseball podcast</a> is the “oblique strain” for pitchers. This was supposed to be 4-6 weeks according to the podcast’s injury expert, <a href="https://twitter.com/stephania_espn">Stephania Bell</a>. I decided to see if my data supported this statement.</p>
 <pre class="r"><code>DL %&gt;% filter(censored_right == F) %&gt;% 
   filter(Position_recode == &quot;P&quot; | 
            Position_recode == &quot;LHP&quot; | 
