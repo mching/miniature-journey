@@ -1,34 +1,54 @@
 ---
-title: VEX Scores
-author: ~
+title: 'VEX Scores and Google Sheets'
+author: 'Michael Ching'
 date: '2017-11-30'
 slug: vex-scores
 categories:
   - R
 tags:
   - robotics
-  - runchart
-  - qualitycontrol
 ---
 
+My son is in a robotics competition this year. He has to score points by driving a robot around a course and making it pick up and place things. I thought it might be nice to chart his progress.
+
+The real learning issue for today is using the [`googlesheets` package](https://github.com/jennybc/googlesheets) to work with the data. I often enter data using this site and it would save me a lot of time to get the data directly from Google Sheets rather than downloading it as a csv. The data loading section of this is based on [this vignette](https://rawgit.com/jennybc/googlesheets/master/vignettes/basic-usage.html).
 ```{r}
-library(qcc)
-library(dplyr)
+suppressPackageStartupMessages(library("dplyr"))
 library(ggplot2)
+library(googlesheets)
+suppressPackageStartupMessages(library(lubridate))
 ```
+First I had to establish a connection with the Google account I use. The following commands brought up a browser window and I authenticated there. Once authenticated I was able to see a list of my Google Sheets, as if I had gone to the website.
+```{r}
+my_sheets <- gs_ls() # Establish connection with my Google account
+my_sheets %>% glimpse() # View the resulting data
+```
+
+To select a sheet I had to get some attributes about it. I used the title to find it, but I could have used its key or even the URL.
+```{r}
+vex <- gs_title("VEX_practice_scores") # Create GS object 
+vex
+```
+
+Once I had the right sheet, I was able to read it in directly into R. Magic!
+```{r}
+vex_scores <- gs_read(vex)
+vex_scores
+```
+
+From there it was a straightforward process to visualize the team's performance. I created a plot of their performance over time. Sadly they don't seem to be getting any better. A solid score would be 105-125. They average in the 70s.
 
 ```{r}
-x <- read.csv("../datasets/vex.csv")
-str(x)
+vex_scores$Points
 
-x$Points
+summary(vex_scores$Points)
 
-summary(x$Points)
-
-ggplot(dat = x, aes(x = Run, y = Points, color = Date)) + geom_line() + geom_point() + 
-  ggtitle("Points Scored over Time")
-
-ggplot(dat = x, aes(x = Points)) + geom_histogram(binwidth = 20)
-boxplot(x$Points)
+ggplot(dat = vex_scores, aes(x = Date, y = Points, group = Date)) + 
+  geom_boxplot() +
+  ggtitle("Team VEX Scores over Time")
 ```
 
+I really should make a quality control run chart but that's a job for another day.
+
+## Conclusion
+The `googlesheets` package is a easy way to get info out of Google Sheets into R. Good luck to the boy on Saturday, but it looks like he has his work cut out for him.

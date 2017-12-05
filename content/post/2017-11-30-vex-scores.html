@@ -1,0 +1,99 @@
+---
+title: 'VEX Scores and Google Sheets'
+author: 'Michael Ching'
+date: '2017-11-30'
+slug: vex-scores
+categories:
+  - R
+tags:
+  - robotics
+---
+
+
+
+<p>My son is in a robotics competition this year. He has to score points by driving a robot around a course and making it pick up and place things. I thought it might be nice to chart his progress.</p>
+<p>The real learning issue for today is using the <a href="https://github.com/jennybc/googlesheets"><code>googlesheets</code> package</a> to work with the data. I often enter data using this site and it would save me a lot of time to get the data directly from Google Sheets rather than downloading it as a csv. The data loading section of this is based on <a href="https://rawgit.com/jennybc/googlesheets/master/vignettes/basic-usage.html">this vignette</a>.</p>
+<pre class="r"><code>suppressPackageStartupMessages(library(&quot;dplyr&quot;))
+library(ggplot2)
+library(googlesheets)
+suppressPackageStartupMessages(library(lubridate))</code></pre>
+<p>First I had to establish a connection with the Google account I use. The following commands brought up a browser window and I authenticated there. Once authenticated I was able to see a list of my Google Sheets, as if I had gone to the website.</p>
+<pre class="r"><code>my_sheets &lt;- gs_ls() # Establish connection with my Google account
+my_sheets %&gt;% glimpse() # View the resulting data</code></pre>
+<pre><code>## Observations: 296
+## Variables: 10
+## $ sheet_title &lt;chr&gt; &quot;VEX_practice_scores&quot;, &quot;Next Step Shelter Dinner -...
+## $ author      &lt;chr&gt; &quot;mikenanowen&quot;, &quot;annkinn&quot;, &quot;cnndmd&quot;, &quot;keriann&quot;, &quot;mi...
+## $ perm        &lt;chr&gt; &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;rw...
+## $ version     &lt;chr&gt; &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;...
+## $ updated     &lt;dttm&gt; 2017-12-04 23:51:58, 2017-12-04 07:53:55, 2017-12...
+## $ sheet_key   &lt;chr&gt; &quot;1oXJj7psIDF8SJMqBIxHQ9dEskLUslXuVSqq0B65guLw&quot;, &quot;1...
+## $ ws_feed     &lt;chr&gt; &quot;https://spreadsheets.google.com/feeds/worksheets/...
+## $ alternate   &lt;chr&gt; &quot;https://docs.google.com/spreadsheets/d/1oXJj7psID...
+## $ self        &lt;chr&gt; &quot;https://spreadsheets.google.com/feeds/spreadsheet...
+## $ alt_key     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</code></pre>
+<p>To select a sheet I had to get some attributes about it. I used the title to find it, but I could have used its key or even the URL.</p>
+<pre class="r"><code>vex &lt;- gs_title(&quot;VEX_practice_scores&quot;) # Create GS object </code></pre>
+<pre><code>## Sheet successfully identified: &quot;VEX_practice_scores&quot;</code></pre>
+<pre class="r"><code>vex</code></pre>
+<pre><code>##                   Spreadsheet title: VEX_practice_scores
+##                  Spreadsheet author: mikenanowen
+##   Date of googlesheets registration: 2017-12-05 00:06:00 GMT
+##     Date of last spreadsheet update: 2017-12-04 23:51:58 GMT
+##                          visibility: private
+##                         permissions: rw
+##                             version: new
+## 
+## Contains 1 worksheets:
+## (Title): (Nominal worksheet extent as rows x columns)
+## Sheet1: 1000 x 26
+## 
+## Key: 1oXJj7psIDF8SJMqBIxHQ9dEskLUslXuVSqq0B65guLw
+## Browser URL: https://docs.google.com/spreadsheets/d/1oXJj7psIDF8SJMqBIxHQ9dEskLUslXuVSqq0B65guLw/</code></pre>
+<p>Once I had the right sheet, I was able to read it in directly into R. Magic!</p>
+<pre class="r"><code>vex_scores &lt;- gs_read(vex)</code></pre>
+<pre><code>## Accessing worksheet titled &#39;Sheet1&#39;.</code></pre>
+<pre><code>## Warning: Duplicated column names deduplicated: &#39;OJ&#39; =&gt; &#39;OJ_1&#39; [6], &#39;EL&#39; =&gt;
+## &#39;EL_1&#39; [7]</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   Run = col_integer(),
+##   Date = col_date(format = &quot;&quot;),
+##   Points = col_integer(),
+##   OJ = col_character(),
+##   EL = col_character(),
+##   OJ_1 = col_character(),
+##   EL_1 = col_character()
+## )</code></pre>
+<pre class="r"><code>vex_scores</code></pre>
+<pre><code>## # A tibble: 39 x 7
+##      Run       Date Points    OJ    EL  OJ_1  EL_1
+##    &lt;int&gt;     &lt;date&gt;  &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;
+##  1     1 2017-11-12     47  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##  2     2 2017-11-15     56  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##  3     3 2017-11-15     60  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##  4     4 2017-11-15     65  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##  5     5 2017-11-15     67  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##  6     6 2017-11-15     91  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##  7     7 2017-11-19     60  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##  8     8 2017-11-19     93  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+##  9     9 2017-11-19     88  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## 10    10 2017-11-19     77  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;
+## # ... with 29 more rows</code></pre>
+<p>From there it was a straightforward process to visualize the team’s performance. I created a plot of their performance over time. Sadly they don’t seem to be getting any better. A solid score would be 105-125. They average in the 70s.</p>
+<pre class="r"><code>vex_scores$Points</code></pre>
+<pre><code>##  [1]  47  56  60  65  67  91  60  93  88  77  67 116 139 108  60  76  88
+## [18]  90  89  76  63  71  52  54 100  78  81  80  46  57  73  72  91  45
+## [35]  59  71  79 100  41</code></pre>
+<pre class="r"><code>summary(vex_scores$Points)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   41.00   60.00   73.00   75.03   88.50  139.00</code></pre>
+<pre class="r"><code>ggplot(dat = vex_scores, aes(x = Date, y = Points, group = Date)) + 
+  geom_boxplot() +
+  ggtitle(&quot;Team VEX Scores over Time&quot;)</code></pre>
+<p><img src="/post/2017-11-30-vex-scores_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>I really should make a quality control run chart but that’s a job for another day.</p>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>The <code>googlesheets</code> package is a easy way to get info out of Google Sheets into R. Good luck to the boy on Saturday, but it looks like he has his work cut out for him.</p>
+</div>
