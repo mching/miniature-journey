@@ -1,0 +1,57 @@
+---
+title: "Estimated Prius Gas Mileage (December 2017 Update)"
+author: "Michael Ching"
+date: "2017-12-19"
+slug: estimated-prius-gas-mileage
+categories:
+  - R
+tags:
+  - mpg
+  - car
+---
+(Updated to add `googlesheets` methodology and new data points) 
+
+I've seen some posts online suggesting that the [miles per gallon estimates](https://auto.howstuffworks.com/fuel-efficiency/hybrid-technology/instant-mpg-readout.htm) that your car provides are [not accurate](https://blog.caranddriver.com/why-your-trip-computer-isnt-giving-accurate-mpg-readings-and-how-to-fix-it/). I collected a few observations to see if this was true for my car.
+
+## Methods
+
+Each time I filled up the gas tank, I collected the number of gallons that were dispensed until the first automatic shutoff. I wrote down the estimated mpg, the trip odometer reading since the last fill-up, and the overall odometer reading. I calculated the mpg and mpg difference from the estimated mpg. I used a paired t test to see if there was a difference between the estimated and actual mpg. 
+
+```{r}
+library(dplyr)
+library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+my_sheets <- gs_ls()
+miles <- gs_title("Prius Gas Mileage")
+x <- gs_read(miles)
+```
+
+## Results
+
+```{r}
+x <- x %>% mutate(mpg_calc = miles_trip/gallons) %>% mutate(mpg_diff = mpg_calc - mpg_est)
+
+x
+
+x %>% select(date, mpg_est, mpg_calc, mpg_diff)
+```
+
+From looking at the data, the estimated mpg from the car's dashboard was higher than the calculated mpg based on the odometer and gallons readout on almost all occasions. It's not clear why that first one was different, but I included it since I didn't have a good reason to throw it out. 
+
+The results of the paired t-test are as follows.
+
+```{r}
+t.test(x$mpg_diff)
+```
+
+```{r}
+x %>%
+  summarize(tot_gallons = sum(gallons), tot_miles_trip = sum(miles_trip), est_miles_trip = sum(gallons * mpg_est)) %>%
+  mutate(overall_mpg = tot_miles_trip/tot_gallons, overall_est_mpg = est_miles_trip/tot_gallons) %>% 
+  mutate(percentage = overall_mpg/overall_est_mpg - 1)
+```
+
+
+## Discussion
+The additional data since the last time I looked revealed a significant difference between the estimated and calculated mpgs. On average there was a -3.6 mpg difference between the estimated and actual MPG figures. It's a small difference. When the total miles and total gallons are added up, the difference is less than about 7%. It's significant but maybe not that far off that I might be upset.
+

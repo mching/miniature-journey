@@ -1,0 +1,110 @@
+---
+title: "Estimated Prius Gas Mileage (December 2017 Update)"
+author: "Michael Ching"
+date: "2017-12-19"
+slug: estimated-prius-gas-mileage
+categories:
+  - R
+tags:
+  - mpg
+  - car
+---
+
+
+
+<p>(Updated to add <code>googlesheets</code> methodology and new data points)</p>
+<p>I’ve seen some posts online suggesting that the <a href="https://auto.howstuffworks.com/fuel-efficiency/hybrid-technology/instant-mpg-readout.htm">miles per gallon estimates</a> that your car provides are <a href="https://blog.caranddriver.com/why-your-trip-computer-isnt-giving-accurate-mpg-readings-and-how-to-fix-it/">not accurate</a>. I collected a few observations to see if this was true for my car.</p>
+<div id="methods" class="section level2">
+<h2>Methods</h2>
+<p>Each time I filled up the gas tank, I collected the number of gallons that were dispensed until the first automatic shutoff. I wrote down the estimated mpg, the trip odometer reading since the last fill-up, and the overall odometer reading. I calculated the mpg and mpg difference from the estimated mpg. I used a paired t test to see if there was a difference between the estimated and actual mpg.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+my_sheets &lt;- gs_ls()</code></pre>
+<pre><code>## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;default/Pacific/
+## Honolulu&#39;</code></pre>
+<pre class="r"><code>miles &lt;- gs_title(&quot;Prius Gas Mileage&quot;)</code></pre>
+<pre><code>## Sheet successfully identified: &quot;Prius Gas Mileage&quot;</code></pre>
+<pre class="r"><code>x &lt;- gs_read(miles)</code></pre>
+<pre><code>## Accessing worksheet titled &#39;Sheet1&#39;.</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   date = col_date(format = &quot;&quot;),
+##   miles_total = col_integer(),
+##   miles_trip = col_double(),
+##   mpg_est = col_double(),
+##   price = col_double(),
+##   gallons = col_double(),
+##   mpg_actual = col_double(),
+##   ratio = col_double(),
+##   notes = col_character()
+## )</code></pre>
+</div>
+<div id="results" class="section level2">
+<h2>Results</h2>
+<pre class="r"><code>x &lt;- x %&gt;% mutate(mpg_calc = miles_trip/gallons) %&gt;% mutate(mpg_diff = mpg_calc - mpg_est)
+
+x</code></pre>
+<pre><code>## # A tibble: 9 x 11
+##         date miles_total miles_trip mpg_est price gallons mpg_actual
+##       &lt;date&gt;       &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;
+## 1 2017-07-20       90208      358.1    48.7 19.54   6.860   52.20117
+## 2 2017-08-19       90596      387.5    53.7 26.02   8.677   44.65829
+## 3 2017-09-03       90984      383.5    55.9 22.10   7.730   49.61190
+## 4 2017-09-28       91748      359.3    51.6 21.82   7.796   46.08774
+## 5 2017-10-13       92216      467.0    54.6 26.08   9.029   51.72223
+## 6 2017-10-26       92661      444.0    54.7 24.74   8.683   51.13440
+## 7 2017-11-05       93072      410.9    54.5 24.42   7.879   52.15129
+## 8 2017-12-01       93996      461.2    55.7 25.95   8.800   52.40909
+## 9 2017-12-10       94442      446.3    53.0 28.15   8.940   49.92170
+## # ... with 4 more variables: ratio &lt;dbl&gt;, notes &lt;lgl&gt;, mpg_calc &lt;dbl&gt;,
+## #   mpg_diff &lt;dbl&gt;</code></pre>
+<pre class="r"><code>x %&gt;% select(date, mpg_est, mpg_calc, mpg_diff)</code></pre>
+<pre><code>## # A tibble: 9 x 4
+##         date mpg_est mpg_calc  mpg_diff
+##       &lt;date&gt;   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
+## 1 2017-07-20    48.7 52.20117  3.501166
+## 2 2017-08-19    53.7 44.65829 -9.041708
+## 3 2017-09-03    55.9 49.61190 -6.288098
+## 4 2017-09-28    51.6 46.08774 -5.512263
+## 5 2017-10-13    54.6 51.72223 -2.877772
+## 6 2017-10-26    54.7 51.13440 -3.565599
+## 7 2017-11-05    54.5 52.15129 -2.348712
+## 8 2017-12-01    55.7 52.40909 -3.290909
+## 9 2017-12-10    53.0 49.92170 -3.078300</code></pre>
+<p>From looking at the data, the estimated mpg from the car’s dashboard was higher than the calculated mpg based on the odometer and gallons readout on almost all occasions. It’s not clear why that first one was different, but I included it since I didn’t have a good reason to throw it out.</p>
+<p>The results of the paired t-test are as follows.</p>
+<pre class="r"><code>t.test(x$mpg_diff)</code></pre>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  x$mpg_diff
+## t = -3.1712, df = 8, p-value = 0.01317
+## alternative hypothesis: true mean is not equal to 0
+## 95 percent confidence interval:
+##  -6.2374623 -0.9852476
+## sample estimates:
+## mean of x 
+## -3.611355</code></pre>
+<pre class="r"><code>x %&gt;%
+  summarize(tot_gallons = sum(gallons), tot_miles_trip = sum(miles_trip), est_miles_trip = sum(gallons * mpg_est)) %&gt;%
+  mutate(overall_mpg = tot_miles_trip/tot_gallons, overall_est_mpg = est_miles_trip/tot_gallons) %&gt;% 
+  mutate(percentage = overall_mpg/overall_est_mpg - 1)</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   tot_gallons tot_miles_trip est_miles_trip overall_mpg overall_est_mpg
+##         &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt;       &lt;dbl&gt;           &lt;dbl&gt;
+## 1      74.394         3717.8       3995.747    49.97446         53.7106
+## # ... with 1 more variables: percentage &lt;dbl&gt;</code></pre>
+</div>
+<div id="discussion" class="section level2">
+<h2>Discussion</h2>
+<p>The additional data since the last time I looked revealed a significant difference between the estimated and calculated mpgs. On average there was a -3.6 mpg difference between the estimated and actual MPG figures. It’s a small difference. When the total miles and total gallons are added up, the difference is less than about 7%. It’s significant but maybe not that far off that I might be upset.</p>
+</div>
