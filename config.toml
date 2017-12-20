@@ -2,7 +2,7 @@ baseurl = "/"
 publishDir = "../mching.github.io"
 relativeurls = true
 languageCode = "en-us"
-# baseurl = "https://username.github.io"
+# baseurl = "https://mching.github.io"
 DefaultContentLanguage = "en"
 #DefaultContentLanguage = "ja"
 title = "Dripping Data"
@@ -16,7 +16,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [Params]
   subtitle = "My numbers blog. It's not quite Flowing."
-  logo = "img/minihead.jpg"
+  logo = "img/IMG_6557.jpg"
   favicon = "img/favicon.ico"
   dateFormat = "January 2, 2006"
   commit = false

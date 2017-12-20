@@ -8,23 +8,30 @@ tags:
   - regular_expressions
 ---
 
+Our fax machine at work has been very slow lately. One of our frequently faxed numbers complained that it took over an hour to send a fax. Googling this problem didn't result in any solutions, other than maybe learning that this is a common problem with fax over IP telephony. I decided to take a closer look at the logs.
+
+The logs are printed out roughly every day or two. I scanned the log and ran it through the Adobe Acrobat OCR program. I copy and pasted the results straight into a text file and read them in.
+
 ```{r}
 library(stringr)
-library(lubridate)
-library(dplyr)
 library(ggplot2)
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(lubridate))
 
-tmp_con <- file("./content/datasets/faxes_OCR.txt")
+tmp_con <- file("../datasets/faxes_OCR.txt")
 fax <- readLines(tmp_con)
 close.connection(tmp_con)
 rm(tmp_con)
 
-fax
-
-
+head(fax)
 ```
 
+From this set of lines we can see that it's roughly coded as transmission number, incoming vs. outgoing number, phone number, time and date, duration, mode, speed (?), and baud rate.
 
+The biggest effort here was to remember how to use regular expressions. I found [this cheat sheet](https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf) very helpful. 
+
+## Phone Numbers
+First I tried to get the phone numbers. I chose the lines that had recognizable phone numbers and extracted the phone numbers (any string of 7 or more numerals).
 ```{r}
 # Get phone numbers
 phoneset <- grep("[0-9]{7,}", fax) # index for lines with recognizable phone numbers
@@ -34,43 +41,53 @@ ph_numbers <- unlist(ph_numbers)
 
 ```
 
-```{r}
+## Transmission Speed
+Then I tried to get the speed of the transmission in minutes per page. I had to get the duration of the transmission first. Fortunately those were pretty uniform in format (hh:mm:ss). I converted these to minutes to make it easier to wrap my mind around the speeds. The `str_extract_all` function from the `stringr` package made things much easier than using `regmatches`.
 
+```{r}
 # Get duration of transmission
 time_durations <- str_extract_all(fax[phoneset], "\\d{2}:\\d{2}:\\d{2}") # times for sending and duration
 durations <- sapply(time_durations, function(x) x[length(x)])
 durations <- period_to_seconds(hms(durations))
-durations <- durations/60
-
-
+durations <- durations/60 # Convert to minutes
 ```
 
+Then I needed the denominator of pages transmitted. This also had a uniform format (pages transmitted/total pages).
 ```{r}
 # Get pages transmitted
 pages <- str_extract_all(fax[phoneset], "\\d+/\\d+") # pages
 pages <- str_extract_all(pages, "\\d+")
 pages <- sapply(pages, function(x) x[length(x)])
 pages <- as.integer(pages)
-
-
 ```
 
+## Baud Rate
+Finally I wanted to see if the baud rate had any impact on the speed of the transmission. (It did but not in the way I would have expected...)
 ```{r}
 # Get baud rate
 baud <- str_extract_all(fax[phoneset], "\\d+$")
 baud <- as.integer(baud)
-
-
 ```
 
 ```{r}
 # bind all into data frame
 faxes <- data_frame(ph_numbers, durations, pages, baud)
-
-
 ```
 
+## Overall Distribution
+The overall distribution looked like this. Some were slow but the mode was for the fast speeds (0-1 minute per page)
+```{r}
+faxes %>% filter(pages > 0) %>% 
+  mutate(min_per_page = durations/pages) %>%
+  group_by(ph_numbers) %>% 
+  summarize(tot_min = sum(durations), tot_pages = sum(pages)) %>% 
+  mutate(avg_min_per_page = tot_min/tot_pages) %>% 
+  arrange(desc(avg_min_per_page)) %>%
+  ggplot(aes(x = avg_min_per_page)) + geom_histogram(binwidth = 0.5)
+```
 
+## Hypothesis: Speed Depends on the Fax Machine on the Other Side
+The first hypothesis I had was that it was the fax machine on the other side having problems (or the communication between our fax machine and certain fax machines). I calculated the average minutes per page. 
 ```{r}
 # hypothesis: the speed is worse for certain numbers
 faxes %>% filter(pages > 0) %>% 
@@ -81,22 +98,34 @@ faxes %>% filter(pages > 0) %>%
   arrange(desc(avg_min_per_page))
 ```
 
+Just visually inspecting it I could see that some 432- prefixes were the slowest at 4 minutes per page. The complaint of slow fax speeds came from the next number. We had occupied their fax machine for almost 5 hours over those couple of days! 
+
+That being said, it wasn't clear that one fax machine at our work or the other work was any worse than others. Speed could vary on the type of material being faxed so there could be some variation. But clearly the one number we heard complaints from wasn't the only one having this problem.
+
+## Hypothesis: Baud Affects Speed
+The other hypothesis I had was that the transmission baud rate affected the speed of the fax. Faster baud would presumably mean faster transmission.
 ```{r}
 # hypothesis: baud affects speed
 faxes <- faxes %>% filter(pages > 0) %>%   
   mutate(min_per_page = durations/pages)
 
-faxes %>% ggplot(aes(x = as.factor(baud), y = min_per_page)) + geom_boxplot()
-
-t.test(min_per_page ~ baud, faxes)
-
 faxes %>% 
   group_by(baud) %>% 
   summarize(avg_min_per_page = mean(min_per_page), sd_mpp = sd(min_per_page))
 
+faxes %>% ggplot(aes(x = as.factor(baud), y = min_per_page)) + geom_boxplot()
 
+t.test(min_per_page ~ baud, faxes)
 
-  summarize(tot_min = sum(durations), tot_pages = sum(pages)) %>% 
-  mutate(avg_min_per_page = tot_min/tot_pages)
 ```
 
+This was clearly wrong. In fact the 2400 baud faxes were transmitted on average about 2 minutes faster per page! 
+
+The reason for this wasn't clear although it could be that slower transmission meant fewer errors. There were some websites that backed this up online. 
+
+The context for this seems to disagree with the conclusion that slower baud could be faster. In fact, according to [this table of fax speeds](http://support.faxbetter.com/knowledgebase/articles/24111-how-long-does-it-take-for-a-fax-to-be-sent-or-rece), a baud rate of 2400 should yield about 2 minutes per page, rather than the 0.8 I observed. 
+
+It's not totally clear why some fax machines are faster than others. I didn't look at all the features. Perhaps the Error Correction (EC) has something to do with it too. In the meantime, there is an option on the fax machine to dial things down to 4800 baud (but not 2400). I'll try that and see if it helps at all.
+
+## Conclusion
+There's something wrong with our fax machine, and it's still not clear what it is. In the meantime, regular expressions remain a tool that are within my reach for doing less manual data processing...

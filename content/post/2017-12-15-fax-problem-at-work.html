@@ -1,0 +1,190 @@
+---
+title: Fax Problem at Work
+author: ~
+date: '2017-12-15'
+slug: fax-problem-at-work
+categories: R
+tags: 
+  - regular_expressions
+---
+
+
+
+<p>Our fax machine at work has been very slow lately. One of our frequently faxed numbers complained that it took over an hour to send a fax. Googling this problem didn’t result in any solutions, other than maybe learning that this is a common problem with fax over IP telephony. I decided to take a closer look at the logs.</p>
+<p>The logs are printed out roughly every day or two. I scanned the log and ran it through the Adobe Acrobat OCR program. I copy and pasted the results straight into a text file and read them in.</p>
+<pre class="r"><code>library(stringr)
+library(ggplot2)
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(lubridate))
+
+tmp_con &lt;- file(&quot;../datasets/faxes_OCR.txt&quot;)
+fax &lt;- readLines(tmp_con)
+close.connection(tmp_con)
+rm(tmp_con)
+
+head(fax)</code></pre>
+<pre><code>## [1] &quot;001 458 8085895865 09:24:4604?05?2016 00:04:00 1 EC HS (P14400&quot;             
+## [2] &quot;002 964 808?692?8255 10:11:02 11?22?2017 00:14:34 818 EC HS________________&quot;
+## [3] &quot;003 965 92375965 11:58:5911?22?2017 00:00:00 0?5 1 HS FA&quot;                   
+## [4] &quot;?a-?&quot;                                                                       
+## [5] &quot;004 966 12:33:0911?22?2017 00:00:08 1/1 N/A ?? RP (P&quot;                       
+## [6] &quot;005 967 HeIpDesk:8776974889 13:40:40 11?22?2017 \x844J2/4T 1 EC HS ?CP14400&quot;</code></pre>
+<p>From this set of lines we can see that it’s roughly coded as transmission number, incoming vs. outgoing number, phone number, time and date, duration, mode, speed (?), and baud rate.</p>
+<p>The biggest effort here was to remember how to use regular expressions. I found <a href="https://www.rstudio.com/wp-content/uploads/2016/09/RegExCheatsheet.pdf">this cheat sheet</a> very helpful.</p>
+<div id="phone-numbers" class="section level2">
+<h2>Phone Numbers</h2>
+<p>First I tried to get the phone numbers. I chose the lines that had recognizable phone numbers and extracted the phone numbers (any string of 7 or more numerals).</p>
+<pre class="r"><code># Get phone numbers
+phoneset &lt;- grep(&quot;[0-9]{7,}&quot;, fax) # index for lines with recognizable phone numbers</code></pre>
+<pre><code>## Warning in grep(&quot;[0-9]{7,}&quot;, fax): input string 6 is invalid in this locale</code></pre>
+<pre class="r"><code>fax[phoneset] # inspect output</code></pre>
+<pre><code>##  [1] &quot;001 458 8085895865 09:24:4604?05?2016 00:04:00 1 EC HS (P14400&quot;        
+##  [2] &quot;003 965 92375965 11:58:5911?22?2017 00:00:00 0?5 1 HS FA&quot;              
+##  [3] &quot;008 ? 970 92335494 15:59:48 11?22?2017 00:04:09 4/4 1 EC (P14400&quot;      
+##  [4] &quot;009 971 8089833005 7:13:36 11?22?2017 00:03:24 2/2 1 EC (P14400&quot;       
+##  [5] &quot;010 972 8089833005 7:13:5411?22?2017 00:02:58 2/2 1 EC (P14400&quot;        
+##  [6] &quot;011 973 4152764164 09:48:30 1 ?23-2017 00:02:56 3/3 1 EC (P2400&quot;       
+##  [7] &quot;013 975 4152764164 08:17:2511?27?2017 00:04:56 4/4 1 EC HR CP2400&quot;     
+##  [8] &quot;014 976 8084328827 09:39:28 11?27?2017 00:11:37 3/3 1 63 HS (P14400&quot;   
+##  [9] &quot;015 977 8084328827 09:40:0811?27?2017 00:11:06 3/3 1 63 HS CP14400&quot;    
+## [10] &quot;017 r979 8084323602 13:51:0611?27?2017 00:05:15 2/2 1 63 HS CP14400&quot;   
+## [11] &quot;018 980 8083299729 14: 54:32 11?27?2017 00:00:39 2/2 1 EC HR (P2400&quot;   
+## [12] &quot;019 981 8084328827 07:45:48 11?28?2017 00:34:42 8/8 1 63 HS ? CP14400&quot; 
+## [13] &quot;021 983 9496668390 10:08:01 11?28?2017 00:01:26 4/4 1 EC HR CP2400&quot;    
+## [14] &quot;022 984 8084325506 10:39:58 11?28?2017 00:04:03 1/1 1 EC HS (P14400&quot;   
+## [15] &quot;023 985 8084325506 10:40:45 11?28?2017 00:04:01 -- 1/1 1 EC HS CP14400&quot;
+## [16] &quot;024 986 8083344446 10:50:36 11?28?2017 00:01:24 T4/4 1 63 HR (P14400&quot;  
+## [17] &quot;025 987 8086917411 11:52:0611?28?2017 00:02:13 7/7 1 EC HR (P2400&quot;     
+## [18] &quot;026 988 6721128 15:08:24 11?28?2017 00:05:56 3/3 1 EC HS (P14400&quot;      
+## [19] &quot;027 989 8089833005 15:09:0311?28?2017 00:41:28 9/9 ? 1 EC HS (P14400&quot;  
+## [20] &quot;028 990 8089833005 15:49:0511?28?2017 00:16:40 10/10 1 EC HS (P14400&quot;  
+## [21] &quot;031 993 9496668390 05:42:2011?29?2017 00:00:57 2/2 1 EC HR (P2400&quot;     
+## [22] &quot;032 994 8089833005 08:14:11 11?29?2017 01:18:10 12/12 1 EC HS (P14400&quot; 
+## [23] &quot;034 996 8086765587 09:36:56 11?29?2017 00:00:31 2/2 1 EC HR (P2400&quot;    
+## [24] &quot;035 997 8084328781 09:40:5211?29?2017 00:10:23 4/4 1 G3 HS (P14400&quot;    
+## [25] &quot;036 998 8084328590 09:46:26 11?29?2017 00:09:53 5/5 1 EC HS CP14400&quot;   
+## [26] &quot;037 999 8089833005 09:55:05 11?29?2017 01:35:21 22/22 1 EC HS CP14400&quot; 
+## [27] &quot;038 001 99558794 10:15:35 11?29?2017 00:05:40 2/2 1 EC HS (P14400&quot;     
+## [28] &quot;039 002 8084328781 11:10:4011?29?2017 00:05:47 3/3 1 63 HS (P14400&quot;    
+## [29] &quot;040 003 8084328827 16:00:36 11?29?2017 00:10:49 3/3 1 63 HS (P14400&quot;   
+## [30] &quot;041 004 9496668390 02:26:03 11?30?2017 ? 00:00:43 2/2 1 EC HR (P2400&quot;  
+## [31] &quot;042 005 4152764164 08:02:29 11?30?2017 ? 00:03:12 4/4 1 E( HR (P2400&quot;  
+## [32] &quot;4F40 007 8089833005 09:15:50 11?30?2017 00:52:28 14/14 1 EC HS (P14400&quot;
+## [33] &quot;045 008 4152764164 10:11:1211?30?2017 00:02:48 3/3 1 EC HR (P2400&quot;     
+## [34] &quot;046 009 9786004364 15:15:55 11?30?2017 00:19:52 8/8 1 EC HR (P2400&quot;    
+## [35] &quot;047 010 9786004364 15:38:25 11?30?2017 00:19:54 8/8 1 1EC HR (P2400&quot;   
+## [36] &quot;048 011 8085860016 10:11:46 12?01?2017 00:01:55 1/1 1 EC HS (P14400&quot;   
+## [37] &quot;049 012 8089833005 10:14:45 12?01?2017 00:04:45 3/3 1 FC HS (P14400&quot;   
+## [38] &quot;050 013 3297518 11:23:4712?01?2017 00:00:36 2/2 1 EC HR________ (P2400&quot;
+## [39] &quot;051 014 6721128 11:50:1012?01?2017 00:12:14 35/35 1 E( HR (P2400&quot;</code></pre>
+<pre class="r"><code>ph_numbers &lt;- str_extract_all(fax[phoneset], &quot;[0-9]{7,}&quot;)
+ph_numbers &lt;- unlist(ph_numbers)</code></pre>
+</div>
+<div id="transmission-speed" class="section level2">
+<h2>Transmission Speed</h2>
+<p>Then I tried to get the speed of the transmission in minutes per page. I had to get the duration of the transmission first. Fortunately those were pretty uniform in format (hh:mm:ss). I converted these to minutes to make it easier to wrap my mind around the speeds. The <code>str_extract_all</code> function from the <code>stringr</code> package made things much easier than using <code>regmatches</code>.</p>
+<pre class="r"><code># Get duration of transmission
+time_durations &lt;- str_extract_all(fax[phoneset], &quot;\\d{2}:\\d{2}:\\d{2}&quot;) # times for sending and duration
+durations &lt;- sapply(time_durations, function(x) x[length(x)])
+durations &lt;- period_to_seconds(hms(durations))
+durations &lt;- durations/60 # Convert to minutes</code></pre>
+<p>Then I needed the denominator of pages transmitted. This also had a uniform format (pages transmitted/total pages).</p>
+<pre class="r"><code># Get pages transmitted
+pages &lt;- str_extract_all(fax[phoneset], &quot;\\d+/\\d+&quot;) # pages
+pages &lt;- str_extract_all(pages, &quot;\\d+&quot;)
+pages &lt;- sapply(pages, function(x) x[length(x)])
+pages &lt;- as.integer(pages)</code></pre>
+</div>
+<div id="baud-rate" class="section level2">
+<h2>Baud Rate</h2>
+<p>Finally I wanted to see if the baud rate had any impact on the speed of the transmission. (It did but not in the way I would have expected…)</p>
+<pre class="r"><code># Get baud rate
+baud &lt;- str_extract_all(fax[phoneset], &quot;\\d+$&quot;)
+baud &lt;- as.integer(baud)</code></pre>
+<pre class="r"><code># bind all into data frame
+faxes &lt;- data_frame(ph_numbers, durations, pages, baud)</code></pre>
+</div>
+<div id="overall-distribution" class="section level2">
+<h2>Overall Distribution</h2>
+<p>The overall distribution looked like this. Some were slow but the mode was for the fast speeds (0-1 minute per page)</p>
+<pre class="r"><code>faxes %&gt;% filter(pages &gt; 0) %&gt;% 
+  mutate(min_per_page = durations/pages) %&gt;%
+  group_by(ph_numbers) %&gt;% 
+  summarize(tot_min = sum(durations), tot_pages = sum(pages)) %&gt;% 
+  mutate(avg_min_per_page = tot_min/tot_pages) %&gt;% 
+  arrange(desc(avg_min_per_page)) %&gt;%
+  ggplot(aes(x = avg_min_per_page)) + geom_histogram(binwidth = 0.5)</code></pre>
+<p><img src="/post/2017-12-15-fax-problem-at-work_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="hypothesis-speed-depends-on-the-fax-machine-on-the-other-side" class="section level2">
+<h2>Hypothesis: Speed Depends on the Fax Machine on the Other Side</h2>
+<p>The first hypothesis I had was that it was the fax machine on the other side having problems (or the communication between our fax machine and certain fax machines). I calculated the average minutes per page.</p>
+<pre class="r"><code># hypothesis: the speed is worse for certain numbers
+faxes %&gt;% filter(pages &gt; 0) %&gt;% 
+  mutate(min_per_page = durations/pages) %&gt;%
+  group_by(ph_numbers) %&gt;% 
+  summarize(tot_min = sum(durations), tot_pages = sum(pages)) %&gt;% 
+  mutate(avg_min_per_page = tot_min/tot_pages) %&gt;% 
+  arrange(desc(avg_min_per_page))</code></pre>
+<pre><code>## # A tibble: 18 x 4
+##    ph_numbers     tot_min tot_pages avg_min_per_page
+##         &lt;chr&gt;       &lt;dbl&gt;     &lt;int&gt;            &lt;dbl&gt;
+##  1 8084325506   8.0666667         2        4.0333333
+##  2 8084328827  68.2333333        17        4.0137255
+##  3 8089833005 295.2333333        74        3.9896396
+##  4   99558794   5.6666667         2        2.8333333
+##  5 8084323602   5.2500000         2        2.6250000
+##  6 9786004364  39.7666667        16        2.4854167
+##  7 8084328781  16.1666667         7        2.3095238
+##  8 8084328590   9.8833333         5        1.9766667
+##  9 8085860016   1.9166667         1        1.9166667
+## 10   92335494   4.1500000         4        1.0375000
+## 11 4152764164  13.8666667        14        0.9904762
+## 12    6721128  18.1666667        38        0.4780702
+## 13 9496668390   3.1000000         8        0.3875000
+## 14 8083344446   1.4000000         4        0.3500000
+## 15 8083299729   0.6500000         2        0.3250000
+## 16 8086917411   2.2166667         7        0.3166667
+## 17    3297518   0.6000000         2        0.3000000
+## 18 8086765587   0.5166667         2        0.2583333</code></pre>
+<p>Just visually inspecting it I could see that some 432- prefixes were the slowest at 4 minutes per page. The complaint of slow fax speeds came from the next number. We had occupied their fax machine for almost 5 hours over those couple of days!</p>
+<p>That being said, it wasn’t clear that one fax machine at our work or the other work was any worse than others. Speed could vary on the type of material being faxed so there could be some variation. But clearly the one number we heard complaints from wasn’t the only one having this problem.</p>
+</div>
+<div id="hypothesis-baud-affects-speed" class="section level2">
+<h2>Hypothesis: Baud Affects Speed</h2>
+<p>The other hypothesis I had was that the transmission baud rate affected the speed of the fax. Faster baud would presumably mean faster transmission.</p>
+<pre class="r"><code># hypothesis: baud affects speed
+faxes &lt;- faxes %&gt;% filter(pages &gt; 0) %&gt;%   
+  mutate(min_per_page = durations/pages)
+
+faxes %&gt;% 
+  group_by(baud) %&gt;% 
+  summarize(avg_min_per_page = mean(min_per_page), sd_mpp = sd(min_per_page))</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##    baud avg_min_per_page    sd_mpp
+##   &lt;int&gt;            &lt;dbl&gt;     &lt;dbl&gt;
+## 1  2400        0.8326049 0.7648467
+## 2 14400        2.8895148 1.4448610</code></pre>
+<pre class="r"><code>faxes %&gt;% ggplot(aes(x = as.factor(baud), y = min_per_page)) + geom_boxplot()</code></pre>
+<p><img src="/post/2017-12-15-fax-problem-at-work_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>t.test(min_per_page ~ baud, faxes)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  min_per_page by baud
+## t = -5.6497, df = 34.533, p-value = 2.336e-06
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -2.796381 -1.317439
+## sample estimates:
+##  mean in group 2400 mean in group 14400 
+##           0.8326049           2.8895148</code></pre>
+<p>This was clearly wrong. In fact the 2400 baud faxes were transmitted on average about 2 minutes faster per page!</p>
+<p>The reason for this wasn’t clear although it could be that slower transmission meant fewer errors. There were some websites that backed this up online.</p>
+<p>The context for this seems to disagree with the conclusion that slower baud could be faster. In fact, according to <a href="http://support.faxbetter.com/knowledgebase/articles/24111-how-long-does-it-take-for-a-fax-to-be-sent-or-rece">this table of fax speeds</a>, a baud rate of 2400 should yield about 2 minutes per page, rather than the 0.8 I observed.</p>
+<p>It’s not totally clear why some fax machines are faster than others. I didn’t look at all the features. Perhaps the Error Correction (EC) has something to do with it too. In the meantime, there is an option on the fax machine to dial things down to 4800 baud (but not 2400). I’ll try that and see if it helps at all.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p>There’s something wrong with our fax machine, and it’s still not clear what it is. In the meantime, regular expressions remain a tool that are within my reach for doing less manual data processing…</p>
+</div>
