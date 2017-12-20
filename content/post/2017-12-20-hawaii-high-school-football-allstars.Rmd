@@ -1,0 +1,81 @@
+---
+title: "Hawaii High School Football All-Stars"
+author: "Michael Ching"
+date: "2017-12-20"
+slug: hi-hs-football-allstars
+categories:
+  - R
+tags:
+  - football
+  - sports
+---
+
+
+## Methods
+
+
+```{r}
+library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+my_sheets <- gs_ls()
+fb <- gs_title("HI_football_allstars")
+x <- gs_read(fb)
+```
+
+## Exploration
+
+```{r}
+glimpse(x)
+x$position <- factor(x$position)
+x$paper <- factor(x$paper)
+```
+
+```{r}
+# players over yeaars
+x %>% mutate(one = 1) %>% group_by(year) %>% summarize(nplayers = sum(one))
+
+x %>% mutate(one = 1) %>% group_by(year, paper) %>% summarize(nplayers = sum(one)) %>%
+  ggplot(aes(x = year, y = nplayers, color = paper)) + geom_point()
+```
+
+```{r}
+# school with most players (not deduplicated)
+x %>% mutate(one = 1) %>% group_by(team) %>% summarize(nplayers = sum(one)) %>% 
+  arrange(desc(nplayers))
+
+```
+
+```{r}
+x %>% mutate(one = 1) %>% group_by(team, paper) %>% summarize(nplayers = sum(one)) %>% 
+  arrange(desc(nplayers))
+```
+
+```{r}
+x %>% mutate(one = 1) %>% filter(paper == "HA") %>%
+  group_by(team) %>% summarize(nplayers = sum(one)) %>% 
+  arrange(desc(nplayers))
+
+x %>% mutate(one = 1) %>% filter(paper == "HSB") %>%
+  group_by(team) %>% summarize(nplayers = sum(one)) %>% 
+  ggplot(aes(x = nplayers)) + geom_histogram(binwidth = 10)
+```
+
+```{r}
+x %>% mutate(one = 1, name = paste(first, last)) %>% group_by(year) %>%
+  distinct(name, .keep_all = T) %>%   
+  group_by(year, team) %>%
+  summarize(nplayers = sum(one)) %>% 
+  arrange(desc(nplayers))
+
+
+```
+
+```{r}
+x %>% mutate(one = 1, name = paste(first, last)) %>% group_by(year) %>%
+  distinct(name, .keep_all = T) %>%   
+  group_by(year, team) %>%
+  summarize(nplayers = sum(one)) %>% 
+  arrange(desc(nplayers))
+```
+

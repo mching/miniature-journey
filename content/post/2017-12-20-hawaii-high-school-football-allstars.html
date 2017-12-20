@@ -1,0 +1,168 @@
+---
+title: "Hawaii High School Football All-Stars"
+author: "Michael Ching"
+date: "2017-12-20"
+slug: hi-hs-football-allstars
+categories:
+  - R
+tags:
+  - football
+  - sports
+---
+
+
+
+<div id="methods" class="section level2">
+<h2>Methods</h2>
+<pre class="r"><code>library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+my_sheets &lt;- gs_ls()</code></pre>
+<pre><code>## Auto-refreshing stale OAuth token.</code></pre>
+<pre><code>## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;default/Pacific/
+## Honolulu&#39;</code></pre>
+<pre class="r"><code>fb &lt;- gs_title(&quot;HI_football_allstars&quot;)</code></pre>
+<pre><code>## Sheet successfully identified: &quot;HI_football_allstars&quot;</code></pre>
+<pre class="r"><code>x &lt;- gs_read(fb)</code></pre>
+<pre><code>## Accessing worksheet titled &#39;Sheet1&#39;.</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   year = col_integer(),
+##   position = col_character(),
+##   first = col_character(),
+##   last = col_character(),
+##   team = col_character(),
+##   poy = col_character(),
+##   paper = col_character()
+## )</code></pre>
+</div>
+<div id="exploration" class="section level2">
+<h2>Exploration</h2>
+<pre class="r"><code>glimpse(x)</code></pre>
+<pre><code>## Observations: 2,014
+## Variables: 7
+## $ year     &lt;int&gt; 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017, 2017,...
+## $ position &lt;chr&gt; &quot;RB&quot;, &quot;QB&quot;, &quot;REC&quot;, &quot;REC&quot;, &quot;REC&quot;, &quot;RB&quot;, &quot;OL&quot;, &quot;OL&quot;, &quot;O...
+## $ first    &lt;chr&gt; &quot;Enoch&quot;, &quot;Chevan&quot;, &quot;Mitchell&quot;, &quot;Jonah&quot;, &quot;Scott&quot;, &quot;Kah...
+## $ last     &lt;chr&gt; &quot;Nawahine&quot;, &quot;Cordeiro&quot;, &quot;Quinn&quot;, &quot;Panoke&quot;, &quot;McLeod&quot;, ...
+## $ team     &lt;chr&gt; &quot;Kahuku&quot;, &quot;Saint Louis&quot;, &quot;Saint Louis&quot;, &quot;Saint Louis&quot;...
+## $ poy      &lt;chr&gt; NA, &quot;OPOY&quot;, NA, NA, NA, NA, NA, NA, NA, NA, &quot;COY&quot;, NA...
+## $ paper    &lt;chr&gt; &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA...</code></pre>
+<pre class="r"><code>x$position &lt;- factor(x$position)
+x$paper &lt;- factor(x$paper)</code></pre>
+<pre class="r"><code># players over yeaars
+x %&gt;% mutate(one = 1) %&gt;% group_by(year) %&gt;% summarize(nplayers = sum(one))</code></pre>
+<pre><code>## # A tibble: 47 x 2
+##     year nplayers
+##    &lt;int&gt;    &lt;dbl&gt;
+##  1  1972       22
+##  2  1973       24
+##  3  1974       26
+##  4  1975       54
+##  5  1976       24
+##  6  1977       46
+##  7  1978       47
+##  8  1979       45
+##  9  1980       46
+## 10  1981       23
+## # ... with 37 more rows</code></pre>
+<pre class="r"><code>x %&gt;% mutate(one = 1) %&gt;% group_by(year, paper) %&gt;% summarize(nplayers = sum(one)) %&gt;%
+  ggplot(aes(x = year, y = nplayers, color = paper)) + geom_point()</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
+<p><img src="/post/2017-12-20-hawaii-high-school-football-allstars_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code># school with most players (not deduplicated)
+x %&gt;% mutate(one = 1) %&gt;% group_by(team) %&gt;% summarize(nplayers = sum(one)) %&gt;% 
+  arrange(desc(nplayers))</code></pre>
+<pre><code>## # A tibble: 46 x 2
+##           team nplayers
+##          &lt;chr&gt;    &lt;dbl&gt;
+##  1 Saint Louis      422
+##  2      Kahuku      278
+##  3  Kamehameha      174
+##  4     Waianae      149
+##  5     Punahou      133
+##  6  Farrington      119
+##  7    Leilehua       93
+##  8      Iolani       89
+##  9    Pac-Five       63
+## 10      Castle       47
+## # ... with 36 more rows</code></pre>
+<pre class="r"><code>x %&gt;% mutate(one = 1) %&gt;% group_by(team, paper) %&gt;% summarize(nplayers = sum(one)) %&gt;% 
+  arrange(desc(nplayers))</code></pre>
+<pre><code>## # A tibble: 106 x 3
+## # Groups:   team [46]
+##           team  paper nplayers
+##          &lt;chr&gt; &lt;fctr&gt;    &lt;dbl&gt;
+##  1 Saint Louis     HA      210
+##  2 Saint Louis    HSB      180
+##  3      Kahuku     HA      112
+##  4      Kahuku    HSB      111
+##  5  Kamehameha     HA       95
+##  6     Waianae     HA       80
+##  7  Kamehameha    HSB       69
+##  8     Waianae    HSB       63
+##  9     Punahou     HA       60
+## 10  Farrington     HA       56
+## # ... with 96 more rows</code></pre>
+<pre class="r"><code>x %&gt;% mutate(one = 1) %&gt;% filter(paper == &quot;HA&quot;) %&gt;%
+  group_by(team) %&gt;% summarize(nplayers = sum(one)) %&gt;% 
+  arrange(desc(nplayers))</code></pre>
+<pre><code>## # A tibble: 42 x 2
+##           team nplayers
+##          &lt;chr&gt;    &lt;dbl&gt;
+##  1 Saint Louis      210
+##  2      Kahuku      112
+##  3  Kamehameha       95
+##  4     Waianae       80
+##  5     Punahou       60
+##  6  Farrington       56
+##  7    Leilehua       53
+##  8      Iolani       47
+##  9    Pac-Five       30
+## 10      Castle       25
+## # ... with 32 more rows</code></pre>
+<pre class="r"><code>x %&gt;% mutate(one = 1) %&gt;% filter(paper == &quot;HSB&quot;) %&gt;%
+  group_by(team) %&gt;% summarize(nplayers = sum(one)) %&gt;% 
+  ggplot(aes(x = nplayers)) + geom_histogram(binwidth = 10)</code></pre>
+<p><img src="/post/2017-12-20-hawaii-high-school-football-allstars_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>x %&gt;% mutate(one = 1, name = paste(first, last)) %&gt;% group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;%   
+  group_by(year, team) %&gt;%
+  summarize(nplayers = sum(one)) %&gt;% 
+  arrange(desc(nplayers))</code></pre>
+<pre><code>## # A tibble: 533 x 3
+## # Groups:   year [47]
+##     year        team nplayers
+##    &lt;int&gt;       &lt;chr&gt;    &lt;dbl&gt;
+##  1  1997 Saint Louis       18
+##  2  1999 Saint Louis       13
+##  3  2000      Kahuku       13
+##  4  1987 Saint Louis       12
+##  5  1992 Saint Louis       12
+##  6  2015      Kahuku       12
+##  7  1975  Kamehameha       11
+##  8  1989 Saint Louis       11
+##  9  1994 Saint Louis       11
+## 10  2002 Saint Louis       11
+## # ... with 523 more rows</code></pre>
+<pre class="r"><code>x %&gt;% mutate(one = 1, name = paste(first, last)) %&gt;% group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;%   
+  group_by(year, team) %&gt;%
+  summarize(nplayers = sum(one)) %&gt;% 
+  arrange(desc(nplayers))</code></pre>
+<pre><code>## # A tibble: 533 x 3
+## # Groups:   year [47]
+##     year        team nplayers
+##    &lt;int&gt;       &lt;chr&gt;    &lt;dbl&gt;
+##  1  1997 Saint Louis       18
+##  2  1999 Saint Louis       13
+##  3  2000      Kahuku       13
+##  4  1987 Saint Louis       12
+##  5  1992 Saint Louis       12
+##  6  2015      Kahuku       12
+##  7  1975  Kamehameha       11
+##  8  1989 Saint Louis       11
+##  9  1994 Saint Louis       11
+## 10  2002 Saint Louis       11
+## # ... with 523 more rows</code></pre>
+</div>
