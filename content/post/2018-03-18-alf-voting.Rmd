@@ -1,0 +1,65 @@
+---
+title: Annual Leadership Forum Voting
+author: ~
+date: '2018-03-18'
+slug: alf-voting
+categories: 
+  - R
+tags: 
+  - AAP
+  - voting
+---
+
+It's been a while since I posted, but this weekend I returned to the American Academy of Pediatrics Annual Leadership Forum and I was able to cite my analysis on the top 10 resolutions. 
+
+In the spirit of looking further at the ALF data I decided to look at the voting records from this year. It seemed that most votes pass by at least 80% if not more. This includes the amendment votes.
+
+## Methods
+For each resolution or amendment, I recorded the number voting and the percentage voting in favor. Here's the exploratory analysis.
+
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+dat <- read.csv("../datasets/ALF_votes.csv")
+dat <- tbl_df(dat)
+dat
+```
+
+There were `r dat %>% filter(Consent == 0) %>% nrow()` votes taken on 78 resolutions and 4 late resolutions. The number of votes is less than the number of resolutions because `r dat %>% filter(Consent == 1) %>% nrow()` were placed on the consent calendar. 
+
+Of all the resolutions, `r dat %>% filter(Consent == 1) %>% nrow()/82` were on the consent calendar.
+
+Overall success rate for amendments
+```{r}
+dat %>% filter(Notes == "Amendment") %>%
+  summarize(Amendment_success_rate = mean(Success, na.rm = T))
+```
+
+Overall success rate for resolutions
+```{r}
+dat %>% filter(Notes == "Resolution") %>%
+  summarize(Resolution_success_rate = mean(Success, na.rm = T))
+```
+
+Success rate if not on consent calendar
+```{r}
+dat %>% filter(Notes == "Resolution" & Consent == 0) %>%
+  summarize(Resolution_success_rate = mean(Success, na.rm = T))
+```
+
+Distribution of votes overall
+```{r}
+dat %>% filter(Consent == 0) %>%
+  group_by(Notes) %>% 
+  summarize(Count = n())
+
+```
+
+
+Distribution of votes for amendments
+```{r}
+dat %>% filter(Notes != "CC")
+```
+
+
+Distribution of votes for resolutions
