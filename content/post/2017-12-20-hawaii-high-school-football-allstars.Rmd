@@ -10,6 +10,7 @@ tags:
   - sports
 ---
 
+The local newspaper released a dataset of high school all stars over decades, and I thought it might be interesting to analyze the information. One question would be what schools have the most all stars, at what positions, and how has this changed over the years.
 
 ## Methods
 

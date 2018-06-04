@@ -1,0 +1,109 @@
+---
+title: Weight Training Data
+author: ~
+date: '2018-06-03'
+slug: weight-training-data
+categories: 
+  - R
+tags: 
+  - exercise
+  - weights
+subtitle: ''
+---
+
+I lifted weights regularly for two years but stopped recently because I decided to run more instead. I tracked my weight lifting using an app called Strong, and since it seemed that I had reached my peak of weight lifting I figured I would look back on my exercise over this time.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+```
+
+```{r}
+dat <- read.csv("../datasets/strong.csv")
+dat <- tbl_df(dat)
+dat
+```
+
+From a high level look at the data, I have a table with each row being a set of an exercise. It's pretty amazing to think that I did 4334 sets of various exercises over these two years.
+
+# Data Cleaning
+Looking at the data there were some basic cleaning issues. One was that the Date format was read in as a factor and I needed to change it into a format that can be manipulated. The other was that there were some variables that weren't needed like the workout name (corresponding to a preset workout), mi (miles?), and Seconds. I didn't use these often or consistently so there's not much to be gained there.
+```{r}
+dat$Date <- ymd_hms(dat$Date)
+dat <- dat %>% select(Date, Exercise.Name, Set.Order, lb, Reps) 
+```
+
+Now I was ready to answer some basic questions.
+
+## How many days did I lift and how long does the data cover
+```{r}
+max(dat$Date) - min(dat$Date)
+```
+
+```{r}
+length(unique(dat$Date))
+```
+
+I completed 218 workouts over the span of 816 days. Recently I have been lifting very rarely.
+
+```{r}
+dat %>%  
+  mutate(Month_obs = month(Date), Year_obs = year(Date)) %>%
+  group_by(Year_obs, Month_obs) %>%
+  summarize(sets = n()) %>%
+  mutate(Yr_mo = as.Date(paste0(Year_obs, "-", Month_obs, "-01"))) %>% 
+  ggplot(aes(x = Yr_mo, y = sets)) + geom_point() + 
+  geom_smooth(method = "loess") +
+  ggtitle("Number of Sets per Month")
+  
+month(dat$Date[1])
+```
+
+
+## What exercises did I do
+```{r}
+dat %>% group_by(Exercise.Name) %>% summarize(sets = n()) %>%
+  arrange(desc(sets))
+```
+
+That seemed about right. I did about 3 sets usually, and I did some exercises just about every time (Lat Pulldown for example).
+
+## What kind of reps was I doing per set
+I examined the number of reps I did per set.
+```{r}
+summary(dat$Reps)
+ggplot(dat, aes(x = Reps)) + geom_histogram(binwidth = 2)
+```
+There is a second peak at 50 from crunches, but I was surprised that I did one set of 100. What was that all about? Looks like I haven't been doing much crunches lately.
+
+```{r}
+dat %>% filter(Reps > 50) %>% arrange(desc(Reps))
+```
+
+Taking out the crunches, most of my sets were 8-12. I also needed to take out Planks and Decline Crunches
+
+```{r}
+dat %>% filter(Exercise.Name != "Crunch") %>% 
+  filter(Exercise.Name != "Plank (Custom)") %>%
+  filter(Exercise.Name != "Decline Crunch") %>%
+  ggplot(aes(x = Reps)) + geom_histogram(binwidth = 2)
+```
+
+## How did the weight change over time
+I got stronger then not so strong as the workouts spaced out. How to show this? One way was to look at an exercise over time. Bench press machine was a good one since I did this over a long period of time.
+
+```{r}
+dat %>% filter(Exercise.Name == "Bench Press (Machine)") %>%
+  group_by(Date) %>% summarize(maxwt = max(lb)) %>%
+  ggplot(aes(x = Date, y = maxwt)) + geom_point() + geom_smooth()
+```
+
+Maybe that's not a great example. 
+
+```{r}
+dat %>% filter(Exercise.Name == "Bicep Curl (Dumbbell)") %>%
+  group_by(Date) %>% summarize(maxwt = max(lb)) %>%
+  ggplot(aes(x = Date, y = maxwt)) + geom_point() + geom_smooth()
+
+```

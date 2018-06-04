@@ -25,6 +25,15 @@ dat <- tbl_df(dat)
 dat
 ```
 
+```{r}
+dat %>% mutate(Yes_p = Yes/Total) %>% 
+  ggplot(aes(x = Yes_p, color = Notes)) + geom_histogram(binwidth = 0.05)
+```
+
+It looks like most 
+
+One hypothesis is that resolutions that have to be amended are less likely to pass than resolutions that do not require amendment. 
+
 There were `r dat %>% filter(Consent == 0) %>% nrow()` votes taken on 78 resolutions and 4 late resolutions. The number of votes is less than the number of resolutions because `r dat %>% filter(Consent == 1) %>% nrow()` were placed on the consent calendar. 
 
 Of all the resolutions, `r dat %>% filter(Consent == 1) %>% nrow()/82` were on the consent calendar.
@@ -35,7 +44,6 @@ dat %>% filter(Notes == "Amendment") %>%
   summarize(Amendment_success_rate = mean(Success, na.rm = T))
 ```
 
-Overall success rate for resolutions
 ```{r}
 dat %>% filter(Notes == "Resolution") %>%
   summarize(Resolution_success_rate = mean(Success, na.rm = T))

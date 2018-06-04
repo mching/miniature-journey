@@ -1,0 +1,50 @@
+---
+title: Runkeeper Data
+author: ~
+date: '2018-06-03'
+slug: runkeeper-data
+categories: 
+  - R
+tags: 
+  - exercise
+subtitle: ''
+---
+
+Last summer I started running again after about 8 years off. I had run from my sophomore year of high school until the fall of 2008 when it seemed like I had a meniscus injury and I stopped running. That was 17 years of running during which the longest break I had taken was maybe a few months. I always missed it, so when my son started training for a Scouting event, I decided I would keep him company. Lo and behold my knee felt ok, so I figured I would keep going. I've been using the Runkeeper app to track my runs and decided to look at what the data showed.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+```
+
+```{r}
+dat <- tbl_df(read.csv("../datasets/cardioActivities.csv"))
+dat
+```
+
+```{r}
+dat$Date <- ymd_hms(dat$Date)
+```
+
+## Activities
+I don't consistently tracka c
+```{r}
+table(dat$Type)
+```
+
+## Weekly Mileage
+```{r}
+dat %>%  
+#  filter(Date < ymd(20180601)) %>% 
+  filter(Type == "Running") %>%
+  mutate(Week_obs = week(Date), Year_obs = year(Date)) %>%
+  group_by(Year_obs, Week_obs) %>%
+  summarize(Mileage = sum(Distance..mi.)) %>%
+  ggplot(aes(x = Week_obs, y = Mileage)) + 
+  facet_grid( ~ factor(Year_obs)) +
+  geom_point()
+
+
+```
+
