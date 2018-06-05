@@ -94,7 +94,7 @@ x %&gt;% mutate(one = 1) %&gt;% group_by(year, paper) %&gt;% summarize(nplayers 
 <pre class="r"><code>x &lt;- x[-which(is.na(x$year)),]</code></pre>
 <div id="which-school-has-the-most-all-stars" class="section level2">
 <h2>Which School Has the Most All Stars</h2>
-<p>For a first pass I looked at the raw number of times each school was listed.</p>
+<p>For a first pass I looked at the raw number of times each school was listed. This list included duplicates, for example when Mark Tuinei was selected as an all star by both the Star Bulletin and the Advertiser in 1977.</p>
 <pre class="r"><code># school with most players (not deduplicated)
 x %&gt;% group_by(team) %&gt;% 
   summarize(nplayers = n()) %&gt;%   
@@ -113,8 +113,7 @@ x %&gt;% group_by(team) %&gt;%
 ##  9 Pac-Five          63
 ## 10 Castle            47
 ## # ... with 35 more rows</code></pre>
-<p>This includes a fair number of players who were selected to both papers’ all star teams.</p>
-<p>After deduplicating players, Saint Louis had the most first team players, followed by Kahuku. The third place team (Kamehameha), had fewer than half the number that Saint Louis had.</p>
+<p>After accounting for the duplicated players, Saint Louis had the most first team players, followed by Kahuku. The third place team (Kamehameha), had fewer than half the number that Saint Louis had.</p>
 <pre class="r"><code>x %&gt;% mutate(name = paste(first, last)) %&gt;% 
   group_by(year) %&gt;%
   distinct(name, .keep_all = T) %&gt;%   
