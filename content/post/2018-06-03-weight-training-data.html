@@ -1,0 +1,142 @@
+---
+title: Weight Training Data
+author: ~
+date: '2018-06-03'
+slug: weight-training-data
+categories: 
+  - R
+tags: 
+  - exercise
+  - weights
+subtitle: ''
+---
+
+
+
+<p>I lifted weights regularly for two years but stopped recently because I decided to run more instead. I tracked my weight lifting using an app called Strong, and since it seemed that I had reached my peak of weight lifting I figured I would look back on my exercise over this time.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     date</code></pre>
+<pre class="r"><code>dat &lt;- read.csv(&quot;../datasets/strong.csv&quot;)
+dat &lt;- tbl_df(dat)
+dat</code></pre>
+<pre><code>## # A tibble: 4,334 x 9
+##    Date    Workout.Name Exercise.Name  Set.Order    lb  Reps    mi Seconds
+##    &lt;fct&gt;   &lt;fct&gt;        &lt;fct&gt;              &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;   &lt;int&gt;
+##  1 2016-0… Basic 2      Bench Press (…         0    65    10     0       0
+##  2 2016-0… Basic 2      Bench Press (…         1    80    10     0       0
+##  3 2016-0… Basic 2      Lat Pulldown …         0    80    10     0       0
+##  4 2016-0… Basic 2      Lat Pulldown …         1    80    10     0       0
+##  5 2016-0… Basic 2      Shoulder Pres…         0    35    10     0       0
+##  6 2016-0… Basic 2      Shoulder Pres…         1    35    10     0       0
+##  7 2016-0… Basic 2      Bicep Curl (M…         0    25    10     0       0
+##  8 2016-0… Basic 2      Bicep Curl (M…         1    30    10     0       0
+##  9 2016-0… Basic 2      Tricep Extens…         0    45    10     0       0
+## 10 2016-0… Basic 2      Tricep Extens…         1    45    10     0       0
+## # ... with 4,324 more rows, and 1 more variable: Notes &lt;fct&gt;</code></pre>
+<p>From a high level look at the data, I have a table with each row being a set of an exercise. It’s pretty amazing to think that I did 4334 sets of various exercises over these two years.</p>
+<div id="data-cleaning" class="section level1">
+<h1>Data Cleaning</h1>
+<p>Looking at the data there were some basic cleaning issues. One was that the Date format was read in as a factor and I needed to change it into a format that can be manipulated. The other was that there were some variables that weren’t needed like the workout name (corresponding to a preset workout), mi (miles?), and Seconds. I didn’t use these often or consistently so there’s not much to be gained there.</p>
+<pre class="r"><code>dat$Date &lt;- ymd_hms(dat$Date)
+dat &lt;- dat %&gt;% select(Date, Exercise.Name, Set.Order, lb, Reps) </code></pre>
+<p>Now I was ready to answer some basic questions.</p>
+<div id="how-many-days-did-i-lift-and-how-long-does-the-data-cover" class="section level2">
+<h2>How many days did I lift and how long does the data cover</h2>
+<pre class="r"><code>max(dat$Date) - min(dat$Date)</code></pre>
+<pre><code>## Time difference of 816.8135 days</code></pre>
+<pre class="r"><code>length(unique(dat$Date))</code></pre>
+<pre><code>## [1] 218</code></pre>
+<p>I completed 218 workouts over the span of 816 days. Recently I have been lifting very rarely.</p>
+<pre class="r"><code>dat %&gt;%  
+  mutate(Month_obs = month(Date), Year_obs = year(Date)) %&gt;%
+  group_by(Year_obs, Month_obs) %&gt;%
+  summarize(sets = n()) %&gt;%
+  mutate(Yr_mo = as.Date(paste0(Year_obs, &quot;-&quot;, Month_obs, &quot;-01&quot;))) %&gt;% 
+  ggplot(aes(x = Yr_mo, y = sets)) + geom_point() + 
+  geom_smooth(method = &quot;loess&quot;) +
+  ggtitle(&quot;Number of Sets per Month&quot;)</code></pre>
+<p><img src="/post/2018-06-03-weight-training-data_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>month(dat$Date[1])</code></pre>
+<pre><code>## [1] 3</code></pre>
+</div>
+<div id="what-exercises-did-i-do" class="section level2">
+<h2>What exercises did I do</h2>
+<pre class="r"><code>dat %&gt;% group_by(Exercise.Name) %&gt;% summarize(sets = n()) %&gt;%
+  arrange(desc(sets))</code></pre>
+<pre><code>## # A tibble: 36 x 2
+##    Exercise.Name                     sets
+##    &lt;fct&gt;                            &lt;int&gt;
+##  1 Lat Pulldown (Custom)              502
+##  2 Triceps (cable)                    428
+##  3 Bench Press (Machine)              341
+##  4 Bicep Curl (Dumbbell)              321
+##  5 Shoulder Press (Machine)           297
+##  6 Seated Military Press (Dumbbell)   286
+##  7 Low Row cable                      267
+##  8 Crunch                             266
+##  9 Seated Row (Custom)                240
+## 10 Bicep Curl (Machine)               228
+## # ... with 26 more rows</code></pre>
+<p>That seemed about right. I did about 3 sets usually, and I did some exercises just about every time (Lat Pulldown for example).</p>
+</div>
+<div id="what-kind-of-reps-was-i-doing-per-set" class="section level2">
+<h2>What kind of reps was I doing per set</h2>
+<p>I examined the number of reps I did per set.</p>
+<pre class="r"><code>summary(dat$Reps)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##       0       8      10      12      12     100</code></pre>
+<pre class="r"><code>ggplot(dat, aes(x = Reps)) + geom_histogram(binwidth = 2)</code></pre>
+<p><img src="/post/2018-06-03-weight-training-data_files/figure-html/unnamed-chunk-8-1.png" width="672" /> There is a second peak at 50 from crunches, but I was surprised that I did one set of 100. What was that all about? Looks like I haven’t been doing much crunches lately.</p>
+<pre class="r"><code>dat %&gt;% filter(Reps &gt; 50) %&gt;% arrange(desc(Reps))</code></pre>
+<pre><code>## # A tibble: 12 x 5
+##    Date                Exercise.Name Set.Order    lb  Reps
+##    &lt;dttm&gt;              &lt;fct&gt;             &lt;int&gt; &lt;dbl&gt; &lt;int&gt;
+##  1 2016-05-24 01:28:30 Crunch                1     0   100
+##  2 2016-05-24 01:28:30 Crunch                0     0    70
+##  3 2016-05-24 01:28:30 Crunch                2     0    70
+##  4 2017-01-21 12:31:30 Crunch                0     0    70
+##  5 2017-06-24 11:50:17 Crunch                0     0    70
+##  6 2016-05-07 11:57:18 Crunch                1     0    60
+##  7 2017-01-08 20:55:35 Crunch                2     0    60
+##  8 2017-03-18 13:05:42 Crunch                0     0    60
+##  9 2017-03-27 12:13:00 Crunch                1     0    60
+## 10 2016-05-07 11:57:18 Crunch                0     0    58
+## 11 2017-05-24 11:59:51 Crunch                0     0    53
+## 12 2016-04-23 12:21:15 Crunch                0     0    52</code></pre>
+<p>Taking out the crunches, most of my sets were 8-12. I also needed to take out Planks and Decline Crunches</p>
+<pre class="r"><code>dat %&gt;% filter(Exercise.Name != &quot;Crunch&quot;) %&gt;% 
+  filter(Exercise.Name != &quot;Plank (Custom)&quot;) %&gt;%
+  filter(Exercise.Name != &quot;Decline Crunch&quot;) %&gt;%
+  ggplot(aes(x = Reps)) + geom_histogram(binwidth = 2)</code></pre>
+<p><img src="/post/2018-06-03-weight-training-data_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="how-did-the-weight-change-over-time" class="section level2">
+<h2>How did the weight change over time</h2>
+<p>I got stronger then not so strong as the workouts spaced out. How to show this? One way was to look at an exercise over time. Bench press machine was a good one since I did this over a long period of time.</p>
+<pre class="r"><code>dat %&gt;% filter(Exercise.Name == &quot;Bench Press (Machine)&quot;) %&gt;%
+  group_by(Date) %&gt;% summarize(maxwt = max(lb)) %&gt;%
+  ggplot(aes(x = Date, y = maxwt)) + geom_point() + geom_smooth()</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39;</code></pre>
+<p><img src="/post/2018-06-03-weight-training-data_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>Maybe that’s not a great example.</p>
+<pre class="r"><code>dat %&gt;% filter(Exercise.Name == &quot;Bicep Curl (Dumbbell)&quot;) %&gt;%
+  group_by(Date) %&gt;% summarize(maxwt = max(lb)) %&gt;%
+  ggplot(aes(x = Date, y = maxwt)) + geom_point() + geom_smooth()</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39;</code></pre>
+<p><img src="/post/2018-06-03-weight-training-data_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+</div>

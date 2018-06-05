@@ -12,16 +12,14 @@ tags:
 
 
 
-<div id="methods" class="section level2">
-<h2>Methods</h2>
+<p>The local newspaper released a <a href="http://www.hawaiiprepworld.com/football/all-state-football-1972-present/">dataset of high school all stars</a> from 1972 to 2017, and I thought it might be interesting to analyze the information. Some interesting questions were what schools have the most all stars, at what positions, and how this has changed over the years. I suspect that Saint Louis, Kahuku, and Waianae will be the top teams but who knows? Maybe there’s a secret dynasty that I never heard of.</p>
+<p>First I loaded the packages I would need.</p>
 <pre class="r"><code>library(googlesheets)
 suppressPackageStartupMessages(library(dplyr))
-library(ggplot2)
-my_sheets &lt;- gs_ls()</code></pre>
-<pre><code>## Auto-refreshing stale OAuth token.</code></pre>
-<pre><code>## Warning in strptime(x, fmt, tz = &quot;GMT&quot;): unknown timezone &#39;default/Pacific/
-## Honolulu&#39;</code></pre>
-<pre class="r"><code>fb &lt;- gs_title(&quot;HI_football_allstars&quot;)</code></pre>
+library(ggplot2)</code></pre>
+<p>I loaded the dataset from my Google Drive. I had a little issue with an error message but it turned out that there was a zombie R instance using the port and a quick <code>kill</code> was all that was needed. Method for that came from <a href="https://github.com/jennybc/googlesheets/issues/343">this post</a>.</p>
+<pre class="r"><code>my_sheets &lt;- gs_ls()
+fb &lt;- gs_title(&quot;HI_football_allstars&quot;)</code></pre>
 <pre><code>## Sheet successfully identified: &quot;HI_football_allstars&quot;</code></pre>
 <pre class="r"><code>x &lt;- gs_read(fb)</code></pre>
 <pre><code>## Accessing worksheet titled &#39;Sheet1&#39;.</code></pre>
@@ -35,9 +33,7 @@ my_sheets &lt;- gs_ls()</code></pre>
 ##   poy = col_character(),
 ##   paper = col_character()
 ## )</code></pre>
-</div>
-<div id="exploration" class="section level2">
-<h2>Exploration</h2>
+<p>First I looked at the variables and made the positions and paper names into factors.</p>
 <pre class="r"><code>glimpse(x)</code></pre>
 <pre><code>## Observations: 2,014
 ## Variables: 7
@@ -50,119 +46,169 @@ my_sheets &lt;- gs_ls()</code></pre>
 ## $ paper    &lt;chr&gt; &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA...</code></pre>
 <pre class="r"><code>x$position &lt;- factor(x$position)
 x$paper &lt;- factor(x$paper)</code></pre>
-<pre class="r"><code># players over yeaars
-x %&gt;% mutate(one = 1) %&gt;% group_by(year) %&gt;% summarize(nplayers = sum(one))</code></pre>
-<pre><code>## # A tibble: 47 x 2
-##     year nplayers
-##    &lt;int&gt;    &lt;dbl&gt;
-##  1  1972       22
-##  2  1973       24
-##  3  1974       26
-##  4  1975       54
-##  5  1976       24
-##  6  1977       46
-##  7  1978       47
-##  8  1979       45
-##  9  1980       46
-## 10  1981       23
-## # ... with 37 more rows</code></pre>
-<pre class="r"><code>x %&gt;% mutate(one = 1) %&gt;% group_by(year, paper) %&gt;% summarize(nplayers = sum(one)) %&gt;%
+<p>Historically there were two newspapers in Honolulu, the Honolulu Star-Bulletin and the Honolulu Advertiser. These newspapers published separate all star lists until they merged in early 2010 and became the Honolulu Star-Advertiser.</p>
+<p>I calculated the size of the all star teams over the years.</p>
+<pre class="r"><code># players over years
+x %&gt;% mutate(one = 1) %&gt;% group_by(year, paper) %&gt;% summarize(nplayers = sum(one)) %&gt;%
   ggplot(aes(x = year, y = nplayers, color = paper)) + geom_point()</code></pre>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
 <p><img src="/post/2017-12-20-hawaii-high-school-football-allstars_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Looking at the data there’s one year that’s an outlier (and one NA observation). The 1975 list is odd in that there are 12 defensive linemen and 7 linebackers chosen for the team. I’d guess that means they published first and second team players in this list, but it’s not clear who would have been first team and who second team.</p>
+<pre class="r"><code>x %&gt;% filter(year == 1975)</code></pre>
+<pre><code>## # A tibble: 54 x 7
+##     year position first   last     team        poy   paper
+##    &lt;int&gt; &lt;fct&gt;    &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;fct&gt;
+##  1  1975 coach    Cal     Chai     Kamehameha  &lt;NA&gt;  HA   
+##  2  1975 E        Casey   Kunitomo Kamehameha  &lt;NA&gt;  HA   
+##  3  1975 E        Jim     Gesser   Kaiser      &lt;NA&gt;  HA   
+##  4  1975 E        Ben     Apuna    Waipahu     &lt;NA&gt;  HA   
+##  5  1975 E        Derek   Yamada   Iolani      &lt;NA&gt;  HA   
+##  6  1975 E        Aaron   Lorenzo  Kamehameha  &lt;NA&gt;  HA   
+##  7  1975 E        Charles Pico     St. Anthony &lt;NA&gt;  HA   
+##  8  1975 E        David   Corbelli Hilo        &lt;NA&gt;  HA   
+##  9  1975 T        Dayle   Turner   Kamehameha  &lt;NA&gt;  HA   
+## 10  1975 T        Robert  Hema     Waianae     &lt;NA&gt;  HA   
+## # ... with 44 more rows</code></pre>
+<pre class="r"><code>x %&gt;% filter(year == 1975) %&gt;% group_by(position) %&gt;% summarize(n())</code></pre>
+<pre><code>## # A tibble: 10 x 2
+##    position `n()`
+##    &lt;fct&gt;    &lt;int&gt;
+##  1 C            2
+##  2 coach        1
+##  3 DB           6
+##  4 DL          12
+##  5 E            7
+##  6 G            4
+##  7 LB           7
+##  8 QB           2
+##  9 RB           8
+## 10 T            5</code></pre>
+<p>The NA year is just one row of all NA entries so I’ll just go ahead and drop it.</p>
+<pre class="r"><code>x %&gt;% filter(is.na(year))</code></pre>
+<pre><code>## # A tibble: 1 x 7
+##    year position first last  team  poy   paper
+##   &lt;int&gt; &lt;fct&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;fct&gt;
+## 1    NA &lt;NA&gt;     &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;  HSA</code></pre>
+<pre class="r"><code>which(is.na(x$year))</code></pre>
+<pre><code>## [1] 28</code></pre>
+<pre class="r"><code>x &lt;- x[-which(is.na(x$year)),]</code></pre>
+<div id="which-school-has-the-most-all-stars" class="section level2">
+<h2>Which School Has the Most All Stars</h2>
+<p>For a first pass I looked at the raw number of times each school was listed.</p>
 <pre class="r"><code># school with most players (not deduplicated)
-x %&gt;% mutate(one = 1) %&gt;% group_by(team) %&gt;% summarize(nplayers = sum(one)) %&gt;% 
+x %&gt;% group_by(team) %&gt;% 
+  summarize(nplayers = n()) %&gt;%   
   arrange(desc(nplayers))</code></pre>
-<pre><code>## # A tibble: 46 x 2
-##           team nplayers
-##          &lt;chr&gt;    &lt;dbl&gt;
+<pre><code>## # A tibble: 45 x 2
+##    team        nplayers
+##    &lt;chr&gt;          &lt;int&gt;
 ##  1 Saint Louis      422
-##  2      Kahuku      278
-##  3  Kamehameha      174
-##  4     Waianae      149
-##  5     Punahou      133
-##  6  Farrington      119
-##  7    Leilehua       93
-##  8      Iolani       89
-##  9    Pac-Five       63
-## 10      Castle       47
-## # ... with 36 more rows</code></pre>
-<pre class="r"><code>x %&gt;% mutate(one = 1) %&gt;% group_by(team, paper) %&gt;% summarize(nplayers = sum(one)) %&gt;% 
-  arrange(desc(nplayers))</code></pre>
-<pre><code>## # A tibble: 106 x 3
-## # Groups:   team [46]
-##           team  paper nplayers
-##          &lt;chr&gt; &lt;fctr&gt;    &lt;dbl&gt;
-##  1 Saint Louis     HA      210
-##  2 Saint Louis    HSB      180
-##  3      Kahuku     HA      112
-##  4      Kahuku    HSB      111
-##  5  Kamehameha     HA       95
-##  6     Waianae     HA       80
-##  7  Kamehameha    HSB       69
-##  8     Waianae    HSB       63
-##  9     Punahou     HA       60
-## 10  Farrington     HA       56
-## # ... with 96 more rows</code></pre>
-<pre class="r"><code>x %&gt;% mutate(one = 1) %&gt;% filter(paper == &quot;HA&quot;) %&gt;%
-  group_by(team) %&gt;% summarize(nplayers = sum(one)) %&gt;% 
-  arrange(desc(nplayers))</code></pre>
-<pre><code>## # A tibble: 42 x 2
-##           team nplayers
-##          &lt;chr&gt;    &lt;dbl&gt;
-##  1 Saint Louis      210
-##  2      Kahuku      112
-##  3  Kamehameha       95
-##  4     Waianae       80
-##  5     Punahou       60
-##  6  Farrington       56
-##  7    Leilehua       53
-##  8      Iolani       47
-##  9    Pac-Five       30
-## 10      Castle       25
-## # ... with 32 more rows</code></pre>
-<pre class="r"><code>x %&gt;% mutate(one = 1) %&gt;% filter(paper == &quot;HSB&quot;) %&gt;%
-  group_by(team) %&gt;% summarize(nplayers = sum(one)) %&gt;% 
-  ggplot(aes(x = nplayers)) + geom_histogram(binwidth = 10)</code></pre>
-<p><img src="/post/2017-12-20-hawaii-high-school-football-allstars_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<pre class="r"><code>x %&gt;% mutate(one = 1, name = paste(first, last)) %&gt;% group_by(year) %&gt;%
+##  2 Kahuku           278
+##  3 Kamehameha       174
+##  4 Waianae          149
+##  5 Punahou          133
+##  6 Farrington       119
+##  7 Leilehua          93
+##  8 Iolani            89
+##  9 Pac-Five          63
+## 10 Castle            47
+## # ... with 35 more rows</code></pre>
+<p>This includes a fair number of players who were selected to both papers’ all star teams.</p>
+<p>After deduplicating players, Saint Louis had the most first team players, followed by Kahuku. The third place team (Kamehameha), had fewer than half the number that Saint Louis had.</p>
+<pre class="r"><code>x %&gt;% mutate(name = paste(first, last)) %&gt;% 
+  group_by(year) %&gt;%
   distinct(name, .keep_all = T) %&gt;%   
-  group_by(year, team) %&gt;%
-  summarize(nplayers = sum(one)) %&gt;% 
+  group_by(team) %&gt;%
+  summarize(nplayers = n()) %&gt;% 
   arrange(desc(nplayers))</code></pre>
-<pre><code>## # A tibble: 533 x 3
-## # Groups:   year [47]
-##     year        team nplayers
-##    &lt;int&gt;       &lt;chr&gt;    &lt;dbl&gt;
-##  1  1997 Saint Louis       18
-##  2  1999 Saint Louis       13
-##  3  2000      Kahuku       13
-##  4  1987 Saint Louis       12
-##  5  1992 Saint Louis       12
-##  6  2015      Kahuku       12
-##  7  1975  Kamehameha       11
-##  8  1989 Saint Louis       11
-##  9  1994 Saint Louis       11
-## 10  2002 Saint Louis       11
-## # ... with 523 more rows</code></pre>
-<pre class="r"><code>x %&gt;% mutate(one = 1, name = paste(first, last)) %&gt;% group_by(year) %&gt;%
+<pre><code>## # A tibble: 45 x 2
+##    team        nplayers
+##    &lt;chr&gt;          &lt;int&gt;
+##  1 Saint Louis      281
+##  2 Kahuku           197
+##  3 Kamehameha       129
+##  4 Punahou          108
+##  5 Waianae          104
+##  6 Farrington        89
+##  7 Iolani            71
+##  8 Leilehua          69
+##  9 Pac-Five          46
+## 10 Mililani          41
+## # ... with 35 more rows</code></pre>
+<p>Maybe a better way to look at it would be an ordered bar chart. Help for the code came from <a href="https://stackoverflow.com/questions/5208679/order-bars-in-ggplot2-bar-graph">here</a>.</p>
+<pre class="r"><code>x %&gt;% mutate(name = paste(first, last)) %&gt;% 
+  group_by(year) %&gt;%
   distinct(name, .keep_all = T) %&gt;%   
+  group_by(team) %&gt;%
+  summarize(nplayers = n()) %&gt;%
+  arrange(-nplayers) %&gt;%
+  mutate(team = factor(team, team)) %&gt;% # to sort the teams
+  filter(nplayers &gt; 4) %&gt;%
+  ggplot(aes(x = team, y = nplayers)) + 
+  geom_bar(stat = &quot;identity&quot;) + 
+#  coord_flip() +
+  labs(title = &quot;Football Teams with the Most All State Players&quot;,
+       subtitle = &quot;1972-2017, minimum 5 all state players per team&quot;,
+       y = &quot;players&quot;) + 
+  theme(axis.text.x = element_text(angle=45, hjust = 1))</code></pre>
+<p><img src="/post/2017-12-20-hawaii-high-school-football-allstars_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>x %&gt;% mutate(name = paste(first, last)) %&gt;% 
+  group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;%   
+  group_by(team) %&gt;%
+  summarize(nplayers = n()) %&gt;% 
+  ggplot(aes(x=nplayers)) +
+  geom_histogram(binwidth = 10) +
+  ggtitle(&quot;Distribution of Football All Stars by School, 1972-2017&quot;) +
+  labs(x = &quot;Number of All Stars&quot;, y = &quot;Number of Teams&quot;)</code></pre>
+<p><img src="/post/2017-12-20-hawaii-high-school-football-allstars_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="how-have-team-strengths-changed-over-time" class="section level2">
+<h2>How Have Team Strengths Changed over Time?</h2>
+<p>Some schools were powerhouses back in the day but have not been producing all stars lately. Examples include Pac Five and Kaiser. I thought it would be neat to plot the number of all stars per year by team.</p>
+<pre class="r"><code># Get rank order of teams
+team_rank &lt;- x %&gt;% mutate(name = paste(first, last)) %&gt;% 
+  group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;%   
+  group_by(team) %&gt;%
+  summarize(nplayers = n()) %&gt;%
+  arrange(-nplayers) %&gt;%
+  mutate(team = factor(team, team))
+
+# Find teams with at least 10 all stars
+min_ten &lt;- x %&gt;% mutate(name = paste(first, last)) %&gt;% 
+  group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;%   
+  group_by(team) %&gt;%
+  summarize(nplayers = n()) %&gt;%
+  arrange(-nplayers) %&gt;%
+  mutate(team = factor(team, team)) %&gt;% # to sort the teams
+  filter(nplayers &gt; 9)
+
+# Create graph
+x %&gt;% 
+  # Deduplicate players
+  mutate(name = paste(first, last), one = 1) %&gt;% 
+  group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;% 
+  
+  # Create running count of all-star players by team
+  arrange(year) %&gt;%
+  group_by(team) %&gt;% 
+  mutate(cumulative = cumsum(one)) %&gt;%
+  
+  # Group by team, sort, and filter
   group_by(year, team) %&gt;%
-  summarize(nplayers = sum(one)) %&gt;% 
-  arrange(desc(nplayers))</code></pre>
-<pre><code>## # A tibble: 533 x 3
-## # Groups:   year [47]
-##     year        team nplayers
-##    &lt;int&gt;       &lt;chr&gt;    &lt;dbl&gt;
-##  1  1997 Saint Louis       18
-##  2  1999 Saint Louis       13
-##  3  2000      Kahuku       13
-##  4  1987 Saint Louis       12
-##  5  1992 Saint Louis       12
-##  6  2015      Kahuku       12
-##  7  1975  Kamehameha       11
-##  8  1989 Saint Louis       11
-##  9  1994 Saint Louis       11
-## 10  2002 Saint Louis       11
-## # ... with 523 more rows</code></pre>
+  summarize(nplayers = max(cumulative)) %&gt;%
+  arrange(-nplayers) %&gt;% 
+  mutate(team = factor(team, levels(team_rank$team))) %&gt;% # to sort the teams
+  filter(team %in% min_ten$team) %&gt;% # limit to only teams with &gt; 10 all stars
+
+  # Create graph
+  ggplot(aes(x = year, y = nplayers, color = team)) + 
+  geom_line() +
+  labs(title = &quot;Cumulative Football All Stars per School&quot;,
+       subtitle = &quot;1972-2017, minimum 10 players&quot;,
+       y = &quot;Number of All Stars&quot;)</code></pre>
+<p><img src="/post/2017-12-20-hawaii-high-school-football-allstars_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>

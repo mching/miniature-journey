@@ -8,6 +8,7 @@ categories:
 tags: 
   - AAP
   - voting
+draft: TRUE
 ---
 
 It's been a while since I posted, but this weekend I returned to the American Academy of Pediatrics Annual Leadership Forum and I was able to cite my analysis on the top 10 resolutions. 

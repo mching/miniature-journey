@@ -10,73 +10,155 @@ tags:
   - sports
 ---
 
-The local newspaper released a dataset of high school all stars over decades, and I thought it might be interesting to analyze the information. One question would be what schools have the most all stars, at what positions, and how has this changed over the years.
+The local newspaper released a [dataset of high school all stars](http://www.hawaiiprepworld.com/football/all-state-football-1972-present/) from 1972 to 2017, and I thought it might be interesting to analyze the information. Some interesting questions were what schools have the most all stars, at what positions, and how this has changed over the years. I suspect that Saint Louis, Kahuku, and Waianae will be the top teams but who knows? Maybe there's a secret dynasty that I never heard of.
 
-## Methods
-
-
+First I loaded the packages I would need. 
 ```{r}
 library(googlesheets)
 suppressPackageStartupMessages(library(dplyr))
 library(ggplot2)
+```
+
+I loaded the dataset from my Google Drive. I had a little issue with an error message but it turned out that there was a zombie R instance using the port and a quick `kill` was all that was needed. Method for that came from [this post](https://github.com/jennybc/googlesheets/issues/343).
+
+```{r dataload, cache=TRUE}
 my_sheets <- gs_ls()
 fb <- gs_title("HI_football_allstars")
 x <- gs_read(fb)
 ```
 
-## Exploration
-
+First I looked at the variables and made the positions and paper names into factors. 
 ```{r}
 glimpse(x)
 x$position <- factor(x$position)
 x$paper <- factor(x$paper)
 ```
 
-```{r}
-# players over yeaars
-x %>% mutate(one = 1) %>% group_by(year) %>% summarize(nplayers = sum(one))
+Historically there were two newspapers in Honolulu, the Honolulu Star-Bulletin and the Honolulu Advertiser. These newspapers published separate all star lists until they merged in early 2010 and became the Honolulu Star-Advertiser.
 
+I calculated the size of the all star teams over the years.
+```{r}
+# players over years
 x %>% mutate(one = 1) %>% group_by(year, paper) %>% summarize(nplayers = sum(one)) %>%
   ggplot(aes(x = year, y = nplayers, color = paper)) + geom_point()
 ```
 
+Looking at the data there's one year that's an outlier (and one NA observation). The 1975 list is odd in that there are 12 defensive linemen and 7 linebackers chosen for the team. I'd guess that means they published first and second team players in this list, but it's not clear who would have been first team and who second team.
+
+```{r}
+x %>% filter(year == 1975)
+x %>% filter(year == 1975) %>% group_by(position) %>% summarize(n())
+```
+
+The NA year is just one row of all NA entries so I'll just go ahead and drop it.
+```{r}
+x %>% filter(is.na(year))
+which(is.na(x$year))
+x <- x[-which(is.na(x$year)),]
+```
+
+## Which School Has the Most All Stars
+For a first pass I looked at the raw number of times each school was listed. 
 ```{r}
 # school with most players (not deduplicated)
-x %>% mutate(one = 1) %>% group_by(team) %>% summarize(nplayers = sum(one)) %>% 
-  arrange(desc(nplayers))
-
-```
-
-```{r}
-x %>% mutate(one = 1) %>% group_by(team, paper) %>% summarize(nplayers = sum(one)) %>% 
+x %>% group_by(team) %>% 
+  summarize(nplayers = n()) %>%   
   arrange(desc(nplayers))
 ```
 
-```{r}
-x %>% mutate(one = 1) %>% filter(paper == "HA") %>%
-  group_by(team) %>% summarize(nplayers = sum(one)) %>% 
-  arrange(desc(nplayers))
+This includes a fair number of players who were selected to both papers' all star teams.
 
-x %>% mutate(one = 1) %>% filter(paper == "HSB") %>%
-  group_by(team) %>% summarize(nplayers = sum(one)) %>% 
-  ggplot(aes(x = nplayers)) + geom_histogram(binwidth = 10)
-```
-
+After deduplicating players, Saint Louis had the most first team players, followed by Kahuku. The third place team (Kamehameha), had fewer than half the number that Saint Louis had.
 ```{r}
-x %>% mutate(one = 1, name = paste(first, last)) %>% group_by(year) %>%
+x %>% mutate(name = paste(first, last)) %>% 
+  group_by(year) %>%
   distinct(name, .keep_all = T) %>%   
-  group_by(year, team) %>%
-  summarize(nplayers = sum(one)) %>% 
+  group_by(team) %>%
+  summarize(nplayers = n()) %>% 
   arrange(desc(nplayers))
-
-
 ```
 
+Maybe a better way to look at it would be an ordered bar chart. Help for the code came from [here](https://stackoverflow.com/questions/5208679/order-bars-in-ggplot2-bar-graph).
+
 ```{r}
-x %>% mutate(one = 1, name = paste(first, last)) %>% group_by(year) %>%
+x %>% mutate(name = paste(first, last)) %>% 
+  group_by(year) %>%
   distinct(name, .keep_all = T) %>%   
+  group_by(team) %>%
+  summarize(nplayers = n()) %>%
+  arrange(-nplayers) %>%
+  mutate(team = factor(team, team)) %>% # to sort the teams
+  filter(nplayers > 4) %>%
+  ggplot(aes(x = team, y = nplayers)) + 
+  geom_bar(stat = "identity") + 
+#  coord_flip() +
+  labs(title = "Football Teams with the Most All State Players",
+       subtitle = "1972-2017, minimum 5 all state players per team",
+       y = "players") + 
+  theme(axis.text.x = element_text(angle=45, hjust = 1))
+  
+```
+
+
+```{r}
+x %>% mutate(name = paste(first, last)) %>% 
+  group_by(year) %>%
+  distinct(name, .keep_all = T) %>%   
+  group_by(team) %>%
+  summarize(nplayers = n()) %>% 
+  ggplot(aes(x=nplayers)) +
+  geom_histogram(binwidth = 10) +
+  ggtitle("Distribution of Football All Stars by School, 1972-2017") +
+  labs(x = "Number of All Stars", y = "Number of Teams")
+```
+
+## How Have Team Strengths Changed over Time?
+Some schools were powerhouses back in the day but have not been producing all stars lately. Examples include Pac Five and Kaiser. I thought it would be neat to plot the number of all stars per year by team.
+
+```{r}
+# Get rank order of teams
+team_rank <- x %>% mutate(name = paste(first, last)) %>% 
+  group_by(year) %>%
+  distinct(name, .keep_all = T) %>%   
+  group_by(team) %>%
+  summarize(nplayers = n()) %>%
+  arrange(-nplayers) %>%
+  mutate(team = factor(team, team))
+
+# Find teams with at least 10 all stars
+min_ten <- x %>% mutate(name = paste(first, last)) %>% 
+  group_by(year) %>%
+  distinct(name, .keep_all = T) %>%   
+  group_by(team) %>%
+  summarize(nplayers = n()) %>%
+  arrange(-nplayers) %>%
+  mutate(team = factor(team, team)) %>% # to sort the teams
+  filter(nplayers > 9)
+
+# Create graph
+x %>% 
+  # Deduplicate players
+  mutate(name = paste(first, last), one = 1) %>% 
+  group_by(year) %>%
+  distinct(name, .keep_all = T) %>% 
+  
+  # Create running count of all-star players by team
+  arrange(year) %>%
+  group_by(team) %>% 
+  mutate(cumulative = cumsum(one)) %>%
+  
+  # Group by team, sort, and filter
   group_by(year, team) %>%
-  summarize(nplayers = sum(one)) %>% 
-  arrange(desc(nplayers))
+  summarize(nplayers = max(cumulative)) %>%
+  arrange(-nplayers) %>% 
+  mutate(team = factor(team, levels(team_rank$team))) %>% # to sort the teams
+  filter(team %in% min_ten$team) %>% # limit to only teams with > 10 all stars
+
+  # Create graph
+  ggplot(aes(x = year, y = nplayers, color = team)) + 
+  geom_line() +
+  labs(title = "Cumulative Football All Stars per School",
+       subtitle = "1972-2017, minimum 10 players",
+       y = "Number of All Stars")
 ```
 

@@ -1,0 +1,72 @@
+---
+title: Runkeeper Data
+author: ~
+date: '2018-06-03'
+slug: runkeeper-data
+categories: 
+  - R
+tags: 
+  - exercise
+subtitle: ''
+---
+
+
+
+<p>Last summer I started running again after about 8 years off. I had run from my sophomore year of high school until the fall of 2008 when it seemed like I had a meniscus injury and I stopped running. That was 17 years of running during which the longest break I had taken was maybe a few months. I always missed it, so when my son started training for a Scouting event, I decided I would keep him company. Lo and behold my knee felt ok, so I figured I would keep going. I’ve been using the Runkeeper app to track my runs and decided to look at what the data showed.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     date</code></pre>
+<pre class="r"><code>dat &lt;- tbl_df(read.csv(&quot;../datasets/cardioActivities.csv&quot;))
+dat</code></pre>
+<pre><code>## # A tibble: 89 x 14
+##    Activity.Id  Date  Type  Route.Name Distance..mi. Duration Average.Pace
+##    &lt;fct&gt;        &lt;fct&gt; &lt;fct&gt; &lt;lgl&gt;              &lt;dbl&gt; &lt;fct&gt;    &lt;fct&gt;       
+##  1 4ff0c9dd-97… 2018… Runn… NA                 10    1:32:29  9:15        
+##  2 dc011367-b4… 2018… Runn… NA                  5.97 54:27    9:08        
+##  3 0e7d5b74-7a… 2018… Rowi… NA                  3.82 30:08    7:53        
+##  4 870ef074-54… 2018… Runn… NA                 11.4  1:50:01  9:40        
+##  5 3afb0d49-06… 2018… Cycl… NA                  8.61 36:10    4:12        
+##  6 77913c3d-92… 2018… Runn… NA                  5.02 47:38    9:30        
+##  7 1450300b-c6… 2018… Runn… NA                  6.22 53:00    8:31        
+##  8 39ca5e99-8f… 2018… Runn… NA                  0.88 8:58     10:10       
+##  9 ce730a71-95… 2018… Runn… NA                  5.01 46:07    9:13        
+## 10 5febf442-c3… 2018… Runn… NA                  4.01 36:46    9:10        
+## # ... with 79 more rows, and 7 more variables: Average.Speed..mph. &lt;dbl&gt;,
+## #   Calories.Burned &lt;dbl&gt;, Climb..ft. &lt;int&gt;,
+## #   Average.Heart.Rate..bpm. &lt;int&gt;, Friend.s.Tagged &lt;lgl&gt;, Notes &lt;fct&gt;,
+## #   GPX.File &lt;fct&gt;</code></pre>
+<pre class="r"><code>dat$Date &lt;- ymd_hms(dat$Date)</code></pre>
+<div id="activities" class="section level2">
+<h2>Activities</h2>
+<p>I don’t consistently tracka c</p>
+<pre class="r"><code>table(dat$Type)</code></pre>
+<pre><code>## 
+## Cycling  Rowing Running 
+##       5       4      80</code></pre>
+</div>
+<div id="weekly-mileage" class="section level2">
+<h2>Weekly Mileage</h2>
+<pre class="r"><code>dat %&gt;%  
+#  filter(Date &lt; ymd(20180601)) %&gt;% 
+  filter(Type == &quot;Running&quot;) %&gt;%
+  mutate(Week_obs = week(Date), Year_obs = year(Date)) %&gt;%
+  group_by(Year_obs, Week_obs) %&gt;%
+  summarize(Mileage = sum(Distance..mi.)) %&gt;%
+  ggplot(aes(x = Week_obs, y = Mileage)) + 
+  facet_grid( ~ factor(Year_obs)) +
+  geom_point()</code></pre>
+<p><img src="/post/2018-06-03-runkeeper-data_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
