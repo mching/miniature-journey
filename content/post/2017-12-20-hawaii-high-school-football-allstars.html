@@ -46,7 +46,7 @@ fb &lt;- gs_title(&quot;HI_football_allstars&quot;)</code></pre>
 ## $ paper    &lt;chr&gt; &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA&quot;, &quot;HSA...</code></pre>
 <pre class="r"><code>x$position &lt;- factor(x$position)
 x$paper &lt;- factor(x$paper)</code></pre>
-<p>Historically there were two newspapers in Honolulu, the Honolulu Star-Bulletin and the Honolulu Advertiser. These newspapers published separate all star lists until they merged in early 2010 and became the Honolulu Star-Advertiser.</p>
+<p>Historically there were two newspapers in Honolulu, the Honolulu Star-Bulletin and the Honolulu Advertiser. These newspapers published separate all star lists until they merged in early 2010 and became the <a href="http://www.staradvertiser.com/">Honolulu Star-Advertiser.</a></p>
 <p>I calculated the size of the all star teams over the years.</p>
 <pre class="r"><code># players over years
 x %&gt;% mutate(one = 1) %&gt;% group_by(year, paper) %&gt;% summarize(nplayers = sum(one)) %&gt;%
@@ -210,4 +210,155 @@ x %&gt;%
        subtitle = &quot;1972-2017, minimum 10 players&quot;,
        y = &quot;Number of All Stars&quot;)</code></pre>
 <p><img src="/post/2017-12-20-hawaii-high-school-football-allstars_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>It turned out that Saint Louis has been dominant for decades but Kahuku has come on strong lately. Kahuku’s rise has correlated with a slight downturn in Kamehameha and Waianae. It’s possible that Kamehameha used to get Kahuku players to come to their school but now they choose to stay home. On the other hand it doesn’t seem likely that Waianae’s players moved to Kahuku to play. Future steps might be looking at the early decades since they’re all crushed together there at the bottom of the chart.</p>
+</div>
+<div id="position-u" class="section level2">
+<h2>Position U</h2>
+<p>I hypothesized that some schools might have more all stars at certain positions than other schools. Here’s the list for quarterback.</p>
+<pre class="r"><code>x %&gt;%   
+  mutate(name = paste(first, last), one = 1) %&gt;% 
+  group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;% 
+  group_by(position, team) %&gt;%
+  summarize(nplayers = n()) %&gt;% 
+  filter(position == &quot;QB&quot;) %&gt;%
+  arrange(-nplayers)</code></pre>
+<pre><code>## # A tibble: 13 x 3
+## # Groups:   position [1]
+##    position team        nplayers
+##    &lt;fct&gt;    &lt;chr&gt;          &lt;int&gt;
+##  1 QB       Saint Louis       19
+##  2 QB       Leilehua           5
+##  3 QB       Pac-Five           5
+##  4 QB       Punahou            5
+##  5 QB       Iolani             4
+##  6 QB       Kahuku             3
+##  7 QB       Waianae            3
+##  8 QB       Mililani           2
+##  9 QB       Farrington         1
+## 10 QB       Kaiser             1
+## 11 QB       Kamehameha         1
+## 12 QB       Lahainaluna        1
+## 13 QB       McKinley           1</code></pre>
+<p>Running back was surprisingly different. Farrington came out on top here.</p>
+<pre class="r"><code>x %&gt;%   
+  mutate(name = paste(first, last), one = 1) %&gt;% 
+  group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;% 
+  group_by(position, team) %&gt;%
+  summarize(nplayers = n()) %&gt;% 
+  filter(position == &quot;RB&quot;) %&gt;%
+  arrange(-nplayers)</code></pre>
+<pre><code>## # A tibble: 21 x 3
+## # Groups:   position [1]
+##    position team        nplayers
+##    &lt;fct&gt;    &lt;chr&gt;          &lt;int&gt;
+##  1 RB       Farrington        16
+##  2 RB       Kahuku            15
+##  3 RB       Kamehameha        11
+##  4 RB       Saint Louis        9
+##  5 RB       Punahou            7
+##  6 RB       Waianae            5
+##  7 RB       Damien             4
+##  8 RB       Leilehua           4
+##  9 RB       Mililani           4
+## 10 RB       Iolani             3
+## # ... with 11 more rows</code></pre>
+<p>Other positions were pretty much dominated by Saint Louis, just like the regular rankings.</p>
+<pre class="r"><code>x %&gt;%   
+  mutate(name = paste(first, last), one = 1) %&gt;% 
+  group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;% 
+  group_by(position, team) %&gt;%
+  summarize(nplayers = n()) %&gt;% 
+  filter(position == &quot;LB&quot;) %&gt;%
+  arrange(-nplayers)</code></pre>
+<pre><code>## # A tibble: 29 x 3
+## # Groups:   position [1]
+##    position team        nplayers
+##    &lt;fct&gt;    &lt;chr&gt;          &lt;int&gt;
+##  1 LB       Saint Louis       39
+##  2 LB       Kahuku            28
+##  3 LB       Waianae           17
+##  4 LB       Kamehameha        15
+##  5 LB       Punahou           14
+##  6 LB       Farrington        12
+##  7 LB       Castle             6
+##  8 LB       Iolani             6
+##  9 LB       Leilehua           6
+## 10 LB       Damien             5
+## # ... with 19 more rows</code></pre>
+<p>What about player of the year? This was pretty messy in how it was coded. Still there were enough OPOY and DPOY that it might be worth looking at.</p>
+<pre class="r"><code>table(x$poy)</code></pre>
+<pre><code>## 
+##             Back of the year             Back of the Year 
+##                            3                            3 
+##                      co dpoy                      co opoy 
+##                            2                            3 
+##                      co-opoy            coach of the year 
+##                            1                            1 
+##                          cOY                          COY 
+##                            1                            4 
+##                        D POY Defensive player of the year 
+##                            2                            1 
+## Defensive Player of the Year                         dpoy 
+##                           13                            3 
+##                         DPOY          Lineman of the year 
+##                           38                            6 
+##          Lineman of the Year                        O POY 
+##                            2                            1 
+## Offensive Player of the Year                Offensive POY 
+##                            1                            1 
+##                         opoy                         OPOY 
+##                            1                           57 
+##           Player of the Year                           So 
+##                            1                            1 
+##                         soph 
+##                            2</code></pre>
+<p>```</p>
+<pre class="r"><code>x %&gt;%   
+  mutate(name = paste(first, last), one = 1) %&gt;% 
+  group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;% 
+  filter(!is.na(poy)) %&gt;%
+  filter(poy == &quot;DPOY&quot;) %&gt;%
+  group_by(poy, team) %&gt;%
+  summarize(nplayers = n()) %&gt;%
+  arrange(-nplayers)</code></pre>
+<pre><code>## # A tibble: 8 x 3
+## # Groups:   poy [1]
+##   poy   team        nplayers
+##   &lt;chr&gt; &lt;chr&gt;          &lt;int&gt;
+## 1 DPOY  Kahuku             8
+## 2 DPOY  Waianae            4
+## 3 DPOY  Leilehua           3
+## 4 DPOY  Kamehameha         2
+## 5 DPOY  Mililani           2
+## 6 DPOY  Saint Louis        2
+## 7 DPOY  Campbell           1
+## 8 DPOY  Punahou            1</code></pre>
+<pre class="r"><code>  x %&gt;%   
+  mutate(name = paste(first, last), one = 1) %&gt;% 
+  group_by(year) %&gt;%
+  distinct(name, .keep_all = T) %&gt;% 
+  filter(!is.na(poy)) %&gt;%
+  filter(poy == &quot;OPOY&quot;) %&gt;%
+  group_by(poy, team) %&gt;%
+  summarize(nplayers = n()) %&gt;%
+  arrange(-nplayers)</code></pre>
+<pre><code>## # A tibble: 11 x 3
+## # Groups:   poy [1]
+##    poy   team        nplayers
+##    &lt;chr&gt; &lt;chr&gt;          &lt;int&gt;
+##  1 OPOY  Saint Louis       11
+##  2 OPOY  Kahuku             5
+##  3 OPOY  Leilehua           4
+##  4 OPOY  Punahou            4
+##  5 OPOY  Iolani             2
+##  6 OPOY  Kamehameha         2
+##  7 OPOY  Mililani           2
+##  8 OPOY  Waianae            2
+##  9 OPOY  Damien             1
+## 10 OPOY  Farrington         1
+## 11 OPOY  Kaiser             1</code></pre>
 </div>

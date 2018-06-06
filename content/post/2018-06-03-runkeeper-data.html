@@ -12,53 +12,33 @@ subtitle: ''
 
 
 
-<p>Last summer I started running again after about 8 years off. I had run from my sophomore year of high school until the fall of 2008 when it seemed like I had a meniscus injury and I stopped running. That was 17 years of running during which the longest break I had taken was maybe a few months. I always missed it, so when my son started training for a Scouting event, I decided I would keep him company. Lo and behold my knee felt ok, so I figured I would keep going. I’ve been using the Runkeeper app to track my runs and decided to look at what the data showed.</p>
-<pre class="r"><code>library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>library(ggplot2)
-library(lubridate)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;lubridate&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:base&#39;:
-## 
-##     date</code></pre>
+<p>Last summer I started running again after about 8 years off. I had run from my sophomore year of high school until the fall of 2008 when it seemed like I had a meniscus injury and I stopped running. I had run for 17 years, during which the longest break I had taken was maybe a few months. After I stopped, I always missed it, and when my son started training for a Scouting running achievement, I decided I would keep him company. Lo and behold my knee felt ok, so I figured I would keep going. I’ve been using the <a href="https://runkeeper.com/index">Runkeeper</a> app to track my runs and decided to look at what the data showed.</p>
+<pre class="r"><code>suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+suppressPackageStartupMessages(library(lubridate))</code></pre>
+<p>I downloaded the data from the <a href="https://runkeeper.com/index">Runkeeper website.</a> It came as a zip file containing all my GPS tracks plus a processed csv file.</p>
 <pre class="r"><code>dat &lt;- tbl_df(read.csv(&quot;../datasets/cardioActivities.csv&quot;))
-dat</code></pre>
-<pre><code>## # A tibble: 89 x 14
-##    Activity.Id  Date  Type  Route.Name Distance..mi. Duration Average.Pace
-##    &lt;fct&gt;        &lt;fct&gt; &lt;fct&gt; &lt;lgl&gt;              &lt;dbl&gt; &lt;fct&gt;    &lt;fct&gt;       
-##  1 4ff0c9dd-97… 2018… Runn… NA                 10    1:32:29  9:15        
-##  2 dc011367-b4… 2018… Runn… NA                  5.97 54:27    9:08        
-##  3 0e7d5b74-7a… 2018… Rowi… NA                  3.82 30:08    7:53        
-##  4 870ef074-54… 2018… Runn… NA                 11.4  1:50:01  9:40        
-##  5 3afb0d49-06… 2018… Cycl… NA                  8.61 36:10    4:12        
-##  6 77913c3d-92… 2018… Runn… NA                  5.02 47:38    9:30        
-##  7 1450300b-c6… 2018… Runn… NA                  6.22 53:00    8:31        
-##  8 39ca5e99-8f… 2018… Runn… NA                  0.88 8:58     10:10       
-##  9 ce730a71-95… 2018… Runn… NA                  5.01 46:07    9:13        
-## 10 5febf442-c3… 2018… Runn… NA                  4.01 36:46    9:10        
-## # ... with 79 more rows, and 7 more variables: Average.Speed..mph. &lt;dbl&gt;,
-## #   Calories.Burned &lt;dbl&gt;, Climb..ft. &lt;int&gt;,
-## #   Average.Heart.Rate..bpm. &lt;int&gt;, Friend.s.Tagged &lt;lgl&gt;, Notes &lt;fct&gt;,
-## #   GPX.File &lt;fct&gt;</code></pre>
+glimpse(dat)</code></pre>
+<pre><code>## Observations: 89
+## Variables: 14
+## $ Activity.Id              &lt;fct&gt; 4ff0c9dd-9713-4a29-98e2-8112c66e2d5c,...
+## $ Date                     &lt;fct&gt; 2018-06-01 16:45:49, 2018-05-30 06:31...
+## $ Type                     &lt;fct&gt; Running, Running, Rowing, Running, Cy...
+## $ Route.Name               &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
+## $ Distance..mi.            &lt;dbl&gt; 10.00, 5.97, 3.82, 11.39, 8.61, 5.02,...
+## $ Duration                 &lt;fct&gt; 1:32:29, 54:27, 30:08, 1:50:01, 36:10...
+## $ Average.Pace             &lt;fct&gt; 9:15, 9:08, 7:53, 9:40, 4:12, 9:30, 8...
+## $ Average.Speed..mph.      &lt;dbl&gt; 6.49, 6.57, 7.61, 6.21, 14.28, 6.32, ...
+## $ Calories.Burned          &lt;dbl&gt; 1334.0000, 801.0000, 369.6282, 1509.0...
+## $ Climb..ft.               &lt;int&gt; 142, 125, 0, 96, 0, 160, 59, 8, 160, ...
+## $ Average.Heart.Rate..bpm. &lt;int&gt; NA, NA, NA, NA, NA, NA, 167, 152, 146...
+## $ Friend.s.Tagged          &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
+## $ Notes                    &lt;fct&gt; , , , , , , Time trial goal 10k in 54...
+## $ GPX.File                 &lt;fct&gt; 2018-06-01-164549.gpx, 2018-05-30-063...</code></pre>
 <pre class="r"><code>dat$Date &lt;- ymd_hms(dat$Date)</code></pre>
-<div id="activities" class="section level2">
-<h2>Activities</h2>
-<p>I don’t consistently tracka c</p>
-<pre class="r"><code>table(dat$Type)</code></pre>
-<pre><code>## 
-## Cycling  Rowing Running 
-##       5       4      80</code></pre>
-</div>
 <div id="weekly-mileage" class="section level2">
 <h2>Weekly Mileage</h2>
+<p>There was a lot of data there but I thought the first thing to start with would be my weekly mileage. I wanted to see how that changed over the last year.</p>
 <pre class="r"><code>dat %&gt;%  
 #  filter(Date &lt; ymd(20180601)) %&gt;% 
   filter(Type == &quot;Running&quot;) %&gt;%
@@ -67,6 +47,74 @@ dat</code></pre>
   summarize(Mileage = sum(Distance..mi.)) %&gt;%
   ggplot(aes(x = Week_obs, y = Mileage)) + 
   facet_grid( ~ factor(Year_obs)) +
-  geom_point()</code></pre>
+  geom_point() +
+  labs(title = &quot;Weekly Mileage&quot;,
+       x = &quot;Week&quot;, 
+       y = &quot;Miles&quot;)</code></pre>
+<p><img src="/post/2018-06-03-runkeeper-data_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="monthly-mileage" class="section level2">
+<h2>Monthly Mileage</h2>
+<p>In <a href="https://www.amazon.com/dp/B0015DWJ8W/ref=dp-kindle-redirect?_encoding=UTF8&amp;btkr=1">What I Talk about When I Talk about Running</a> by Haruki Murakami, he talks about his monthly mileage, averaging 136-186 miles per month. My monthly averages weren’t as impressive as his.</p>
+<pre class="r"><code>dat %&gt;%  
+  filter(Date &lt; ymd(&quot;20180601&quot;)) %&gt;%
+  filter(Type == &quot;Running&quot;) %&gt;%
+  mutate(Month_obs = month(Date), Year_obs = year(Date)) %&gt;%
+  group_by(Year_obs, Month_obs) %&gt;%
+  summarize(Mileage = sum(Distance..mi.)) %&gt;%
+  ggplot(aes(x = Month_obs, y = Mileage)) + 
+  facet_grid( ~ factor(Year_obs)) +
+  geom_point() +
+  labs(title = &quot;Monthly Mileage&quot;,
+       x = &quot;Month&quot;, 
+       y = &quot;Miles&quot;)</code></pre>
 <p><img src="/post/2018-06-03-runkeeper-data_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="calories-burned" class="section level2">
+<h2>Calories Burned</h2>
+<p>I tracked my weekly calories burned, expecting that these would be highly correlated with mileage.</p>
+<pre class="r"><code>dat %&gt;%  
+  filter(Type == &quot;Running&quot;) %&gt;%
+  mutate(Week_obs = week(Date), Year_obs = year(Date)) %&gt;%
+  group_by(Year_obs, Week_obs) %&gt;%
+  summarize(Calories = sum(Calories.Burned)) %&gt;%
+  ggplot(aes(x = Week_obs, y = Calories)) + 
+  facet_grid( ~ factor(Year_obs)) +
+  geom_point() +
+  labs(title = &quot;Weekly Calories&quot;,
+       x = &quot;Week&quot;, 
+       y = &quot;Total Calories&quot;)</code></pre>
+<p><img src="/post/2018-06-03-runkeeper-data_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="correlation-between-calories-and-miles" class="section level2">
+<h2>Correlation between Calories and Miles</h2>
+<p>The app estimated calories per run. There was a linear correlation between calories and miles run, as displayed below.</p>
+<pre class="r"><code>dat %&gt;% filter(Type == &quot;Running&quot;) %&gt;%
+  ggplot(aes(x = Distance..mi., y = Calories.Burned)) + geom_point() + geom_smooth(method = &quot;lm&quot;) +
+  labs(title = &quot;Correlation between Calories and Miles Run&quot;,
+       x = &quot;Miles&quot;,
+       y = &quot;Calories&quot;)</code></pre>
+<p><img src="/post/2018-06-03-runkeeper-data_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>This was a very linear relationship, even at the very extremes of the distances run. I fit a linear model and determined that a rough estimate of the energy expenditure rate was 136 calories per mile.</p>
+<pre class="r"><code>x &lt;- filter(dat, Type == &quot;Running&quot;)
+model1 &lt;- lm(x$Calories.Burned ~ x$Distance..mi.)
+summary(model1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = x$Calories.Burned ~ x$Distance..mi.)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -66.844  -5.463  -1.716   4.585  44.856 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      -3.6690     4.3352  -0.846      0.4    
+## x$Distance..mi. 136.1300     0.7617 178.715   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 15.91 on 78 degrees of freedom
+## Multiple R-squared:  0.9976, Adjusted R-squared:  0.9975 
+## F-statistic: 3.194e+04 on 1 and 78 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>

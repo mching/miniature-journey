@@ -10,30 +10,26 @@ tags:
 subtitle: ''
 ---
 
-Last summer I started running again after about 8 years off. I had run from my sophomore year of high school until the fall of 2008 when it seemed like I had a meniscus injury and I stopped running. That was 17 years of running during which the longest break I had taken was maybe a few months. I always missed it, so when my son started training for a Scouting event, I decided I would keep him company. Lo and behold my knee felt ok, so I figured I would keep going. I've been using the Runkeeper app to track my runs and decided to look at what the data showed.
+Last summer I started running again after about 8 years off. I had run from my sophomore year of high school until the fall of 2008 when it seemed like I had a meniscus injury and I stopped running. I had run for 17 years, during which the longest break I had taken was maybe a few months. After I stopped, I always missed it, and when my son started training for a Scouting running achievement, I decided I would keep him company. Lo and behold my knee felt ok, so I figured I would keep going. I've been using the [Runkeeper](https://runkeeper.com/index) app to track my runs and decided to look at what the data showed.
 
 ```{r}
-library(dplyr)
+suppressPackageStartupMessages(library(dplyr))
 library(ggplot2)
-library(lubridate)
+suppressPackageStartupMessages(library(lubridate))
 ```
 
+I downloaded the data from the [Runkeeper website.](https://runkeeper.com/index) It came as a zip file containing all my GPS tracks plus a processed csv file.
 ```{r}
 dat <- tbl_df(read.csv("../datasets/cardioActivities.csv"))
-dat
+glimpse(dat)
 ```
 
 ```{r}
 dat$Date <- ymd_hms(dat$Date)
 ```
 
-## Activities
-I don't consistently tracka c
-```{r}
-table(dat$Type)
-```
-
 ## Weekly Mileage
+There was a lot of data there but I thought the first thing to start with would be my weekly mileage. I wanted to see how that changed over the last year. 
 ```{r}
 dat %>%  
 #  filter(Date < ymd(20180601)) %>% 
@@ -43,8 +39,63 @@ dat %>%
   summarize(Mileage = sum(Distance..mi.)) %>%
   ggplot(aes(x = Week_obs, y = Mileage)) + 
   facet_grid( ~ factor(Year_obs)) +
-  geom_point()
+  geom_point() +
+  labs(title = "Weekly Mileage",
+       x = "Week", 
+       y = "Miles")
+```
 
+## Monthly Mileage
+In [What I Talk about When I Talk about Running](https://www.amazon.com/dp/B0015DWJ8W/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1) by Haruki Murakami, he talks about his monthly mileage, averaging 136-186 miles per month. My monthly averages weren't as impressive as his.
 
+```{r}
+dat %>%  
+  filter(Date < ymd("20180601")) %>%
+  filter(Type == "Running") %>%
+  mutate(Month_obs = month(Date), Year_obs = year(Date)) %>%
+  group_by(Year_obs, Month_obs) %>%
+  summarize(Mileage = sum(Distance..mi.)) %>%
+  ggplot(aes(x = Month_obs, y = Mileage)) + 
+  facet_grid( ~ factor(Year_obs)) +
+  geom_point() +
+  labs(title = "Monthly Mileage",
+       x = "Month", 
+       y = "Miles")
+```
+
+## Calories Burned
+I tracked my weekly calories burned, expecting that these would be highly correlated with mileage.
+
+```{r}
+dat %>%  
+  filter(Type == "Running") %>%
+  mutate(Week_obs = week(Date), Year_obs = year(Date)) %>%
+  group_by(Year_obs, Week_obs) %>%
+  summarize(Calories = sum(Calories.Burned)) %>%
+  ggplot(aes(x = Week_obs, y = Calories)) + 
+  facet_grid( ~ factor(Year_obs)) +
+  geom_point() +
+  labs(title = "Weekly Calories",
+       x = "Week", 
+       y = "Total Calories")
+```
+
+## Correlation between Calories and Miles
+The app estimated calories per run. There was a linear correlation between calories and miles run, as displayed below.
+
+```{r}
+dat %>% filter(Type == "Running") %>%
+  ggplot(aes(x = Distance..mi., y = Calories.Burned)) + geom_point() + geom_smooth(method = "lm") +
+  labs(title = "Correlation between Calories and Miles Run",
+       x = "Miles",
+       y = "Calories")
+```
+
+This was a very linear relationship, even at the very extremes of the distances run. I fit a linear model and determined that a rough estimate of the energy expenditure rate was 136 calories per mile.
+
+```{r}
+x <- filter(dat, Type == "Running")
+model1 <- lm(x$Calories.Burned ~ x$Distance..mi.)
+summary(model1)
 ```
 

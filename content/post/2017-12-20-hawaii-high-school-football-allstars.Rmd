@@ -34,7 +34,7 @@ x$position <- factor(x$position)
 x$paper <- factor(x$paper)
 ```
 
-Historically there were two newspapers in Honolulu, the Honolulu Star-Bulletin and the Honolulu Advertiser. These newspapers published separate all star lists until they merged in early 2010 and became the Honolulu Star-Advertiser.
+Historically there were two newspapers in Honolulu, the Honolulu Star-Bulletin and the Honolulu Advertiser. These newspapers published separate all star lists until they merged in early 2010 and became the [Honolulu Star-Advertiser.](http://www.staradvertiser.com/)
 
 I calculated the size of the all star teams over the years.
 ```{r}
@@ -158,5 +158,72 @@ x %>%
   labs(title = "Cumulative Football All Stars per School",
        subtitle = "1972-2017, minimum 10 players",
        y = "Number of All Stars")
+```
+
+It turned out that Saint Louis has been dominant for decades but Kahuku has come on strong lately. Kahuku's rise has correlated with a slight downturn in Kamehameha and Waianae. It's possible that Kamehameha used to get Kahuku players to come to their school but now they choose to stay home. On the other hand it doesn't seem likely that Waianae's players moved to Kahuku to play. Future steps might be looking at the early decades since they're all crushed together there at the bottom of the chart. 
+
+## Position U
+I hypothesized that some schools might have more all stars at certain positions than other schools. Here's the list for quarterback.
+```{r}
+x %>%   
+  mutate(name = paste(first, last), one = 1) %>% 
+  group_by(year) %>%
+  distinct(name, .keep_all = T) %>% 
+  group_by(position, team) %>%
+  summarize(nplayers = n()) %>% 
+  filter(position == "QB") %>%
+  arrange(-nplayers)
+```
+
+Running back was surprisingly different. Farrington came out on top here.
+```{r}
+x %>%   
+  mutate(name = paste(first, last), one = 1) %>% 
+  group_by(year) %>%
+  distinct(name, .keep_all = T) %>% 
+  group_by(position, team) %>%
+  summarize(nplayers = n()) %>% 
+  filter(position == "RB") %>%
+  arrange(-nplayers)
+```
+
+Other positions were pretty much dominated by Saint Louis, just like the regular rankings.
+```{r}
+x %>%   
+  mutate(name = paste(first, last), one = 1) %>% 
+  group_by(year) %>%
+  distinct(name, .keep_all = T) %>% 
+  group_by(position, team) %>%
+  summarize(nplayers = n()) %>% 
+  filter(position == "LB") %>%
+  arrange(-nplayers)
+```
+
+What about player of the year? This was pretty messy in how it was coded. Still there were enough OPOY and DPOY that it might be worth looking at.
+```{r}
+table(x$poy)
+```
+```
+
+```{r}
+x %>%   
+  mutate(name = paste(first, last), one = 1) %>% 
+  group_by(year) %>%
+  distinct(name, .keep_all = T) %>% 
+  filter(!is.na(poy)) %>%
+  filter(poy == "DPOY") %>%
+  group_by(poy, team) %>%
+  summarize(nplayers = n()) %>%
+  arrange(-nplayers)
+  
+  x %>%   
+  mutate(name = paste(first, last), one = 1) %>% 
+  group_by(year) %>%
+  distinct(name, .keep_all = T) %>% 
+  filter(!is.na(poy)) %>%
+  filter(poy == "OPOY") %>%
+  group_by(poy, team) %>%
+  summarize(nplayers = n()) %>%
+  arrange(-nplayers)
 ```
 
