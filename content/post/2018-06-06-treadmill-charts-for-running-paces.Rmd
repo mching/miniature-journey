@@ -1,0 +1,55 @@
+---
+title: Treadmill Charts for Running Paces
+author: ~
+date: '2018-06-06'
+slug: treadmill-charts-for-running-paces
+categories: 
+  - R
+tags: 
+  - exercise
+  - running
+subtitle: ''
+---
+
+I find it hard to pace myself on the road when doing interval workouts. The GPS apps aren't good enough to maintain a steady pace at the goal so I always end up running too fast at the beginning then die at the end. I've found it easier to do these on the treadmill at the gym. The only problem is that it's hard for me to convert between the paces I want to run and the miles per hour speed that are supplied by the treadmills. I wrote a function to provide these figures.
+
+It's actually not that hard since minutes per mile is easily converted to miles per hour. Just divide 60 by the minutes per mile and you get the speed in MPH.
+
+```{r}
+sec_to_min <- function(m) {
+  seconds <- round(m%%60, 1)
+  minutes <- m%/%60
+  if(seconds<10) {
+    seconds <- paste0("0", seconds)
+  }
+  out <- paste0(minutes, ":", seconds)
+  return(out)
+}
+
+x <- seq(300, 720, 6)
+
+mph <- seq(12, 5, -0.1)
+min_per_mile <- sapply(3600 / mph, sec_to_min)
+
+min_per_distance <- function(speed, distance) {
+  # distance in meters
+  # speed in mph
+  # 1609 meters per mile
+  out <- sec_to_min((distance / 1609.34) / speed * 3600)
+  return(out)
+}
+
+mp200 <- sapply(mph, function(x) min_per_distance(x, 200))
+mp400 <- sapply(mph, function(x) min_per_distance(x, 400))
+mp600 <- sapply(mph, function(x) min_per_distance(x, 600))
+mp800 <- sapply(mph, function(x) min_per_distance(x, 800))
+mp1200 <- sapply(mph, function(x) min_per_distance(x, 1200))
+
+```
+
+```{r highlight=FALSE}
+pacetable <- as.data.frame(cbind(mph, min_per_mile, mp200, mp400, mp600, mp800, mp1200))
+knitr::kable(pacetable)
+
+```
+
