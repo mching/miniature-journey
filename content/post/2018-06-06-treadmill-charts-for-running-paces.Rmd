@@ -43,12 +43,13 @@ mp200 <- sapply(mph, function(x) min_per_distance(x, 200))
 mp400 <- sapply(mph, function(x) min_per_distance(x, 400))
 mp600 <- sapply(mph, function(x) min_per_distance(x, 600))
 mp800 <- sapply(mph, function(x) min_per_distance(x, 800))
+mp1000 <- sapply(mph, function(x) min_per_distance(x, 1000))
 mp1200 <- sapply(mph, function(x) min_per_distance(x, 1200))
 
 ```
 
 ```{r highlight=FALSE}
-pacetable <- as.data.frame(cbind(mph, min_per_mile, mp200, mp400, mp600, mp800, mp1200))
+pacetable <- as.data.frame(cbind(mph, min_per_mile, mp200, mp400, mp600, mp800, mp1000, mp1200))
 knitr::kable(pacetable)
 
 ```
