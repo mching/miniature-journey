@@ -32,19 +32,21 @@ The variables I had tracked included weight before and after, run duration, dist
 glimpse(x)
 ```
 
-I took data from 5 runs. Most of these were early morning, right after sunrise. After accounting for the fluid intake, I found that I was losing about 1.5 kg per hour, or about 50 oz per hour. Some of this weight loss was from the energy required to propel my butt down the road, but most of it was probably water.
+I took data from `r nrow(x)` runs. Most of these were early morning, right after sunrise. After accounting for the fluid intake, I found that I was losing about 1.5 kg per hour, or about 50 oz per hour. Some of this weight loss was from the energy required to propel my butt down the road, but most of it was probably water.
 
 ```{r}
 x %>% mutate(dwt_lbs = Beginning_weight_lbs - Ending_weight_lbs + Fluid_intake_oz/16) %>%
   mutate(dwt_g = 1000 * dwt_lbs / 2.2) %>%
-  mutate(dwt_g_hr = dwt_g / Duration_min * 60, dwt_oz_hr = dwt_lbs * 16 / Duration_min * 60) %>% 
+  mutate(dwt_g_hr = dwt_g / Duration_min * 60, 
+         dwt_oz_hr = dwt_lbs * 16 / Duration_min * 60) %>% 
   select(dwt_g_hr, dwt_oz_hr)
 ```
 
 ```{r}
 x %>% mutate(dwt_lbs = Beginning_weight_lbs - Ending_weight_lbs + Fluid_intake_oz/16) %>%
   mutate(dwt_g = 1000 * dwt_lbs / 2.2) %>%
-  mutate(dwt_g_hr = dwt_g / Duration_min * 60, dwt_oz_hr = dwt_lbs * 16 / Duration_min * 60) %>%
+  mutate(dwt_g_hr = dwt_g / Duration_min * 60, 
+         dwt_oz_hr = dwt_lbs * 16 / Duration_min * 60) %>%
   summarize(mean(dwt_g_hr), sd(dwt_g_hr), mean(dwt_oz_hr), sd(dwt_oz_hr))
 
 ```

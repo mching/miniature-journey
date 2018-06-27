@@ -53,7 +53,8 @@ fb &lt;- gs_title(&quot;sweat_loss_data&quot;)</code></pre>
 <p>I took data from 5 runs. Most of these were early morning, right after sunrise. After accounting for the fluid intake, I found that I was losing about 1.5 kg per hour, or about 50 oz per hour. Some of this weight loss was from the energy required to propel my butt down the road, but most of it was probably water.</p>
 <pre class="r"><code>x %&gt;% mutate(dwt_lbs = Beginning_weight_lbs - Ending_weight_lbs + Fluid_intake_oz/16) %&gt;%
   mutate(dwt_g = 1000 * dwt_lbs / 2.2) %&gt;%
-  mutate(dwt_g_hr = dwt_g / Duration_min * 60, dwt_oz_hr = dwt_lbs * 16 / Duration_min * 60) %&gt;% 
+  mutate(dwt_g_hr = dwt_g / Duration_min * 60, 
+         dwt_oz_hr = dwt_lbs * 16 / Duration_min * 60) %&gt;% 
   select(dwt_g_hr, dwt_oz_hr)</code></pre>
 <pre><code>## # A tibble: 5 x 2
 ##   dwt_g_hr dwt_oz_hr
@@ -65,7 +66,8 @@ fb &lt;- gs_title(&quot;sweat_loss_data&quot;)</code></pre>
 ## 5    1428.      50.3</code></pre>
 <pre class="r"><code>x %&gt;% mutate(dwt_lbs = Beginning_weight_lbs - Ending_weight_lbs + Fluid_intake_oz/16) %&gt;%
   mutate(dwt_g = 1000 * dwt_lbs / 2.2) %&gt;%
-  mutate(dwt_g_hr = dwt_g / Duration_min * 60, dwt_oz_hr = dwt_lbs * 16 / Duration_min * 60) %&gt;%
+  mutate(dwt_g_hr = dwt_g / Duration_min * 60, 
+         dwt_oz_hr = dwt_lbs * 16 / Duration_min * 60) %&gt;%
   summarize(mean(dwt_g_hr), sd(dwt_g_hr), mean(dwt_oz_hr), sd(dwt_oz_hr))</code></pre>
 <pre><code>## # A tibble: 1 x 4
 ##   `mean(dwt_g_hr)` `sd(dwt_g_hr)` `mean(dwt_oz_hr)` `sd(dwt_oz_hr)`
