@@ -11,6 +11,8 @@ tags:
 subtitle: ''
 ---
 
+Update: 7/20/18
+
 I've been having a hard time with my long runs now that the weather is getting hot. I went on one in particular that was particularly tough. I was nauseous and felt hot afterwards for a long time. I probably had heat exhaustion. The next morning when I weighed myself I was about 5 lbs less than I thought I should be. This got me thinking that maybe I was also very dehydrated, even though I had taken water breaks at several water stops along the way. 
 
 I decided to keep track of how much weight I was losing on each run. I weighed myself in the buff before and after each run. After a few runs, I decided to look at the data.
@@ -22,6 +24,7 @@ library(ggplot2)
 ```
 
 ```{r, cache = T}
+# Change cache flag to F if updating data
 my_sheets <- gs_ls()
 fb <- gs_title("sweat_loss_data")
 x <- gs_read(fb)
@@ -51,7 +54,6 @@ x %>% mutate(dwt_lbs = Beginning_weight_lbs - Ending_weight_lbs + Fluid_intake_o
 
 ```
 
-With these results, I decided that I would aggressively hydrate on my 15 mile run today. I ended up drinking 140 oz, or about 4.1 liters, over about 2.5 hours. I didn't include the numbers in with this analysis because I drank so much that I had to pee a couple of times during the run. In the end, I actually gained over a pound during this run! 
+With the initial results, I decided that I would aggressively hydrate on my 15 mile run today. I ended up drinking 140 oz, or about 4.1 liters, over about 2.5 hours. I didn't include the numbers in with this analysis because I drank so much that I had to pee a couple of times during the run. In the end, I actually gained over a pound during this run! 
 
-There has been quite a bit of variability in the data. Once I track some more data, I will come back and update these figures.
 

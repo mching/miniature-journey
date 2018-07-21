@@ -13,12 +13,14 @@ subtitle: ''
 
 
 
+<p>Update: 7/20/18</p>
 <p>I’ve been having a hard time with my long runs now that the weather is getting hot. I went on one in particular that was particularly tough. I was nauseous and felt hot afterwards for a long time. I probably had heat exhaustion. The next morning when I weighed myself I was about 5 lbs less than I thought I should be. This got me thinking that maybe I was also very dehydrated, even though I had taken water breaks at several water stops along the way.</p>
 <p>I decided to keep track of how much weight I was losing on each run. I weighed myself in the buff before and after each run. After a few runs, I decided to look at the data.</p>
 <pre class="r"><code>library(googlesheets)
 suppressPackageStartupMessages(library(dplyr))
 library(ggplot2)</code></pre>
-<pre class="r"><code>my_sheets &lt;- gs_ls()
+<pre class="r"><code># Change cache flag to F if updating data
+my_sheets &lt;- gs_ls()
 fb &lt;- gs_title(&quot;sweat_loss_data&quot;)</code></pre>
 <pre><code>## Sheet successfully identified: &quot;sweat_loss_data&quot;</code></pre>
 <pre class="r"><code>x &lt;- gs_read(fb)</code></pre>
@@ -38,32 +40,36 @@ fb &lt;- gs_title(&quot;sweat_loss_data&quot;)</code></pre>
 ## )</code></pre>
 <p>The variables I had tracked included weight before and after, run duration, distance, presence of tradewinds, sun conditions, and fluid intake.</p>
 <pre class="r"><code>glimpse(x)</code></pre>
-<pre><code>## Observations: 5
+<pre><code>## Observations: 9
 ## Variables: 10
 ## $ Timestamp            &lt;chr&gt; &quot;6/11/2018 19:07:51&quot;, &quot;6/14/2018 7:00:56&quot;...
 ## $ Date                 &lt;chr&gt; &quot;6/11/2018&quot;, &quot;6/14/2018&quot;, &quot;6/16/2018&quot;, &quot;6...
 ## $ Time_of_day          &lt;chr&gt; &quot;Shortly after sunrise&quot;, &quot;Shortly after s...
-## $ Beginning_weight_lbs &lt;dbl&gt; 174.4, 174.2, 171.6, 175.8, 175.2
-## $ Ending_weight_lbs    &lt;dbl&gt; 172.2, 172.0, 169.8, 172.2, 173.0
-## $ Duration_min         &lt;dbl&gt; 47.3, 60.6, 132.5, 46.3, 65.9
-## $ Distance_miles       &lt;dbl&gt; 5.05, 6.48, 13.12, 4.65, 7.01
-## $ Tradewinds           &lt;lgl&gt; TRUE, TRUE, FALSE, TRUE, TRUE
-## $ Sunny                &lt;lgl&gt; FALSE, NA, TRUE, TRUE, NA
-## $ Fluid_intake_oz      &lt;int&gt; 0, 21, 70, 0, 20</code></pre>
-<p>I took data from 5 runs. Most of these were early morning, right after sunrise. After accounting for the fluid intake, I found that I was losing about 1.5 kg per hour, or about 50 oz per hour. Some of this weight loss was from the energy required to propel my butt down the road, but most of it was probably water.</p>
+## $ Beginning_weight_lbs &lt;dbl&gt; 174.4, 174.2, 171.6, 175.8, 175.2, 174.0,...
+## $ Ending_weight_lbs    &lt;dbl&gt; 172.2, 172.0, 169.8, 172.2, 173.0, 172.2,...
+## $ Duration_min         &lt;dbl&gt; 47.3, 60.6, 132.5, 46.3, 65.9, 63.5, 63.9...
+## $ Distance_miles       &lt;dbl&gt; 5.05, 6.48, 13.12, 4.65, 7.01, 7.01, 7.01...
+## $ Tradewinds           &lt;lgl&gt; TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE...
+## $ Sunny                &lt;lgl&gt; FALSE, NA, TRUE, TRUE, NA, NA, NA, FALSE, NA
+## $ Fluid_intake_oz      &lt;int&gt; 0, 21, 70, 0, 20, 20, 20, 140, 0</code></pre>
+<p>I took data from 9 runs. Most of these were early morning, right after sunrise. After accounting for the fluid intake, I found that I was losing about 1.5 kg per hour, or about 50 oz per hour. Some of this weight loss was from the energy required to propel my butt down the road, but most of it was probably water.</p>
 <pre class="r"><code>x %&gt;% mutate(dwt_lbs = Beginning_weight_lbs - Ending_weight_lbs + Fluid_intake_oz/16) %&gt;%
   mutate(dwt_g = 1000 * dwt_lbs / 2.2) %&gt;%
   mutate(dwt_g_hr = dwt_g / Duration_min * 60, 
          dwt_oz_hr = dwt_lbs * 16 / Duration_min * 60) %&gt;% 
   select(dwt_g_hr, dwt_oz_hr)</code></pre>
-<pre><code>## # A tibble: 5 x 2
+<pre><code>## # A tibble: 9 x 2
 ##   dwt_g_hr dwt_oz_hr
 ##      &lt;dbl&gt;     &lt;dbl&gt;
 ## 1    1268.      44.7
 ## 2    1581.      55.6
 ## 3    1271.      44.7
 ## 4    2121.      74.6
-## 5    1428.      50.3</code></pre>
+## 5    1428.      50.3
+## 6    1310.      46.1
+## 7    1387.      48.8
+## 8    1303.      45.9
+## 9    1148.      40.4</code></pre>
 <pre class="r"><code>x %&gt;% mutate(dwt_lbs = Beginning_weight_lbs - Ending_weight_lbs + Fluid_intake_oz/16) %&gt;%
   mutate(dwt_g = 1000 * dwt_lbs / 2.2) %&gt;%
   mutate(dwt_g_hr = dwt_g / Duration_min * 60, 
@@ -72,6 +78,5 @@ fb &lt;- gs_title(&quot;sweat_loss_data&quot;)</code></pre>
 <pre><code>## # A tibble: 1 x 4
 ##   `mean(dwt_g_hr)` `sd(dwt_g_hr)` `mean(dwt_oz_hr)` `sd(dwt_oz_hr)`
 ##              &lt;dbl&gt;          &lt;dbl&gt;             &lt;dbl&gt;           &lt;dbl&gt;
-## 1            1534.           353.              54.0            12.4</code></pre>
-<p>With these results, I decided that I would aggressively hydrate on my 15 mile run today. I ended up drinking 140 oz, or about 4.1 liters, over about 2.5 hours. I didn’t include the numbers in with this analysis because I drank so much that I had to pee a couple of times during the run. In the end, I actually gained over a pound during this run!</p>
-<p>There has been quite a bit of variability in the data. Once I track some more data, I will come back and update these figures.</p>
+## 1            1424.           288.              50.1            10.1</code></pre>
+<p>With the initial results, I decided that I would aggressively hydrate on my 15 mile run today. I ended up drinking 140 oz, or about 4.1 liters, over about 2.5 hours. I didn’t include the numbers in with this analysis because I drank so much that I had to pee a couple of times during the run. In the end, I actually gained over a pound during this run!</p>
