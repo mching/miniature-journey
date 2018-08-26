@@ -13,7 +13,7 @@ subtitle: ''
 
 
 
-<p>Update: 7/29/18</p>
+<p>Update: 8/25/2018</p>
 <p>I’ve been having a hard time with my long runs now that the weather is getting hot. I went on one in particular that was particularly tough. I was nauseous and felt hot afterwards for a long time. I probably had heat exhaustion. The next morning when I weighed myself I was about 5 lbs less than I thought I should be. This got me thinking that maybe I was also very dehydrated, even though I had taken water breaks at several water stops along the way.</p>
 <p>I decided to keep track of how much weight I was losing on each run. I weighed myself in the buff before and after each run. After a few runs, I decided to look at the data.</p>
 <pre class="r"><code>library(googlesheets)
@@ -40,7 +40,7 @@ fb &lt;- gs_title(&quot;sweat_loss_data&quot;)</code></pre>
 ## )</code></pre>
 <p>The variables I had tracked included weight before and after, run duration, distance, presence of tradewinds, sun conditions, and fluid intake.</p>
 <pre class="r"><code>glimpse(x)</code></pre>
-<pre><code>## Observations: 11
+<pre><code>## Observations: 14
 ## Variables: 10
 ## $ Timestamp            &lt;chr&gt; &quot;6/11/2018 19:07:51&quot;, &quot;6/14/2018 7:00:56&quot;...
 ## $ Date                 &lt;chr&gt; &quot;6/11/2018&quot;, &quot;6/14/2018&quot;, &quot;6/16/2018&quot;, &quot;6...
@@ -51,14 +51,14 @@ fb &lt;- gs_title(&quot;sweat_loss_data&quot;)</code></pre>
 ## $ Distance_miles       &lt;dbl&gt; 5.05, 6.48, 13.12, 4.65, 7.01, 7.01, 7.01...
 ## $ Tradewinds           &lt;lgl&gt; TRUE, TRUE, FALSE, TRUE, TRUE, TRUE, TRUE...
 ## $ Sunny                &lt;lgl&gt; FALSE, NA, TRUE, TRUE, NA, NA, NA, FALSE,...
-## $ Fluid_intake_oz      &lt;int&gt; 0, 21, 70, 0, 20, 20, 20, 140, 0, 20, 68</code></pre>
-<p>I took data from 11 runs. Most of these were early morning, right after sunrise. After accounting for the fluid intake, I found that I was losing about 1.3 kg per hour, or about 45 oz per hour. Some of this weight loss was from the energy required to propel my butt down the road, but most of it was probably water.</p>
+## $ Fluid_intake_oz      &lt;int&gt; 0, 21, 70, 0, 20, 20, 20, 140, 0, 20, 68,...</code></pre>
+<p>I took data from 14 runs. Most of these were early morning, right after sunrise. After accounting for the fluid intake, I found that I was losing about 1.3 kg per hour, or about 45 oz per hour. Some of this weight loss was from the energy required to propel my butt down the road, but most of it was probably water.</p>
 <pre class="r"><code>x %&gt;% mutate(dwt_lbs = Beginning_weight_lbs - Ending_weight_lbs + Fluid_intake_oz/16) %&gt;%
   mutate(dwt_g = 1000 * dwt_lbs / 2.2) %&gt;%
   mutate(dwt_g_hr = dwt_g / Duration_min * 60, 
          dwt_oz_hr = dwt_lbs * 16 / Duration_min * 60) %&gt;% 
   select(dwt_g_hr, dwt_oz_hr)</code></pre>
-<pre><code>## # A tibble: 11 x 2
+<pre><code>## # A tibble: 14 x 2
 ##    dwt_g_hr dwt_oz_hr
 ##       &lt;dbl&gt;     &lt;dbl&gt;
 ##  1    1268.      44.7
@@ -71,7 +71,10 @@ fb &lt;- gs_title(&quot;sweat_loss_data&quot;)</code></pre>
 ##  8    1303.      45.9
 ##  9    1148.      40.4
 ## 10     624.      22.0
-## 11    1011.      35.6</code></pre>
+## 11    1011.      35.6
+## 12    1158.      40.8
+## 13    1270.      44.7
+## 14    1414.      49.8</code></pre>
 <pre class="r"><code>x %&gt;% mutate(dwt_lbs = Beginning_weight_lbs - Ending_weight_lbs + Fluid_intake_oz/16) %&gt;%
   mutate(dwt_g = 1000 * dwt_lbs / 2.2) %&gt;%
   mutate(dwt_g_hr = dwt_g / Duration_min * 60, 
@@ -80,7 +83,7 @@ fb &lt;- gs_title(&quot;sweat_loss_data&quot;)</code></pre>
 <pre><code>## # A tibble: 1 x 4
 ##   `mean(dwt_g_hr)` `sd(dwt_g_hr)` `mean(dwt_oz_hr)` `sd(dwt_oz_hr)`
 ##              &lt;dbl&gt;          &lt;dbl&gt;             &lt;dbl&gt;           &lt;dbl&gt;
-## 1            1314.           366.              46.2            12.9</code></pre>
+## 1            1307.           325.              46.0            11.4</code></pre>
 <p>Here’s the distribution of the data. Nice boxplot!</p>
 <pre class="r"><code>chart_data &lt;- x %&gt;% mutate(dwt_lbs = Beginning_weight_lbs - Ending_weight_lbs + Fluid_intake_oz/16) %&gt;%
   mutate(dwt_g = 1000 * dwt_lbs / 2.2) %&gt;%

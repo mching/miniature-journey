@@ -1,0 +1,102 @@
+---
+title: Astronaut Fluid Shift Experiment
+author: ~
+date: '2018-08-25'
+slug: astronaut-fluid-shift-experiment
+categories: 
+  - R
+tags: 
+  - experiment
+subtitle: ''
+---
+
+
+
+<p>Today I ran an experiment with the students in my daughter’s First Lego League team. It was meant to demonstrate how fluid shifts in space. The kids measured their leg circumference at 3 different spots after standing for 10 minutes. They lay with their legs in the air for 10 more minutes and then re-measured the circumference.</p>
+<p>The inspiration for this activity came from <a href="https://www.nasa.gov/audience/foreducators/topnav/materials/listbytype/Get_a_Leg_Up_Activity.html">the NASA website</a>.</p>
+<pre class="r"><code>library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+library(tidyr)
+my_sheets &lt;- gs_ls()
+fb &lt;- gs_title(&quot;get_a_leg_up&quot;)</code></pre>
+<pre><code>## Sheet successfully identified: &quot;get_a_leg_up&quot;</code></pre>
+<pre class="r"><code>x &lt;- gs_read(fb)</code></pre>
+<pre><code>## Accessing worksheet titled &#39;Sheet1&#39;.</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   student = col_integer(),
+##   location = col_character(),
+##   pre_post = col_character(),
+##   circum = col_double()
+## )</code></pre>
+<pre class="r"><code>x$student &lt;- factor(x$student)
+x$location &lt;- factor(x$location)
+x$pre_post &lt;- factor(x$pre_post, levels = c(&quot;pre&quot;, &quot;post&quot;))
+x &lt;- tbl_df(x)</code></pre>
+<p>There were 7 kids today, and their pre and post measurements are plotted below against an identity line.</p>
+<pre class="r"><code>x %&gt;% spread(pre_post, circum) %&gt;%
+  ggplot(aes(x = pre, y = post, color = location)) + 
+  geom_point() + 
+  geom_abline(slope = 1)</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_point).</code></pre>
+<p><img src="/post/2018-08-25-astronaut-fluid-shift-experiment_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>I calculated the group means by location. There were a couple of missing observations.</p>
+<pre class="r"><code>x %&gt;% group_by(location, pre_post) %&gt;% 
+  summarise(mean_circ = mean(circum, na.rm = T), stdev = sd(circum, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 6 x 4
+## # Groups:   location [?]
+##   location pre_post mean_circ stdev
+##   &lt;fct&gt;    &lt;fct&gt;        &lt;dbl&gt; &lt;dbl&gt;
+## 1 a        pre           28.6  4.48
+## 2 a        post          28.3  4.55
+## 3 b        pre           29.1  3.14
+## 4 b        post          28.2  2.50
+## 5 c        pre           18.0  1.61
+## 6 c        post          17.4  2.16</code></pre>
+<p>Then I ran paired t-tests on each location. It turned out that the only statistically significant location was location a (and that’s not significant if we use the Bonferroni correction for multiple comparisons).</p>
+<pre class="r"><code>loc_a &lt;- x %&gt;% 
+  filter(location == &quot;a&quot;, student != 5) %&gt;% 
+  arrange(pre_post, student)
+t.test(circum ~ pre_post, data = loc_a, paired = TRUE)</code></pre>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  circum by pre_post
+## t = 3.1398, df = 5, p-value = 0.02567
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  0.188832 1.894501
+## sample estimates:
+## mean of the differences 
+##                1.041667</code></pre>
+<pre class="r"><code>loc_b &lt;- x %&gt;% 
+  filter(location == &quot;b&quot;, student != 5) %&gt;% 
+  arrange(pre_post, student)
+t.test(circum ~ pre_post, data = loc_b, paired = TRUE)</code></pre>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  circum by pre_post
+## t = 1.0518, df = 5, p-value = 0.3411
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.6017005  1.4350339
+## sample estimates:
+## mean of the differences 
+##               0.4166667</code></pre>
+<pre class="r"><code>loc_c &lt;- x %&gt;% 
+  filter(location == &quot;c&quot;) %&gt;% 
+  arrange(pre_post, student)
+t.test(circum ~ pre_post, data = loc_c, paired = TRUE)</code></pre>
+<pre><code>## 
+##  Paired t-test
+## 
+## data:  circum by pre_post
+## t = 1.8, df = 6, p-value = 0.122
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.2310399  1.5167542
+## sample estimates:
+## mean of the differences 
+##               0.6428571</code></pre>

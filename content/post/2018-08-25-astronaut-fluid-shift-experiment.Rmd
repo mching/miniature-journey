@@ -1,0 +1,67 @@
+---
+title: Astronaut Fluid Shift Experiment
+author: ~
+date: '2018-08-25'
+slug: astronaut-fluid-shift-experiment
+categories: 
+  - R
+tags: 
+  - experiment
+subtitle: ''
+---
+
+Today I ran an experiment with the students in my daughter's First Lego League team. It was meant to demonstrate how fluid shifts in space. The kids measured their leg circumference at 3 different spots after standing for 10 minutes. They lay with their legs in the air for 10 more minutes and then re-measured the circumference.
+
+The inspiration for this activity came from [the NASA website](https://www.nasa.gov/audience/foreducators/topnav/materials/listbytype/Get_a_Leg_Up_Activity.html). 
+
+```{r}
+library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+library(tidyr)
+my_sheets <- gs_ls()
+fb <- gs_title("get_a_leg_up")
+x <- gs_read(fb)
+```
+
+```{r}
+x$student <- factor(x$student)
+x$location <- factor(x$location)
+x$pre_post <- factor(x$pre_post, levels = c("pre", "post"))
+x <- tbl_df(x)
+```
+
+There were 7 kids today, and their pre and post measurements are plotted below against an identity line.
+
+```{r}
+x %>% spread(pre_post, circum) %>%
+  ggplot(aes(x = pre, y = post, color = location)) + 
+  geom_point() + 
+  geom_abline(slope = 1)
+```
+
+I calculated the group means by location. There were a couple of missing observations. 
+```{r}
+x %>% group_by(location, pre_post) %>% 
+  summarise(mean_circ = mean(circum, na.rm = T), stdev = sd(circum, na.rm = T))
+```
+
+Then I ran paired t-tests on each location. It turned out that the only statistically significant location was location a (and that's not significant if we use the Bonferroni correction for multiple comparisons).
+```{r}
+loc_a <- x %>% 
+  filter(location == "a", student != 5) %>% 
+  arrange(pre_post, student)
+t.test(circum ~ pre_post, data = loc_a, paired = TRUE)
+
+loc_b <- x %>% 
+  filter(location == "b", student != 5) %>% 
+  arrange(pre_post, student)
+t.test(circum ~ pre_post, data = loc_b, paired = TRUE)
+
+loc_c <- x %>% 
+  filter(location == "c") %>% 
+  arrange(pre_post, student)
+t.test(circum ~ pre_post, data = loc_c, paired = TRUE)
+
+```
+
