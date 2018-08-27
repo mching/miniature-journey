@@ -10,7 +10,7 @@ tags:
 subtitle: ''
 ---
 
-Today I ran an experiment with the students in my daughter's First Lego League team. It was meant to demonstrate how fluid shifts in space. The kids measured their leg circumference at 3 different spots after standing for 10 minutes. They lay with their legs in the air for 10 more minutes and then re-measured the circumference.
+Today I ran an experiment with the students in my daughter's First Lego League team. It was meant to demonstrate how fluid shifts in space. The kids measured their leg circumference at 3 different spots after standing for 10 minutes. They lay with their legs propped up in the air for 10 more minutes and then re-measured the circumference.
 
 The inspiration for this activity came from [the NASA website](https://www.nasa.gov/audience/foreducators/topnav/materials/listbytype/Get_a_Leg_Up_Activity.html). 
 
@@ -26,42 +26,52 @@ x <- gs_read(fb)
 
 ```{r}
 x$student <- factor(x$student)
+x$location[which(x$location == "a")] <- "thigh"
+x$location[which(x$location == "b")] <- "calf"
+x$location[which(x$location == "c")] <- "ankle"
 x$location <- factor(x$location)
 x$pre_post <- factor(x$pre_post, levels = c("pre", "post"))
 x <- tbl_df(x)
 ```
 
-There were 7 kids today, and their pre and post measurements are plotted below against an identity line.
+There were 7 kids in the inital group and 2 more kids and me in a second session. Pre and post measurements are plotted below against an identity line.
 
 ```{r}
 x %>% spread(pre_post, circum) %>%
   ggplot(aes(x = pre, y = post, color = location)) + 
   geom_point() + 
-  geom_abline(slope = 1)
+  geom_abline(slope = 1) +
+  ggtitle("Leg Circumference Fluid Shifts") +
+  xlab("Standing Leg Circumference (cm)") +
+  ylab("Lying with Legs Straight Up Circumference (cm)")
 ```
+From this curve most dots were to the right of the identity line, a few were on the line, and a few were above it. There was a trend that the pre measurements were higher than the post measurements.
 
-I calculated the group means by location. There were a couple of missing observations. 
-```{r}
-x %>% group_by(location, pre_post) %>% 
-  summarise(mean_circ = mean(circum, na.rm = T), stdev = sd(circum, na.rm = T))
-```
+Because of multiple comparisons, I computed the Bonferroni correction to be 0.05/3 or about 0.0167.
 
-Then I ran paired t-tests on each location. It turned out that the only statistically significant location was location a (and that's not significant if we use the Bonferroni correction for multiple comparisons).
+I ran paired t-tests on each location. The thigh just above the knee demonstrated a significant difference of about 1 cm between the two positions.
 ```{r}
 loc_a <- x %>% 
-  filter(location == "a", student != 5) %>% 
+  filter(location == "thigh", student != 5) %>% 
   arrange(pre_post, student)
 t.test(circum ~ pre_post, data = loc_a, paired = TRUE)
-
-loc_b <- x %>% 
-  filter(location == "b", student != 5) %>% 
-  arrange(pre_post, student)
-t.test(circum ~ pre_post, data = loc_b, paired = TRUE)
-
-loc_c <- x %>% 
-  filter(location == "c") %>% 
-  arrange(pre_post, student)
-t.test(circum ~ pre_post, data = loc_c, paired = TRUE)
-
 ```
 
+The calf did not demonstrate a significant difference between the two positions. The mean of the differences was 0.367 but this did not meet statistical significance. The reason for this might be because you can flex your calf and it might change in circumference.
+```{r}
+loc_b <- x %>% 
+  filter(location == "calf", student != 5) %>% 
+  arrange(pre_post, student)
+t.test(circum ~ pre_post, data = loc_b, paired = TRUE)
+```
+
+The ankle demonstrated a difference of about 0.75 cm between the two positions, but this was not a significant difference with the Bonferroni adjusted type 1 error rate of 0.0167.
+```{r}
+loc_c <- x %>% 
+  filter(location == "ankle") %>% 
+  arrange(pre_post, student)
+t.test(circum ~ pre_post, data = loc_c, paired = TRUE)
+```
+
+## Discussion
+Leg circumference did appear to decrease when comparing lying down with legs up to a standing position. This was notable in the thigh only but not in the calf or ankle. The reason for the different results is hard to interpret but might include measurement error versus a different propensity of the tissues underlying these areas to swell or contract.
