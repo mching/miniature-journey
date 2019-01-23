@@ -1,0 +1,19 @@
+---
+title: Honolulu Traffic Tweets
+author: ~
+date: '2018-07-27'
+slug: honolulu-traffic-tweets
+categories:
+  - R
+tags: 
+  - twitter
+  - cars
+  - traffic
+subtitle: ''
+draft: TRUE
+---
+
+```{r}
+
+```
+
