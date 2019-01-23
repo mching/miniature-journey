@@ -1,0 +1,38 @@
+---
+title: Marathon Data
+author: ~
+date: '2019-01-10'
+slug: marathon-data
+categories: []
+tags: []
+subtitle: ''
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(stringr)
+
+x <- read.csv("./content/datasets/PSEResultsOfficial_Honolulu2018.csv", colClasses = "character")
+
+x <- tbl_df(x)
+glimpse(x)
+
+x <- x %>%
+  rename(d5k = T1...ChipTime..HH.mm.ss.,
+         d10k = T2...ChipTime..HH.mm.ss.,
+         d15k = T3...ChipTime..HH.mm.ss.,
+         d21k = T4...ChipTime..HH.mm.ss.,
+         d25k = T5...ChipTime..HH.mm.ss.,
+         d30k = T6...ChipTime..HH.mm.ss.,
+         d35k = T7...ChipTime..HH.mm.ss.,
+         d40k = T8...ChipTime..HH.mm.ss.,
+         d42k = T9...ChipTime..HH.mm.ss.) %>%
+  select(-starts_with('T'), -UnderlyingURL) 
+
+glimpse(x)
+mutate(x,BibNum=sapply(strsplit(x$BibNum, split='\\t', fixed=TRUE),function(x) (x[1])))
+
+
+```
+
