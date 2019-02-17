@@ -1,0 +1,60 @@
+---
+title: Tenderfoot Paces
+author: ~
+date: '2019-02-16'
+slug: tenderfoot-paces
+categories: 
+  - R
+tags: 
+  - scouting
+subtitle: ''
+---
+
+I had to organize the Tenderfoot scouts in my troop to learn some orienteering. The first step is to calculate how long their paces are. We went to the track and measured their pace count per 100 meters at least twice per scout. I wondered what the distribution looked like.
+
+I used dplyr method to group and summarize the data. It's a little overkill but it does make it super easy. It looks like the median length of a pace is just about 151 cm, with a mean of pretty much the same thing. 
+
+```{r}
+library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+```
+
+```{r, cache = F}
+# Change cache flag to F if updating data
+my_sheets <- gs_ls()
+fb <- gs_title("BoysPaces")
+x <- gs_read(fb)
+```
+
+```{r}
+x <- as_tibble(x)
+x
+```
+
+```{r}
+x %>% group_by(Name) %>%
+  summarize(mean_paces_per_100m = mean(paces_per_100m)) %>%
+  mutate(paces_m = 100/mean_paces_per_100m, 
+         paces_ft = 328.084/mean_paces_per_100m)
+```
+
+```{r}
+x %>% group_by(Name) %>%
+  summarize(mean_paces_per_100m = mean(paces_per_100m)) %>%
+  mutate(paces_m = 100/mean_paces_per_100m) %>%
+  ggplot(aes(y = paces_m)) + geom_boxplot()
+```
+
+```{r}
+x %>% group_by(Name) %>%
+  summarize(mean_paces_per_100m = mean(paces_per_100m)) %>%
+  mutate(pace_length_m = 100/mean_paces_per_100m) %>%
+  summarize(median_pace_length = median(pace_length_m))
+
+x %>% group_by(Name) %>%
+  summarize(mean_paces_per_100m = mean(paces_per_100m)) %>%
+  mutate(pace_length_m = 100/mean_paces_per_100m) %>%
+  summarize(mean_pace_length = mean(pace_length_m))
+```
+
