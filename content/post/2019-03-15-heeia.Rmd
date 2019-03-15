@@ -1,0 +1,51 @@
+---
+title: heeia
+author: ~
+date: '2019-03-15'
+slug: heeia
+categories: 
+  - R
+tags: 
+  - observation
+  - ecology
+subtitle: ''
+---
+
+```{r}
+library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+```
+
+```{r, cache = F}
+# Change cache flag to F if updating data
+my_sheets <- gs_ls()
+fb <- gs_title("heeia")
+x <- gs_read(fb)
+```
+
+```{r}
+x <- as_tibble(x)
+x
+```
+
+```{r}
+t.test(x$DO ~ x$Mangrove)
+t.test(x$pH ~ x$Mangrove)
+t.test(x$turbidity ~ x$Mangrove)
+```
+
+```{r}
+obs <- 6
+x %>% group_by(Mangrove) %>% summarize(
+  meanDO = mean(DO), 
+  seDO = sd(DO)/sqrt(obs)
+  ) %>%   
+  ggplot(aes(x = Mangrove, y = meanDO, fill = Mangrove)) + 
+  geom_bar(stat='identity') +
+  geom_errorbar(aes(ymin = meanDO - seDO, ymax = meanDO + seDO),
+                width = 0.2,
+                position=position_dodge(0.9))
+
+```
+
