@@ -30,22 +30,71 @@ x
 ```
 
 ```{r}
-t.test(x$DO ~ x$Mangrove)
-t.test(x$pH ~ x$Mangrove)
-t.test(x$turbidity ~ x$Mangrove)
+t.test(x$DO ~ x$mangrove)
 ```
 
 ```{r}
-obs <- 6
-x %>% group_by(Mangrove) %>% summarize(
-  meanDO = mean(DO), 
-  seDO = sd(DO)/sqrt(obs)
+t.test(x$pH ~ x$mangrove)
+```
+
+```{r}
+t.test(x$turbidity ~ x$mangrove)
+```
+
+```{r}
+obs <- 9
+
+x %>% group_by(mangrove) %>% 
+  summarize(mean.DO = mean(DO),
+            se.DO = sd(DO)/sqrt(obs),
+            mean.pH = mean(pH),
+            se.pH = sd(pH)/sqrt(obs),
+            mean.turbidity = mean(turbidity),
+            se.turbidity = sd(turbidity)/sqrt(obs))
+```
+
+```{r}
+x %>% group_by(mangrove) %>% summarize(
+  mean.DO = mean(DO), 
+  se.DO = sd(DO)/sqrt(obs)
   ) %>%   
-  ggplot(aes(x = Mangrove, y = meanDO, fill = Mangrove)) + 
+  ggplot(aes(x = mangrove, y = mean.DO, fill = mangrove)) + 
   geom_bar(stat='identity') +
-  geom_errorbar(aes(ymin = meanDO - seDO, ymax = meanDO + seDO),
+  geom_errorbar(aes(ymin = mean.DO - se.DO, ymax = mean.DO + se.DO),
                 width = 0.2,
                 position=position_dodge(0.9))
 
+```
+
+```{r}
+x %>% group_by(mangrove) %>% summarize(
+  mean.pH = mean(pH), 
+  se.pH = sd(pH)/sqrt(obs)
+  ) %>%   
+  ggplot(aes(x = mangrove, y = mean.pH, fill = mangrove)) + 
+  geom_bar(stat='identity') +
+  geom_errorbar(aes(ymin = mean.pH - se.pH, ymax = mean.pH + se.pH),
+                width = 0.2,
+                position=position_dodge(0.9))
+```
+
+```{r}
+```{r}
+x %>% group_by(mangrove) %>% summarize(
+  mean.turbidity = mean(turbidity), 
+  se.turbidity = sd(turbidity)/sqrt(obs)
+  ) %>%   
+  ggplot(aes(x = mangrove, y = mean.turbidity, fill = mangrove)) + 
+  geom_bar(stat='identity') +
+  geom_errorbar(aes(ymin = mean.turbidity - se.turbidity, 
+                    ymax = mean.turbidity + se.turbidity),
+                width = 0.2,
+                position=position_dodge(0.9))
+```
+```
+
+```{r}
+model1 <- lm(x$DO ~ x$mangrove + as.factor(x$Date))
+summary(model1)
 ```
 
