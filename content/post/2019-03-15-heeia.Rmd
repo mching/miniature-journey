@@ -1,5 +1,5 @@
 ---
-title: heeia
+title: Effects of Mangrove Clearance on Water Quality at He'eia Fishpond
 author: ~
 date: '2019-03-15'
 slug: heeia
@@ -29,18 +29,7 @@ x <- as_tibble(x)
 x
 ```
 
-```{r}
-t.test(x$DO ~ x$mangrove)
-```
-
-```{r}
-t.test(x$pH ~ x$mangrove)
-```
-
-```{r}
-t.test(x$turbidity ~ x$mangrove)
-```
-
+# Description of Mean Dissolved Oxygen, pH, and Turbidity by Mangrove Presence
 ```{r}
 obs <- 9
 
@@ -51,6 +40,12 @@ x %>% group_by(mangrove) %>%
             se.pH = sd(pH)/sqrt(obs),
             mean.turbidity = mean(turbidity),
             se.turbidity = sd(turbidity)/sqrt(obs))
+```
+
+# t-Tests
+## Dissolved Oxygen by Mangrove Presence
+```{r}
+t.test(x$DO ~ x$mangrove)
 ```
 
 ```{r}
@@ -66,6 +61,11 @@ x %>% group_by(mangrove) %>% summarize(
 
 ```
 
+## pH by Mangrove Presence
+```{r}
+t.test(x$pH ~ x$mangrove)
+```
+
 ```{r}
 x %>% group_by(mangrove) %>% summarize(
   mean.pH = mean(pH), 
@@ -78,7 +78,11 @@ x %>% group_by(mangrove) %>% summarize(
                 position=position_dodge(0.9))
 ```
 
+## Turbidity by Mangrove Presence
 ```{r}
+t.test(x$turbidity ~ x$mangrove)
+```
+
 ```{r}
 x %>% group_by(mangrove) %>% summarize(
   mean.turbidity = mean(turbidity), 
@@ -91,8 +95,9 @@ x %>% group_by(mangrove) %>% summarize(
                 width = 0.2,
                 position=position_dodge(0.9))
 ```
-```
 
+## Multivariable Model for Dissolved Oxygen
+Including date and mangrove as predictor variables.
 ```{r}
 model1 <- lm(x$DO ~ x$mangrove + as.factor(x$Date))
 summary(model1)
