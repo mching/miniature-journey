@@ -13,6 +13,16 @@ subtitle: ''
 
 
 
+<p>My daughter started doing a science project on the ecology of the Heeia fishpond. She collected a bunch of data, but since she’s only a 5th grader, I thought she might need some help with the analysis.</p>
+<p>The premise is that the fishpond has been overgrown by invasive mangrove plants. The organization that runs the fishpond has been clearing back the mangroves. This helps to restore the water in the pond. What these effects are were not clear, but she hypothesized that there would be less mud since the mangroves trap mud. There would also be better oxygenation since there is less bacteria and dirt in the water. Finally the water would be clearer because the mud does not settle between the tree branches and roots once these have been cleared out.</p>
+<div id="methods" class="section level1">
+<h1>Methods</h1>
+<p>She and her teammate sampled water from an area that had been cleared months ago and an area that still had mangroves near it. They collected data on the dissolved oxygen content, pH, and turbidity of the water.</p>
+<p>To analyze the data we ran two-sided t-tests, comparing dissolved oxygen, pH, and turbidity at the two sites. To compensate for the clustered data collection (3 data collection days, each about a week apart), I also put the data into a multivariable linear regression model, with the date of collection as a separate variable.</p>
+</div>
+<div id="results" class="section level1">
+<h1>Results</h1>
+<p>Here’s the raw data.</p>
 <pre class="r"><code>library(googlesheets)
 suppressPackageStartupMessages(library(dplyr))
 library(ggplot2)</code></pre>
@@ -24,7 +34,7 @@ fb &lt;- gs_title(&quot;heeia&quot;)</code></pre>
 <pre><code>## Accessing worksheet titled &#39;Sheet1&#39;.</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
-##   Date = col_date(format = &quot;&quot;),
+##   coll_date = col_date(format = &quot;&quot;),
 ##   ID = col_double(),
 ##   mangrove = col_logical(),
 ##   DO = col_double(),
@@ -34,7 +44,7 @@ fb &lt;- gs_title(&quot;heeia&quot;)</code></pre>
 <pre class="r"><code>x &lt;- as_tibble(x)
 x</code></pre>
 <pre><code>## # A tibble: 18 x 6
-##    Date          ID mangrove    DO    pH turbidity
+##    coll_date     ID mangrove    DO    pH turbidity
 ##    &lt;date&gt;     &lt;dbl&gt; &lt;lgl&gt;    &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
 ##  1 2019-02-23     1 FALSE    0.851   6.2      32.1
 ##  2 2019-02-23     2 FALSE    0.829   6.2      12  
@@ -54,8 +64,8 @@ x</code></pre>
 ## 16 2019-03-15    16 TRUE     0.321   6.2      57.5
 ## 17 2019-03-15    17 TRUE     0.565   6.1     366  
 ## 18 2019-03-15    18 TRUE     0.511   6.2     501.</code></pre>
-<div id="description-of-mean-dissolved-oxygen-ph-and-turbidity-by-mangrove-presence" class="section level1">
-<h1>Description of Mean Dissolved Oxygen, pH, and Turbidity by Mangrove Presence</h1>
+<div id="description-of-mean-dissolved-oxygen-ph-and-turbidity-by-mangrove-presence" class="section level2">
+<h2>Description of Mean Dissolved Oxygen, pH, and Turbidity by Mangrove Presence</h2>
 <pre class="r"><code>obs &lt;- 9
 
 x %&gt;% group_by(mangrove) %&gt;% 
@@ -71,10 +81,9 @@ x %&gt;% group_by(mangrove) %&gt;%
 ## 1 FALSE      0.898 0.0243    6.13 0.0333           20.8         3.63
 ## 2 TRUE       0.539 0.0377    6.24 0.0294          161.         57.5</code></pre>
 </div>
-<div id="t-tests" class="section level1">
-<h1>t-Tests</h1>
 <div id="dissolved-oxygen-by-mangrove-presence" class="section level2">
 <h2>Dissolved Oxygen by Mangrove Presence</h2>
+<p>There seemed to be more dissolved oxygen in the mangrove-free areas. This difference was highly significant based on a two-sided t-test.</p>
 <pre class="r"><code>t.test(x$DO ~ x$mangrove)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
@@ -100,6 +109,7 @@ x %&gt;% group_by(mangrove) %&gt;%
 </div>
 <div id="ph-by-mangrove-presence" class="section level2">
 <h2>pH by Mangrove Presence</h2>
+<p>Water pH was marginally different between the mangrove-free and mangrove containing areas. However the difference was still statistically significant. Water in the mangrove free areas was slightly more acidic than in the mangrove containing areas.</p>
 <pre class="r"><code>t.test(x$pH ~ x$mangrove)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
@@ -125,6 +135,7 @@ x %&gt;% group_by(mangrove) %&gt;%
 </div>
 <div id="turbidity-by-mangrove-presence" class="section level2">
 <h2>Turbidity by Mangrove Presence</h2>
+<p>There was a significant difference in turbidity between the two areas. The mangrove free areas had very little turbidity while the mangrove containing areas were very clearly more turbid.</p>
 <pre class="r"><code>t.test(x$turbidity ~ x$mangrove)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
@@ -151,23 +162,23 @@ x %&gt;% group_by(mangrove) %&gt;%
 </div>
 <div id="multivariable-model-for-dissolved-oxygen" class="section level2">
 <h2>Multivariable Model for Dissolved Oxygen</h2>
-<p>Including date and mangrove as predictor variables.</p>
-<pre class="r"><code>model1 &lt;- lm(x$DO ~ x$mangrove + as.factor(x$Date))
+<p>Including date and mangrove as predictor variables, there was still a significant effect of the mangrove presence. The March 9, 2019 collection date had significantly more dissolved oxygen than the February 23 date.</p>
+<pre class="r"><code>model1 &lt;- lm(x$DO ~ x$mangrove + as.factor(x$coll_date))
 summary(model1)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = x$DO ~ x$mangrove + as.factor(x$Date))
+## lm(formula = x$DO ~ x$mangrove + as.factor(x$coll_date))
 ## 
 ## Residuals:
 ##       Min        1Q    Median        3Q       Max 
 ## -0.153056 -0.024153  0.003083  0.043847  0.090944 
 ## 
 ## Coefficients:
-##                             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                  0.87544    0.03343   26.18 2.71e-13 ***
-## x$mangroveTRUE              -0.35922    0.03343  -10.74 3.81e-08 ***
-## as.factor(x$Date)2019-03-09  0.11017    0.04095    2.69   0.0176 *  
-## as.factor(x$Date)2019-03-15 -0.04217    0.04095   -1.03   0.3206    
+##                                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)                       0.87544    0.03343   26.18 2.71e-13 ***
+## x$mangroveTRUE                   -0.35922    0.03343  -10.74 3.81e-08 ***
+## as.factor(x$coll_date)2019-03-09  0.11017    0.04095    2.69   0.0176 *  
+## as.factor(x$coll_date)2019-03-15 -0.04217    0.04095   -1.03   0.3206    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
@@ -175,4 +186,8 @@ summary(model1)</code></pre>
 ## Multiple R-squared:  0.9029, Adjusted R-squared:  0.8821 
 ## F-statistic:  43.4 on 3 and 14 DF,  p-value: 2.443e-07</code></pre>
 </div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>I will leave the discussion up to my daughter and her teammate to figure out.</p>
 </div>

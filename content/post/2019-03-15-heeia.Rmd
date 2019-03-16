@@ -11,6 +11,18 @@ tags:
 subtitle: ''
 ---
 
+My daughter started doing a science project on the ecology of the Heeia fishpond. She collected a bunch of data, but since she's only a 5th grader, I thought she might need some help with the analysis.
+
+The premise is that the fishpond has been overgrown by invasive mangrove plants. The organization that runs the fishpond has been clearing back the mangroves. This helps to restore the water in the pond. What these effects are were not clear, but she hypothesized that there would be less mud since the mangroves trap mud. There would also be better oxygenation since there is less bacteria and dirt in the water. Finally the water would be clearer because the mud does not settle between the tree branches and roots once these have been cleared out.
+
+# Methods
+She and her teammate sampled water from an area that had been cleared months ago and an area that still had mangroves near it. They collected data on the dissolved oxygen content, pH, and turbidity of the water. 
+
+To analyze the data we ran two-sided t-tests, comparing dissolved oxygen, pH, and turbidity at the two sites. To compensate for the clustered data collection (3 data collection days, each about a week apart), I also put the data into a multivariable linear regression model, with the date of collection as a separate variable.
+
+# Results
+Here's the raw data.
+
 ```{r}
 library(googlesheets)
 suppressPackageStartupMessages(library(dplyr))
@@ -24,12 +36,14 @@ fb <- gs_title("heeia")
 x <- gs_read(fb)
 ```
 
+
+
 ```{r}
 x <- as_tibble(x)
 x
 ```
 
-# Description of Mean Dissolved Oxygen, pH, and Turbidity by Mangrove Presence
+## Description of Mean Dissolved Oxygen, pH, and Turbidity by Mangrove Presence
 ```{r}
 obs <- 9
 
@@ -42,8 +56,10 @@ x %>% group_by(mangrove) %>%
             se.turbidity = sd(turbidity)/sqrt(obs))
 ```
 
-# t-Tests
+
 ## Dissolved Oxygen by Mangrove Presence
+There seemed to be more dissolved oxygen in the mangrove-free areas. This difference was highly significant based on a two-sided t-test.
+
 ```{r}
 t.test(x$DO ~ x$mangrove)
 ```
@@ -62,6 +78,7 @@ x %>% group_by(mangrove) %>% summarize(
 ```
 
 ## pH by Mangrove Presence
+Water pH was marginally different between the mangrove-free and mangrove containing areas. However the difference was still statistically significant. Water in the mangrove free areas was slightly more acidic than in the mangrove containing areas.
 ```{r}
 t.test(x$pH ~ x$mangrove)
 ```
@@ -79,6 +96,8 @@ x %>% group_by(mangrove) %>% summarize(
 ```
 
 ## Turbidity by Mangrove Presence
+There was a significant difference in turbidity between the two areas. The mangrove free areas had very little turbidity while the mangrove containing areas were very clearly more turbid.
+
 ```{r}
 t.test(x$turbidity ~ x$mangrove)
 ```
@@ -97,9 +116,11 @@ x %>% group_by(mangrove) %>% summarize(
 ```
 
 ## Multivariable Model for Dissolved Oxygen
-Including date and mangrove as predictor variables.
+Including date and mangrove as predictor variables, there was still a significant effect of the mangrove presence. The March 9, 2019 collection date had significantly more dissolved oxygen than the February 23 date.
 ```{r}
-model1 <- lm(x$DO ~ x$mangrove + as.factor(x$Date))
+model1 <- lm(x$DO ~ x$mangrove + as.factor(x$coll_date))
 summary(model1)
 ```
 
+# Discussion
+I will leave the discussion up to my daughter and her teammate to figure out.
