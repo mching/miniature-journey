@@ -58,10 +58,11 @@ x %>% group_by(mangrove) %>%
 
 
 ## Dissolved Oxygen by Mangrove Presence
-There seemed to be more dissolved oxygen in the mangrove-free areas. This difference was highly significant based on a two-sided t-test.
+There seemed to be more dissolved oxygen in the mangrove-free areas. This difference was highly significant based on a two-sided t-test. I also tried a non-parametric test (Wilcoxon rank-sum test) to avoid making the assumption of normality. 
 
 ```{r}
 t.test(x$DO ~ x$mangrove)
+wilcox.test(x$DO ~ x$mangrove)
 ```
 
 ```{r}
@@ -81,6 +82,7 @@ x %>% group_by(mangrove) %>% summarize(
 Water pH was marginally different between the mangrove-free and mangrove containing areas. However the difference was still statistically significant. Water in the mangrove free areas was slightly more acidic than in the mangrove containing areas.
 ```{r}
 t.test(x$pH ~ x$mangrove)
+wilcox.test(x$pH ~ x$mangrove)
 ```
 
 ```{r}
@@ -100,6 +102,7 @@ There was a significant difference in turbidity between the two areas. The mangr
 
 ```{r}
 t.test(x$turbidity ~ x$mangrove)
+wilcox.test(x$turbidity ~ x$mangrove)
 ```
 
 ```{r}

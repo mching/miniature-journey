@@ -83,7 +83,7 @@ x %&gt;% group_by(mangrove) %&gt;%
 </div>
 <div id="dissolved-oxygen-by-mangrove-presence" class="section level2">
 <h2>Dissolved Oxygen by Mangrove Presence</h2>
-<p>There seemed to be more dissolved oxygen in the mangrove-free areas. This difference was highly significant based on a two-sided t-test.</p>
+<p>There seemed to be more dissolved oxygen in the mangrove-free areas. This difference was highly significant based on a two-sided t-test. I also tried a non-parametric test (Wilcoxon rank-sum test) to avoid making the assumption of normality.</p>
 <pre class="r"><code>t.test(x$DO ~ x$mangrove)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
@@ -96,6 +96,15 @@ x %&gt;% group_by(mangrove) %&gt;%
 ## sample estimates:
 ## mean in group FALSE  mean in group TRUE 
 ##           0.8981111           0.5388889</code></pre>
+<pre class="r"><code>wilcox.test(x$DO ~ x$mangrove)</code></pre>
+<pre><code>## Warning in wilcox.test.default(x = c(0.851, 0.829, 0.92, 0.988, 0.982,
+## 0.988, : cannot compute exact p-value with ties</code></pre>
+<pre><code>## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  x$DO by x$mangrove
+## W = 81, p-value = 0.0004095
+## alternative hypothesis: true location shift is not equal to 0</code></pre>
 <pre class="r"><code>x %&gt;% group_by(mangrove) %&gt;% summarize(
   mean.DO = mean(DO), 
   se.DO = sd(DO)/sqrt(obs)
@@ -122,6 +131,15 @@ x %&gt;% group_by(mangrove) %&gt;%
 ## sample estimates:
 ## mean in group FALSE  mean in group TRUE 
 ##            6.133333            6.244444</code></pre>
+<pre class="r"><code>wilcox.test(x$pH ~ x$mangrove)</code></pre>
+<pre><code>## Warning in wilcox.test.default(x = c(6.2, 6.2, 6, 6, 6.2, 6.2, 6.2, 6, 6.2:
+## cannot compute exact p-value with ties</code></pre>
+<pre><code>## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  x$pH by x$mangrove
+## W = 18, p-value = 0.03208
+## alternative hypothesis: true location shift is not equal to 0</code></pre>
 <pre class="r"><code>x %&gt;% group_by(mangrove) %&gt;% summarize(
   mean.pH = mean(pH), 
   se.pH = sd(pH)/sqrt(obs)
@@ -148,6 +166,13 @@ x %&gt;% group_by(mangrove) %&gt;%
 ## sample estimates:
 ## mean in group FALSE  mean in group TRUE 
 ##                20.8               160.6</code></pre>
+<pre class="r"><code>wilcox.test(x$turbidity ~ x$mangrove)</code></pre>
+<pre><code>## 
+##  Wilcoxon rank sum test
+## 
+## data:  x$turbidity by x$mangrove
+## W = 12, p-value = 0.01061
+## alternative hypothesis: true location shift is not equal to 0</code></pre>
 <pre class="r"><code>x %&gt;% group_by(mangrove) %&gt;% summarize(
   mean.turbidity = mean(turbidity), 
   se.turbidity = sd(turbidity)/sqrt(obs)
