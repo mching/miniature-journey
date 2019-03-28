@@ -25,7 +25,11 @@ subtitle: ''
 <p>Here’s the raw data.</p>
 <pre class="r"><code>library(googlesheets)
 suppressPackageStartupMessages(library(dplyr))
-library(ggplot2)</code></pre>
+library(ggplot2)
+library(hrbrthemes)</code></pre>
+<pre><code>## NOTE: Either Arial Narrow or Roboto Condensed fonts are required to use these themes.</code></pre>
+<pre><code>##       Please use hrbrthemes::import_roboto_condensed() to install Roboto Condensed and</code></pre>
+<pre><code>##       if Arial Narrow is not on your system, please see http://bit.ly/arialnarrow</code></pre>
 <pre class="r"><code># Change cache flag to F if updating data
 my_sheets &lt;- gs_ls()
 fb &lt;- gs_title(&quot;heeia&quot;)</code></pre>
@@ -81,11 +85,11 @@ x %&gt;% group_by(mangrove) %&gt;%
 ## 1 FALSE      0.898 0.0243    6.13 0.0333           20.8         3.63
 ## 2 TRUE       0.539 0.0377    6.24 0.0294          161.         57.5</code></pre>
 <p>The data do not appear to be normally distributed from looking at these boxplots.</p>
-<pre class="r"><code>ggplot(x, aes(x = mangrove, y = DO)) + geom_boxplot()</code></pre>
+<pre class="r"><code>ggplot(x, aes(x = mangrove, y = DO)) + geom_boxplot() + theme_ipsum()</code></pre>
 <p><img src="/post/2019-03-15-heeia_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(x, aes(x = mangrove, y = pH)) + geom_boxplot()</code></pre>
+<pre class="r"><code>ggplot(x, aes(x = mangrove, y = pH)) + geom_boxplot() + theme_ipsum()</code></pre>
 <p><img src="/post/2019-03-15-heeia_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
-<pre class="r"><code>ggplot(x, aes(x = mangrove, y = turbidity)) + geom_boxplot()</code></pre>
+<pre class="r"><code>ggplot(x, aes(x = mangrove, y = turbidity)) + geom_boxplot() + theme_ipsum()</code></pre>
 <p><img src="/post/2019-03-15-heeia_files/figure-html/unnamed-chunk-5-3.png" width="672" /></p>
 </div>
 <div id="dissolved-oxygen-by-mangrove-presence" class="section level2">
@@ -116,11 +120,19 @@ x %&gt;% group_by(mangrove) %&gt;%
   mean.DO = mean(DO), 
   se.DO = sd(DO)/sqrt(obs)
   ) %&gt;%   
-  ggplot(aes(x = mangrove, y = mean.DO, fill = mangrove)) + 
-  geom_bar(stat=&#39;identity&#39;) +
+  ggplot(aes(x = mangrove, y = mean.DO)) + 
+  geom_bar(stat=&#39;identity&#39;,
+           color = &quot;black&quot;,
+           fill = &quot;#99cccc&quot;
+           ) +
   geom_errorbar(aes(ymin = mean.DO - se.DO, ymax = mean.DO + se.DO),
                 width = 0.2,
-                position=position_dodge(0.9))</code></pre>
+                position=position_dodge(0.9)) +
+  ggtitle(&quot;Dissolved Oxygen by Mangrove Presence&quot;) +
+  xlab(&quot;Mangrove Presence&quot;) +
+  ylab(&quot;Dissolved Oxygen (%)&quot;) +
+  theme_ipsum() +
+  scale_y_percent()</code></pre>
 <p><img src="/post/2019-03-15-heeia_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 <div id="ph-by-mangrove-presence" class="section level2">
@@ -147,15 +159,22 @@ x %&gt;% group_by(mangrove) %&gt;%
 ## data:  x$pH by x$mangrove
 ## W = 18, p-value = 0.03208
 ## alternative hypothesis: true location shift is not equal to 0</code></pre>
-<pre class="r"><code>x %&gt;% group_by(mangrove) %&gt;% summarize(
+<pre class="r"><code>x %&gt;% group_by(mangrove) %&gt;% 
+summarize(
   mean.pH = mean(pH), 
   se.pH = sd(pH)/sqrt(obs)
   ) %&gt;%   
-  ggplot(aes(x = mangrove, y = mean.pH, fill = mangrove)) + 
-  geom_bar(stat=&#39;identity&#39;) +
+  ggplot(aes(x = mangrove, y = mean.pH)) + 
+  geom_bar(stat=&#39;identity&#39;,
+           color = &quot;black&quot;,
+           fill = &quot;#99cccc&quot;) +
   geom_errorbar(aes(ymin = mean.pH - se.pH, ymax = mean.pH + se.pH),
                 width = 0.2,
-                position=position_dodge(0.9))</code></pre>
+                position=position_dodge(0.9)) +
+  ggtitle(&quot;pH by Mangrove Presence&quot;) +
+  xlab(&quot;Mangrove Presence&quot;) +
+  ylab(&quot;pH&quot;) +
+  theme_ipsum()</code></pre>
 <p><img src="/post/2019-03-15-heeia_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 <div id="turbidity-by-mangrove-presence" class="section level2">
@@ -184,12 +203,18 @@ x %&gt;% group_by(mangrove) %&gt;%
   mean.turbidity = mean(turbidity), 
   se.turbidity = sd(turbidity)/sqrt(obs)
   ) %&gt;%   
-  ggplot(aes(x = mangrove, y = mean.turbidity, fill = mangrove)) + 
-  geom_bar(stat=&#39;identity&#39;) +
+  ggplot(aes(x = mangrove, y = mean.turbidity)) + 
+  geom_bar(stat=&#39;identity&#39;,
+           color = &quot;black&quot;,
+           fill = &quot;#99cccc&quot;) +
   geom_errorbar(aes(ymin = mean.turbidity - se.turbidity, 
                     ymax = mean.turbidity + se.turbidity),
                 width = 0.2,
-                position=position_dodge(0.9))</code></pre>
+                position=position_dodge(0.9)) +
+  ggtitle(&quot;Turbidity by Mangrove Presence&quot;) +
+  xlab(&quot;Mangrove Presence&quot;) +
+  ylab(&quot;Turbidity&quot;) +
+  theme_ipsum()</code></pre>
 <p><img src="/post/2019-03-15-heeia_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 </div>
 <div id="multivariable-model-for-dissolved-oxygen" class="section level2">

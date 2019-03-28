@@ -18,7 +18,7 @@ The premise is that the fishpond has been overgrown by invasive mangrove plants.
 # Methods
 She and her teammate sampled water from an area that had been cleared months ago and an area that still had mangroves near it. They collected data on the dissolved oxygen content, pH, and turbidity of the water. 
 
-To analyze the data we ran two-sided t-tests, comparing dissolved oxygen, pH, and turbidity at the two sites. To compensate for the clustered data collection (3 data collection days, each about a week apart), I also put the data into a multivariable linear regression model, with the date of collection as a separate variable.
+To analyze the data we ran two-sided t-tests, comparing dissolved oxygen, pH, and turbidity at the two sites. To compensate for the clustered data collection (3 data collection days, each about a week apart), I also put the data into a multivariable linear regression model, with the date of collection as a separate variable. 
 
 # Results
 Here's the raw data.
@@ -27,6 +27,7 @@ Here's the raw data.
 library(googlesheets)
 suppressPackageStartupMessages(library(dplyr))
 library(ggplot2)
+library(hrbrthemes)
 ```
 
 ```{r, cache = F}
@@ -59,9 +60,9 @@ x %>% group_by(mangrove) %>%
 
 The data do not appear to be normally distributed from looking at these boxplots.
 ```{r}
-ggplot(x, aes(x = mangrove, y = DO)) + geom_boxplot()
-ggplot(x, aes(x = mangrove, y = pH)) + geom_boxplot()
-ggplot(x, aes(x = mangrove, y = turbidity)) + geom_boxplot()
+ggplot(x, aes(x = mangrove, y = DO)) + geom_boxplot() + theme_ipsum()
+ggplot(x, aes(x = mangrove, y = pH)) + geom_boxplot() + theme_ipsum()
+ggplot(x, aes(x = mangrove, y = turbidity)) + geom_boxplot() + theme_ipsum()
 ```
 
 
@@ -78,11 +79,20 @@ x %>% group_by(mangrove) %>% summarize(
   mean.DO = mean(DO), 
   se.DO = sd(DO)/sqrt(obs)
   ) %>%   
-  ggplot(aes(x = mangrove, y = mean.DO, fill = mangrove)) + 
-  geom_bar(stat='identity') +
+  ggplot(aes(x = mangrove, y = mean.DO)) + 
+  geom_bar(stat='identity',
+           color = "black",
+           fill = "#99cccc"
+           ) +
   geom_errorbar(aes(ymin = mean.DO - se.DO, ymax = mean.DO + se.DO),
                 width = 0.2,
-                position=position_dodge(0.9))
+                position=position_dodge(0.9)) +
+  ggtitle("Dissolved Oxygen by Mangrove Presence") +
+  xlab("Mangrove Presence") +
+  ylab("Dissolved Oxygen (%)") +
+  theme_ipsum() +
+  scale_y_percent()
+
 
 ```
 
@@ -94,15 +104,23 @@ wilcox.test(x$pH ~ x$mangrove)
 ```
 
 ```{r}
-x %>% group_by(mangrove) %>% summarize(
+x %>% group_by(mangrove) %>% 
+summarize(
   mean.pH = mean(pH), 
   se.pH = sd(pH)/sqrt(obs)
   ) %>%   
-  ggplot(aes(x = mangrove, y = mean.pH, fill = mangrove)) + 
-  geom_bar(stat='identity') +
+  ggplot(aes(x = mangrove, y = mean.pH)) + 
+  geom_bar(stat='identity',
+           color = "black",
+           fill = "#99cccc") +
   geom_errorbar(aes(ymin = mean.pH - se.pH, ymax = mean.pH + se.pH),
                 width = 0.2,
-                position=position_dodge(0.9))
+                position=position_dodge(0.9)) +
+  ggtitle("pH by Mangrove Presence") +
+  xlab("Mangrove Presence") +
+  ylab("pH") +
+  theme_ipsum()
+
 ```
 
 ## Turbidity by Mangrove Presence
@@ -118,12 +136,18 @@ x %>% group_by(mangrove) %>% summarize(
   mean.turbidity = mean(turbidity), 
   se.turbidity = sd(turbidity)/sqrt(obs)
   ) %>%   
-  ggplot(aes(x = mangrove, y = mean.turbidity, fill = mangrove)) + 
-  geom_bar(stat='identity') +
+  ggplot(aes(x = mangrove, y = mean.turbidity)) + 
+  geom_bar(stat='identity',
+           color = "black",
+           fill = "#99cccc") +
   geom_errorbar(aes(ymin = mean.turbidity - se.turbidity, 
                     ymax = mean.turbidity + se.turbidity),
                 width = 0.2,
-                position=position_dodge(0.9))
+                position=position_dodge(0.9)) +
+  ggtitle("Turbidity by Mangrove Presence") +
+  xlab("Mangrove Presence") +
+  ylab("Turbidity") +
+  theme_ipsum()
 ```
 
 ## Multivariable Model for Dissolved Oxygen
