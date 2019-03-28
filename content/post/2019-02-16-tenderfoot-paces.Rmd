@@ -27,11 +27,14 @@ fb <- gs_title("BoysPaces")
 x <- gs_read(fb)
 ```
 
+Here's what the raw data looked like.
 ```{r}
 x <- as_tibble(x)
 x
+nboys <- length(unique(x$Name))
 ```
 
+Here I calculated the mean paces per 100 meters per boy and how long their paces were in meters and feet.
 ```{r}
 x %>% group_by(Name) %>%
   summarize(mean_paces_per_100m = mean(paces_per_100m)) %>%
@@ -39,6 +42,7 @@ x %>% group_by(Name) %>%
          paces_ft = 328.084/mean_paces_per_100m)
 ```
 
+To look at the distribution I plotted a boxplot.
 ```{r}
 x %>% group_by(Name) %>%
   summarize(mean_paces_per_100m = mean(paces_per_100m)) %>%
@@ -46,6 +50,7 @@ x %>% group_by(Name) %>%
   ggplot(aes(y = paces_m)) + geom_boxplot()
 ```
 
+Here's the median and mean pace length for the boys.
 ```{r}
 x %>% group_by(Name) %>%
   summarize(mean_paces_per_100m = mean(paces_per_100m)) %>%
@@ -55,6 +60,6 @@ x %>% group_by(Name) %>%
 x %>% group_by(Name) %>%
   summarize(mean_paces_per_100m = mean(paces_per_100m)) %>%
   mutate(pace_length_m = 100/mean_paces_per_100m) %>%
-  summarize(mean_pace_length = mean(pace_length_m))
+  summarize(mean_pace_length = mean(pace_length_m), sem_pace_length = sd(pace_length_m)/sqrt(nboys))
 ```
 
