@@ -54,6 +54,14 @@ x %>% group_by(mangrove) %>%
             se.pH = sd(pH)/sqrt(obs),
             mean.turbidity = mean(turbidity),
             se.turbidity = sd(turbidity)/sqrt(obs))
+
+```
+
+The data do not appear to be normally distributed from looking at these boxplots.
+```{r}
+ggplot(x, aes(x = mangrove, y = DO)) + geom_boxplot()
+ggplot(x, aes(x = mangrove, y = pH)) + geom_boxplot()
+ggplot(x, aes(x = mangrove, y = turbidity)) + geom_boxplot()
 ```
 
 
