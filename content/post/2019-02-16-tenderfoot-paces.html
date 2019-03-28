@@ -12,7 +12,7 @@ subtitle: ''
 
 
 
-<p>I had to organize the Tenderfoot scouts in my troop to learn some orienteering. The first step is to calculate how long their paces are. We went to the track and measured their pace count per 100 meters at least twice per scout. I wondered what the distribution looked like.</p>
+<p>I had to organize the Tenderfoot scouts in my troop to learn some orienteering. The first step was to calculate how long their paces are. We went to the track and measured their pace count per 100 meters at least twice per scout. I wondered what the distribution looked like.</p>
 <p>I used dplyr method to group and summarize the data. It’s a little overkill but it does make it super easy. It looks like the median length of a pace is just about 151 cm, with a mean of pretty much the same thing.</p>
 <pre class="r"><code>library(googlesheets)
 suppressPackageStartupMessages(library(dplyr))
@@ -28,6 +28,7 @@ fb &lt;- gs_title(&quot;BoysPaces&quot;)</code></pre>
 ##   Name = col_character(),
 ##   paces_per_100m = col_double()
 ## )</code></pre>
+<p>Here’s what the raw data looked like.</p>
 <pre class="r"><code>x &lt;- as_tibble(x)
 x</code></pre>
 <pre><code>## # A tibble: 23 x 2
@@ -43,7 +44,9 @@ x</code></pre>
 ##  8 KF                66
 ##  9 BL                55
 ## 10 BL                59
-## # ... with 13 more rows</code></pre>
+## # … with 13 more rows</code></pre>
+<pre class="r"><code>nboys &lt;- length(unique(x$Name))</code></pre>
+<p>Here I calculated the mean paces per 100 meters per boy and how long their paces were in meters and feet.</p>
 <pre class="r"><code>x %&gt;% group_by(Name) %&gt;%
   summarize(mean_paces_per_100m = mean(paces_per_100m)) %&gt;%
   mutate(paces_m = 100/mean_paces_per_100m, 
@@ -61,11 +64,13 @@ x</code></pre>
 ##  8 SK                   83.5    1.20     3.93
 ##  9 VC                   68      1.47     4.82
 ## 10 VM                   59      1.69     5.56</code></pre>
+<p>To look at the distribution I plotted a boxplot.</p>
 <pre class="r"><code>x %&gt;% group_by(Name) %&gt;%
   summarize(mean_paces_per_100m = mean(paces_per_100m)) %&gt;%
   mutate(paces_m = 100/mean_paces_per_100m) %&gt;%
   ggplot(aes(y = paces_m)) + geom_boxplot()</code></pre>
 <p><img src="/post/2019-02-16-tenderfoot-paces_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Here’s the median and mean pace length for the boys.</p>
 <pre class="r"><code>x %&gt;% group_by(Name) %&gt;%
   summarize(mean_paces_per_100m = mean(paces_per_100m)) %&gt;%
   mutate(pace_length_m = 100/mean_paces_per_100m) %&gt;%
@@ -77,8 +82,8 @@ x</code></pre>
 <pre class="r"><code>x %&gt;% group_by(Name) %&gt;%
   summarize(mean_paces_per_100m = mean(paces_per_100m)) %&gt;%
   mutate(pace_length_m = 100/mean_paces_per_100m) %&gt;%
-  summarize(mean_pace_length = mean(pace_length_m))</code></pre>
-<pre><code>## # A tibble: 1 x 1
-##   mean_pace_length
-##              &lt;dbl&gt;
-## 1             1.51</code></pre>
+  summarize(mean_pace_length = mean(pace_length_m), sem_pace_length = sd(pace_length_m)/sqrt(nboys))</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   mean_pace_length sem_pace_length
+##              &lt;dbl&gt;           &lt;dbl&gt;
+## 1             1.51          0.0723</code></pre>
