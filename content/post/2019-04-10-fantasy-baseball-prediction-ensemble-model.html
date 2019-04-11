@@ -1,0 +1,301 @@
+---
+title: Fantasy Baseball Prediction Ensemble Model
+author: ~
+date: '2019-04-10'
+slug: fantasy-baseball-prediction-ensemble-model
+categories: 
+  - R
+tags: 
+  - baseball
+  - fantasy
+  - sports
+subtitle: ''
+---
+
+
+
+<p>It’s fantasy baseball season again, and it was time for my kids to do their draft with my friend’s kids. None of them know anything about baseball players except for the very top stars (Mookie Betts, Mike Trout), so they rely a lot on analyst predictions. Of course, one person’s predictions are not always that great, so inspired by Nate Silver, I set out to build a combination of several models to see if I could get a more accurate outcome.</p>
+<p>There are several prediction algorithms available on Fangraphs (ZIPS, Steamer, Depth Charts, etc). They all take into account various player characteristics and performance metrics to predict what a player will do in the next season. I used the Fangraphs auction calculator to calculate values for each player based on the unique parameters of the kids’ league. There are 4 teams, each with one player per fielding position and 5 starting pitchers. The point totals have not changed much lately but tend to reward total bases and strikeouts more than stolen bases and ERA.</p>
+<p>The site allows you to export one table for batting predictions and one table for pitching predictions. I downloaded both sets of predictions for the following prediction models: ZIPS, Steamer, Fans, Depth Charts.</p>
+<div id="data-munging" class="section level1">
+<h1>Data Munging</h1>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>dc1 &lt;- tbl_df(read.csv(&quot;../datasets/dc1.csv&quot;, colClasses = &quot;character&quot;))
+dc2 &lt;- tbl_df(read.csv(&quot;../datasets/dc2.csv&quot;, colClasses = &quot;character&quot;))
+fans1 &lt;- tbl_df(read.csv(&quot;../datasets/fans1.csv&quot;, colClasses = &quot;character&quot;))
+fans2 &lt;- tbl_df(read.csv(&quot;../datasets/fans2.csv&quot;, colClasses = &quot;character&quot;))
+steamer1 &lt;- tbl_df(read.csv(&quot;../datasets/steamer1.csv&quot;, colClasses = &quot;character&quot;))
+steamer2 &lt;- tbl_df(read.csv(&quot;../datasets/steamer2.csv&quot;, colClasses = &quot;character&quot;))
+zips1 &lt;- tbl_df(read.csv(&quot;../datasets/zips1.csv&quot;, colClasses = &quot;character&quot;))
+zips2 &lt;- tbl_df(read.csv(&quot;../datasets/zips2.csv&quot;, colClasses = &quot;character&quot;))</code></pre>
+<p>I appended a column to each to label which prediction model the prediction had come from.</p>
+<pre class="r"><code>dc1 &lt;- dc1 %&gt;% mutate(pred_model = &quot;dc&quot;)
+dc2 &lt;- dc2 %&gt;% mutate(pred_model = &quot;dc&quot;)
+fans1 &lt;- fans1 %&gt;% mutate(pred_model = &quot;fans&quot;)
+fans2 &lt;- fans2 %&gt;% mutate(pred_model = &quot;fans&quot;)
+steamer1 &lt;- steamer1 %&gt;% mutate(pred_model = &quot;steamer&quot;)
+steamer2 &lt;- steamer2 %&gt;% mutate(pred_model = &quot;steamer&quot;)
+zips1 &lt;- zips1 %&gt;% mutate(pred_model = &quot;zips&quot;)
+zips2 &lt;- zips2 %&gt;% mutate(pred_model = &quot;zips&quot;)</code></pre>
+<p>Then I appended them all together in long form to make it easier to manipulate in R’s dplyr package.</p>
+<pre class="r"><code>m1 &lt;- bind_rows(dc1, dc2, fans1, fans2, steamer1, steamer2, zips1, zips2)
+glimpse(m1)</code></pre>
+<pre><code>## Observations: 3,231
+## Variables: 11
+## $ PlayerName &lt;chr&gt; &quot;Mike Trout&quot;, &quot;Mookie Betts&quot;, &quot;Jose Ramirez&quot;, &quot;Gary S…
+## $ Team       &lt;chr&gt; &quot;Angels&quot;, &quot;Red Sox&quot;, &quot;Indians&quot;, &quot;Yankees&quot;, &quot;Phillies&quot;…
+## $ POS        &lt;chr&gt; &quot;OF&quot;, &quot;OF&quot;, &quot;3B&quot;, &quot;C&quot;, &quot;C&quot;, &quot;3B&quot;, &quot;OF/DH&quot;, &quot;1B&quot;, &quot;OF&quot;…
+## $ ADP        &lt;chr&gt; &quot;1.1&quot;, &quot;2.0&quot;, &quot;5.0&quot;, &quot;53.4&quot;, &quot;42.4&quot;, &quot;7.1&quot;, &quot;6.1&quot;, &quot;2…
+## $ PA         &lt;chr&gt; &quot;658&quot;, &quot;679&quot;, &quot;651&quot;, &quot;543&quot;, &quot;544&quot;, &quot;651&quot;, &quot;651&quot;, &quot;658…
+## $ rPTS       &lt;chr&gt; &quot;1187.0&quot;, &quot;1114.0&quot;, &quot;1050.0&quot;, &quot;766.0&quot;, &quot;726.0&quot;, &quot;990.…
+## $ PTS        &lt;chr&gt; &quot;$252.8&quot;, &quot;$176.2&quot;, &quot;$108.9&quot;, &quot;($189.4)&quot;, &quot;($231.4)&quot;,…
+## $ aPOS       &lt;chr&gt; &quot;$7.6&quot;, &quot;$7.6&quot;, &quot;$50.7&quot;, &quot;$342.7&quot;, &quot;$342.7&quot;, &quot;$50.7&quot;,…
+## $ Dollars    &lt;chr&gt; &quot;$261.5&quot;, &quot;$184.8&quot;, &quot;$160.7&quot;, &quot;$154.4&quot;, &quot;$112.3&quot;, &quot;$9…
+## $ pred_model &lt;chr&gt; &quot;dc&quot;, &quot;dc&quot;, &quot;dc&quot;, &quot;dc&quot;, &quot;dc&quot;, &quot;dc&quot;, &quot;dc&quot;, &quot;dc&quot;, &quot;dc&quot;,…
+## $ IP         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…</code></pre>
+<p>I converted each column to an appropriate data type for analysis.</p>
+<pre class="r"><code>m1$PlayerName &lt;- factor(m1$PlayerName)
+m1$Team &lt;- factor(m1$Team)
+m1$POS &lt;- factor(m1$POS)
+m1$ADP &lt;- as.numeric(m1$ADP)
+m1$PA &lt;- as.integer(m1$PA)
+m1$rPTS &lt;- as.numeric(m1$rPTS)
+m1$pred_model &lt;- factor (m1$pred_model)
+m1$IP &lt;- as.numeric(m1$IP)</code></pre>
+<p>However the dollar value columns had a dollar sign and parentheses to signify negative values. There’s probably an R function to do this, but I was not able to look it up on the airplane as I was writing this post. I wrote my own.</p>
+<pre class="r"><code>dol.to.num &lt;- function(x) {
+  x &lt;- gsub(&quot;\\$&quot;, &quot;&quot;, x)
+  x &lt;- gsub(&quot;\\(&quot;, &quot;-&quot;, x)
+  x &lt;- gsub(&quot;\\)&quot;, &quot;&quot;, x)
+  x &lt;- as.numeric(x)
+}
+
+m1$PTS &lt;- dol.to.num(m1$PTS)
+m1$aPOS &lt;- dol.to.num(m1$aPOS)
+m1$Dollars &lt;- dol.to.num(m1$Dollars)
+
+glimpse(m1)</code></pre>
+<pre><code>## Observations: 3,231
+## Variables: 11
+## $ PlayerName &lt;fct&gt; Mike Trout, Mookie Betts, Jose Ramirez, Gary Sanchez,…
+## $ Team       &lt;fct&gt; Angels, Red Sox, Indians, Yankees, Phillies, Rockies,…
+## $ POS        &lt;fct&gt; OF, OF, 3B, C, C, 3B, OF/DH, 1B, OF, 1B, 1B, OF, 2B/3…
+## $ ADP        &lt;dbl&gt; 1.1, 2.0, 5.0, 53.4, 42.4, 7.1, 6.1, 21.8, 16.3, 19.3…
+## $ PA         &lt;int&gt; 658, 679, 651, 543, 544, 651, 651, 658, 623, 658, 651…
+## $ rPTS       &lt;dbl&gt; 1187, 1114, 1050, 766, 726, 990, 1019, 975, 1011, 964…
+## $ PTS        &lt;dbl&gt; 252.8, 176.2, 108.9, -189.4, -231.4, 45.9, 76.4, 30.2…
+## $ aPOS       &lt;dbl&gt; 7.6, 7.6, 50.7, 342.7, 342.7, 50.7, 7.6, 47.6, 7.6, 4…
+## $ Dollars    &lt;dbl&gt; 261.5, 184.8, 160.7, 154.4, 112.3, 97.6, 85.0, 78.7, …
+## $ pred_model &lt;fct&gt; dc, dc, dc, dc, dc, dc, dc, dc, dc, dc, dc, dc, dc, d…
+## $ IP         &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…</code></pre>
+<p>Looks pretty good!</p>
+</div>
+<div id="player-values" class="section level1">
+<h1>Player Values</h1>
+<p>Here I grouped the players by name and then took a basic mean of the 4 models’ predictions for their values.</p>
+<pre class="r"><code>s1 &lt;- m1 %&gt;% group_by(PlayerName, POS) %&gt;%
+  summarize(mean_Dollars = mean(Dollars)) %&gt;% 
+  arrange(-mean_Dollars)</code></pre>
+<div id="overall" class="section level2">
+<h2>Overall</h2>
+<pre class="r"><code>as.data.frame(s1)[1:60,]</code></pre>
+<pre><code>##           PlayerName      POS mean_Dollars
+## 1       Max Scherzer       SP    331.87500
+## 2       Jacob deGrom       SP    276.32500
+## 3         Chris Sale       SP    241.45000
+## 4   Justin Verlander       SP    235.27500
+## 5        Gerrit Cole       SP    205.00000
+## 6         Mike Trout       OF    195.00000
+## 7       Jose Ramirez       3B    178.40000
+## 8       Mookie Betts       OF    166.25000
+## 9       Corey Kluber       SP    145.27500
+## 10       Blake Snell       SP    138.52500
+## 11     Nolan Arenado       3B    119.87500
+## 12        Aaron Nola       SP    109.82500
+## 13      Trevor Bauer       SP    101.85000
+## 14     J.T. Realmuto        C     97.75000
+## 15      Bryce Harper       OF     79.10000
+## 16  Christian Yelich       OF     75.70000
+## 17     Luis Severino       SP     74.97500
+## 18   Freddie Freeman       1B     73.22500
+## 19  Paul Goldschmidt       1B     71.05000
+## 20      Gary Sanchez        C     68.55000
+## 21    German Marquez       SP     62.87500
+## 22   Carlos Carrasco       SP     59.90000
+## 23       Jose Altuve       2B     57.45000
+## 24     Anthony Rizzo       1B     57.17500
+## 25  Ronald Acuna Jr.       OF     54.35000
+## 26       Kris Bryant    3B/OF     52.62500
+## 27    Patrick Corbin       SP     45.27500
+## 28 Giancarlo Stanton    OF/DH     43.10000
+## 29         Juan Soto       OF     37.12500
+## 30     J.D. Martinez    OF/DH     35.90000
+## 31       Trea Turner       SS     34.10000
+## 32  Francisco Lindor       SS     32.92500
+## 33       Javier Baez 2B/3B/SS     32.00000
+## 34  Charlie Blackmon       OF     31.85000
+## 35   Yasmani Grandal        C     31.25000
+## 36      Rhys Hoskins       OF     23.75000
+## 37      Jose Berrios       SP     22.17500
+## 38      Chris Archer       SP     20.55000
+## 39      Alex Bregman    3B/SS     18.45000
+## 40    Cody Bellinger    1B/OF     16.95000
+## 41       Aaron Judge       OF     15.40000
+## 42 Andrew Benintendi       OF      9.15000
+## 43   Whit Merrifield    2B/OF      8.80000
+## 44        Joey Votto       1B      7.97500
+## 45     Jack Flaherty       SP      6.57500
+## 46    Salvador Perez     C/DH      6.20000
+## 47      Trevor Story       SS      4.62500
+## 48  Noah Syndergaard       SP      3.50000
+## 49      Zack Greinke       SP     -2.27500
+## 50    Walker Buehler       SP     -7.22500
+## 51 Stephen Strasburg       SP     -8.30000
+## 52   Jonathan Villar       2B    -10.16667
+## 53    Eugenio Suarez       3B    -10.85000
+## 54     Manny Machado       SS    -11.10000
+## 55    Matt Carpenter    1B/3B    -11.85000
+## 56      James Paxton       SP    -11.90000
+## 57      Buster Posey        C    -15.15000
+## 58       Khris Davis       DH    -16.40000
+## 59      Ozzie Albies       2B    -18.15000
+## 60 Madison Bumgarner       SP    -20.10000</code></pre>
+<p>Here they are by position.</p>
+</div>
+<div id="catcher" class="section level2">
+<h2>Catcher</h2>
+<pre class="r"><code>head(s1[grep(&quot;C&quot;, s1$POS), ])</code></pre>
+<pre><code>## # A tibble: 6 x 3
+## # Groups:   PlayerName [6]
+##   PlayerName        POS   mean_Dollars
+##   &lt;fct&gt;             &lt;fct&gt;        &lt;dbl&gt;
+## 1 J.T. Realmuto     C             97.8
+## 2 Gary Sanchez      C             68.6
+## 3 Yasmani Grandal   C             31.2
+## 4 Salvador Perez    C/DH           6.2
+## 5 Buster Posey      C            -15.2
+## 6 Willson Contreras C            -24.0</code></pre>
+</div>
+<div id="first-base" class="section level2">
+<h2>First Base</h2>
+<pre class="r"><code>head(s1[grep(&quot;1B&quot;, s1$POS), ])</code></pre>
+<pre><code>## # A tibble: 6 x 3
+## # Groups:   PlayerName [6]
+##   PlayerName       POS   mean_Dollars
+##   &lt;fct&gt;            &lt;fct&gt;        &lt;dbl&gt;
+## 1 Freddie Freeman  1B           73.2 
+## 2 Paul Goldschmidt 1B           71.0 
+## 3 Anthony Rizzo    1B           57.2 
+## 4 Cody Bellinger   1B/OF        17.0 
+## 5 Joey Votto       1B            7.98
+## 6 Matt Carpenter   1B/3B       -11.9</code></pre>
+</div>
+<div id="second-base" class="section level2">
+<h2>Second Base</h2>
+<pre class="r"><code>head(s1[grep(&quot;2B&quot;, s1$POS), ])</code></pre>
+<pre><code>## # A tibble: 6 x 3
+## # Groups:   PlayerName [6]
+##   PlayerName      POS      mean_Dollars
+##   &lt;fct&gt;           &lt;fct&gt;           &lt;dbl&gt;
+## 1 Jose Altuve     2B               57.4
+## 2 Javier Baez     2B/3B/SS         32  
+## 3 Whit Merrifield 2B/OF             8.8
+## 4 Jonathan Villar 2B              -10.2
+## 5 Ozzie Albies    2B              -18.2
+## 6 Rougned Odor    2B              -26.8</code></pre>
+</div>
+<div id="third-base" class="section level2">
+<h2>Third Base</h2>
+<pre class="r"><code>head(s1[grep(&quot;3B&quot;, s1$POS), ])</code></pre>
+<pre><code>## # A tibble: 6 x 3
+## # Groups:   PlayerName [6]
+##   PlayerName     POS      mean_Dollars
+##   &lt;fct&gt;          &lt;fct&gt;           &lt;dbl&gt;
+## 1 Jose Ramirez   3B              178. 
+## 2 Nolan Arenado  3B              120. 
+## 3 Kris Bryant    3B/OF            52.6
+## 4 Javier Baez    2B/3B/SS         32  
+## 5 Alex Bregman   3B/SS            18.5
+## 6 Eugenio Suarez 3B              -10.9</code></pre>
+</div>
+<div id="shortstop" class="section level2">
+<h2>Shortstop</h2>
+<pre class="r"><code>head(s1[grep(&quot;SS&quot;, s1$POS), ])</code></pre>
+<pre><code>## # A tibble: 6 x 3
+## # Groups:   PlayerName [6]
+##   PlayerName       POS      mean_Dollars
+##   &lt;fct&gt;            &lt;fct&gt;           &lt;dbl&gt;
+## 1 Trea Turner      SS              34.1 
+## 2 Francisco Lindor SS              32.9 
+## 3 Javier Baez      2B/3B/SS        32   
+## 4 Alex Bregman     3B/SS           18.5 
+## 5 Trevor Story     SS               4.62
+## 6 Manny Machado    SS             -11.1</code></pre>
+</div>
+<div id="outfield" class="section level2">
+<h2>Outfield</h2>
+<pre class="r"><code>head(s1[grep(&quot;OF&quot;, s1$POS), ], 20)</code></pre>
+<pre><code>## # A tibble: 20 x 3
+## # Groups:   PlayerName [20]
+##    PlayerName           POS   mean_Dollars
+##    &lt;fct&gt;                &lt;fct&gt;        &lt;dbl&gt;
+##  1 Mike Trout           OF          195   
+##  2 Mookie Betts         OF          166.  
+##  3 Bryce Harper         OF           79.1 
+##  4 Christian Yelich     OF           75.7 
+##  5 Ronald Acuna Jr.     OF           54.4 
+##  6 Kris Bryant          3B/OF        52.6 
+##  7 Giancarlo Stanton    OF/DH        43.1 
+##  8 Juan Soto            OF           37.1 
+##  9 J.D. Martinez        OF/DH        35.9 
+## 10 Charlie Blackmon     OF           31.8 
+## 11 Rhys Hoskins         OF           23.8 
+## 12 Cody Bellinger       1B/OF        17.0 
+## 13 Aaron Judge          OF           15.4 
+## 14 Andrew Benintendi    OF            9.15
+## 15 Whit Merrifield      2B/OF         8.8 
+## 16 Joey Gallo           1B/OF       -43.4 
+## 17 Wil Myers            3B/OF       -62.0 
+## 18 Mitch Haniger        OF          -67.1 
+## 19 Nicholas Castellanos OF          -70.6 
+## 20 Michael Conforto     OF          -79.6</code></pre>
+</div>
+<div id="pitcher" class="section level2">
+<h2>Pitcher</h2>
+<pre class="r"><code>as.data.frame(s1[grep(&quot;SP&quot;, s1$POS), ])[1:25, ]</code></pre>
+<pre><code>##           PlayerName POS mean_Dollars
+## 1       Max Scherzer  SP    331.87500
+## 2       Jacob deGrom  SP    276.32500
+## 3         Chris Sale  SP    241.45000
+## 4   Justin Verlander  SP    235.27500
+## 5        Gerrit Cole  SP    205.00000
+## 6       Corey Kluber  SP    145.27500
+## 7        Blake Snell  SP    138.52500
+## 8         Aaron Nola  SP    109.82500
+## 9       Trevor Bauer  SP    101.85000
+## 10     Luis Severino  SP     74.97500
+## 11    German Marquez  SP     62.87500
+## 12   Carlos Carrasco  SP     59.90000
+## 13    Patrick Corbin  SP     45.27500
+## 14      Jose Berrios  SP     22.17500
+## 15      Chris Archer  SP     20.55000
+## 16     Jack Flaherty  SP      6.57500
+## 17  Noah Syndergaard  SP      3.50000
+## 18      Zack Greinke  SP     -2.27500
+## 19    Walker Buehler  SP     -7.22500
+## 20 Stephen Strasburg  SP     -8.30000
+## 21      James Paxton  SP    -11.90000
+## 22 Madison Bumgarner  SP    -20.10000
+## 23        Robbie Ray  SP    -21.10000
+## 24   Jameson Taillon  SP    -21.76667
+## 25    Mike Clevinger  SP    -26.07500</code></pre>
+</div>
+</div>

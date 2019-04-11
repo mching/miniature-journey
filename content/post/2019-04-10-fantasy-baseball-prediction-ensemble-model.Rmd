@@ -1,0 +1,139 @@
+---
+title: Fantasy Baseball Prediction Ensemble Model
+author: ~
+date: '2019-04-10'
+slug: fantasy-baseball-prediction-ensemble-model
+categories: 
+  - R
+tags: 
+  - baseball
+  - fantasy
+  - sports
+subtitle: ''
+---
+
+It's fantasy baseball season again, and it was time for my kids to do their draft with my friend's kids. None of them know anything about baseball players except for the very top stars (Mookie Betts, Mike Trout), so they rely a lot on analyst predictions. Of course, one person's predictions are not always that great, so inspired by Nate Silver, I set out to build a combination of several models to see if I could get a more accurate outcome. 
+
+There are several prediction algorithms available on Fangraphs (ZIPS, Steamer, Depth Charts, etc). They all take into account various player characteristics and performance metrics to predict what a player will do in the next season. I used the Fangraphs auction calculator to calculate values for each player based on the unique parameters of the kids' league. There are 4 teams, each with one player per fielding position and 5 starting pitchers. The point totals have not changed much lately but tend to reward total bases and strikeouts more than stolen bases and ERA.
+
+The site allows you to export one table for batting predictions and one table for pitching predictions. I downloaded both sets of predictions for the following prediction models: ZIPS, Steamer, Fans, Depth Charts. 
+
+# Data Munging
+```{r}
+library(dplyr)
+dc1 <- tbl_df(read.csv("../datasets/dc1.csv", colClasses = "character"))
+dc2 <- tbl_df(read.csv("../datasets/dc2.csv", colClasses = "character"))
+fans1 <- tbl_df(read.csv("../datasets/fans1.csv", colClasses = "character"))
+fans2 <- tbl_df(read.csv("../datasets/fans2.csv", colClasses = "character"))
+steamer1 <- tbl_df(read.csv("../datasets/steamer1.csv", colClasses = "character"))
+steamer2 <- tbl_df(read.csv("../datasets/steamer2.csv", colClasses = "character"))
+zips1 <- tbl_df(read.csv("../datasets/zips1.csv", colClasses = "character"))
+zips2 <- tbl_df(read.csv("../datasets/zips2.csv", colClasses = "character"))
+```
+
+I appended a column to each to label which prediction model the prediction had come from. 
+
+```{r}
+dc1 <- dc1 %>% mutate(pred_model = "dc")
+dc2 <- dc2 %>% mutate(pred_model = "dc")
+fans1 <- fans1 %>% mutate(pred_model = "fans")
+fans2 <- fans2 %>% mutate(pred_model = "fans")
+steamer1 <- steamer1 %>% mutate(pred_model = "steamer")
+steamer2 <- steamer2 %>% mutate(pred_model = "steamer")
+zips1 <- zips1 %>% mutate(pred_model = "zips")
+zips2 <- zips2 %>% mutate(pred_model = "zips")
+```
+
+Then I appended them all together in long form to make it easier to manipulate in R's dplyr package. 
+
+```{r}
+m1 <- bind_rows(dc1, dc2, fans1, fans2, steamer1, steamer2, zips1, zips2)
+glimpse(m1)
+```
+
+I converted each column to an appropriate data type for analysis.
+
+```{r}
+m1$PlayerName <- factor(m1$PlayerName)
+m1$Team <- factor(m1$Team)
+m1$POS <- factor(m1$POS)
+m1$ADP <- as.numeric(m1$ADP)
+m1$PA <- as.integer(m1$PA)
+m1$rPTS <- as.numeric(m1$rPTS)
+m1$pred_model <- factor (m1$pred_model)
+m1$IP <- as.numeric(m1$IP)
+```
+
+However the dollar value columns had a dollar sign and parentheses to signify negative values. There's probably an R function to do this, but I was not able to look it up on the airplane as I was writing this post. I wrote my own.
+
+```{r}
+dol.to.num <- function(x) {
+  x <- gsub("\\$", "", x)
+  x <- gsub("\\(", "-", x)
+  x <- gsub("\\)", "", x)
+  x <- as.numeric(x)
+}
+
+m1$PTS <- dol.to.num(m1$PTS)
+m1$aPOS <- dol.to.num(m1$aPOS)
+m1$Dollars <- dol.to.num(m1$Dollars)
+
+glimpse(m1)
+```
+
+Looks pretty good!
+
+# Player Values
+Here I grouped the players by name and then took a basic mean of the 4 models' predictions for their values.
+
+```{r}
+s1 <- m1 %>% group_by(PlayerName, POS) %>%
+  summarize(mean_Dollars = mean(Dollars)) %>% 
+  arrange(-mean_Dollars)
+
+```
+
+## Overall
+
+```{r}
+as.data.frame(s1)[1:60,]
+```
+
+Here they are by position.
+
+## Catcher
+```{r}
+head(s1[grep("C", s1$POS), ])
+```
+
+## First Base
+```{r}
+head(s1[grep("1B", s1$POS), ])
+```
+
+## Second Base
+```{r}
+head(s1[grep("2B", s1$POS), ])
+```
+
+## Third Base
+```{r}
+head(s1[grep("3B", s1$POS), ])
+```
+
+## Shortstop
+```{r}
+head(s1[grep("SS", s1$POS), ])
+```
+
+## Outfield
+```{r}
+head(s1[grep("OF", s1$POS), ], 20)
+```
+
+## Pitcher
+```{r}
+as.data.frame(s1[grep("SP", s1$POS), ])[1:25, ]
+```
+
+
