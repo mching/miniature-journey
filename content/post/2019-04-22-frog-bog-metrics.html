@@ -14,7 +14,8 @@ image: ''
 
 
 
-<p>The school fair was a couple weekends ago, and I volunteered at a game called Frog Bog. Players use a hammer to hit a lever that launches a frog at a rotating set of lily pads. You score by getting a frog in the lily pad. Players get four frogs per turn. I thought it might be nice to know the probability of success to help understand how to distribute prizes.</p>
+<p>The school carnival was a couple weekends ago, and I volunteered at a game called Frog Bog. Players use a hammer to hit a lever that launches a frog at a rotating set of lily pads. You score by getting a frog in the lily pad. Players get four frogs per turn. I thought it might be nice to know the probability of success to help understand how to distribute prizes.</p>
+<p>Here’s a video from a different carnival. We only have one rotating set of lily pads at our carnival.</p>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/nDRnu2wQCbA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
 </iframe>
 <p>Loading the data…</p>
@@ -52,7 +53,7 @@ x</code></pre>
 <pre><code>## x
 ##  0  1  2  3 
 ## 30 15  2  1</code></pre>
-<p>To find the probability of success, we make a big assumption that success is completely random and independent of each player’s skill. The probability of a success on any one attempt is thus successes divided by attempts.</p>
+<p>To find the probability of success, we make a <b>big</b> assumption that success is completely random and independent of each player’s skill. The probability of a success on any one attempt is thus successes divided by attempts.</p>
 <pre class="r"><code>attempts &lt;- nrow(x) * 4
 successes &lt;- sum(x$Successes)
 psuccess &lt;- successes/attempts</code></pre>
@@ -64,12 +65,14 @@ psuccess &lt;- successes/attempts</code></pre>
 ## 3         2 0.0617574762
 ## 4         3 0.0053280960
 ## 5         4 0.0001723796</code></pre>
-<p>If we want to take about 80% of the proceeeds, we need to determine what each prize should be. Let’s say the entry fee is $1. If we have no prize for 0 frogs, you already are collecting 0.6145975 of the proceeds.</p>
-<p>Let’s say we have a small prize for 1 success, valued at a small percentage of the entry fee. A medium prize for 2 successes, and a big prize for 3 successes. The grand prize could be much larger than the entry fee. I set the percentage of returns in the vector below.</p>
-<pre class="r"><code>fractions &lt;- c(0, 0.1, 1, 4, 10)</code></pre>
-<p>Here’s the amount won for each outcome.</p>
+<p>If we want to take about 90% of the entry fee (return 10% to winners), we need to determine what each prize should be. If we have no prize for 0 frogs, you already are collecting 61.46% of the proceeds.</p>
+<p>Let’s say we have a small prize for 1 success, valued at a small percentage of the entry fee. We would have a medium prize for 2 successes and a big prize for 3 successes. The grand prize could be much larger than the entry fee since it only happens about 1 in 5800 tries. I set the absolute dollar returns in the vector below.</p>
+<pre class="r"><code>fractions &lt;- c(0, 0.1, 1, 3, 10)</code></pre>
+<p>Here’s the expected payout, broken down by probability of successes in one 4 frog game.</p>
 <pre class="r"><code>dbinom(0:4, size = 4, prob = psuccess) * fractions</code></pre>
-<pre><code>## [1] 0.000000000 0.031814457 0.061757476 0.021312384 0.001723796</code></pre>
-<p>Overall expected winnings would be then:</p>
+<pre><code>## [1] 0.000000000 0.031814457 0.061757476 0.015984288 0.001723796</code></pre>
+<p>Overall expected payout per game would be then:</p>
 <pre class="r"><code>sum(dbinom(0:4, size = 4, prob = psuccess) * fractions)</code></pre>
-<pre><code>## [1] 0.1166081</code></pre>
+<pre><code>## [1] 0.11128</code></pre>
+<p>That gets pretty close to the goal amount of proceeds. The actual entry fee was $2.50.</p>
+<p>At a conservative estimate of one game per minute, over 10 hours per day, in a 2 day fair, that’s 1200 games. The game thus makes approximately $2866.46 or $143.32 per hour.</p>
