@@ -1,0 +1,71 @@
+---
+title: Frog Bog Metrics
+author: ~
+date: '2019-04-22'
+slug: frog-bog-metrics
+categories: 
+  - R
+tags: 
+  - games
+type: ''
+subtitle: ''
+image: ''
+---
+
+The school fair was a couple weekends ago, and I volunteered at a game called Frog Bog. Players use a hammer to hit a lever that launches a frog at a rotating set of lily pads. You score by getting a frog in the lily pad. Players get four frogs per turn. I thought it might be nice to know the probability of success to help understand how to distribute prizes.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nDRnu2wQCbA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Loading the data...
+```{r}
+library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+library(binom)
+```
+
+```{r}
+my_sheets <- gs_ls()
+fb <- gs_title("Frog_bog")
+x <- gs_read(fb)
+```
+
+Here is what the raw data look like.
+```{r}
+x <- tbl_df(x)
+x
+```
+
+Summarized in table form we have the number of times each outcome happened per game of 4 tries.
+```{r}
+table(x)
+```
+
+To find the probability of success, we make a big assumption that success is completely random and independent of each player's skill. The probability of a success on any one attempt is thus successes divided by attempts.
+```{r}
+attempts <- nrow(x) * 4
+successes <- sum(x$Successes)
+psuccess <- successes/attempts
+```
+
+Below I calculate the probability of 4, 3, 2, 1, and 0 successes per game.
+```{r}
+data.frame(successes = 0:4, p = dbinom(0:4, size = 4, prob = psuccess))
+```
+
+If we want to take about 80% of the proceeeds, we need to determine what each prize should be. Let's say the entry fee is $1. If we have no prize for 0 frogs, you already are collecting `r (1-psuccess)^4` of the proceeds.
+
+Let's say we have a small prize for 1 success, valued at a small percentage of the entry fee. A medium prize for 2 successes, and a big prize for 3 successes. The grand prize could be much larger than the entry fee. I set the percentage of returns in the vector below.
+```{r}
+fractions <- c(0, 0.1, 1, 4, 10)
+```
+
+Here's the amount won for each outcome.
+```{r}
+dbinom(0:4, size = 4, prob = psuccess) * fractions
+```
+
+Overall expected winnings would be then:
+```{r}
+sum(dbinom(0:4, size = 4, prob = psuccess) * fractions)
+```
+
