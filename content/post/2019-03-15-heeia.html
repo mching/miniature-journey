@@ -68,6 +68,7 @@ x</code></pre>
 ## 16 2019-03-15    16 TRUE     0.321   6.2      57.5
 ## 17 2019-03-15    17 TRUE     0.565   6.1     366  
 ## 18 2019-03-15    18 TRUE     0.511   6.2     501.</code></pre>
+<pre class="r"><code>x &lt;- x %&gt;% mutate(mangrove, mangrove = if_else(mangrove, &quot;Mangrove&quot;, &quot;No Mangrove&quot;))</code></pre>
 <div id="description-of-mean-dissolved-oxygen-ph-and-turbidity-by-mangrove-presence" class="section level2">
 <h2>Description of Mean Dissolved Oxygen, pH, and Turbidity by Mangrove Presence</h2>
 <pre class="r"><code>obs &lt;- 9
@@ -80,10 +81,10 @@ x %&gt;% group_by(mangrove) %&gt;%
             mean.turbidity = mean(turbidity),
             se.turbidity = sd(turbidity)/sqrt(obs))</code></pre>
 <pre><code>## # A tibble: 2 x 7
-##   mangrove mean.DO  se.DO mean.pH  se.pH mean.turbidity se.turbidity
-##   &lt;lgl&gt;      &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
-## 1 FALSE      0.898 0.0243    6.13 0.0333           20.8         3.63
-## 2 TRUE       0.539 0.0377    6.24 0.0294          161.         57.5</code></pre>
+##   mangrove    mean.DO  se.DO mean.pH  se.pH mean.turbidity se.turbidity
+##   &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
+## 1 Mangrove      0.539 0.0377    6.24 0.0294          161.         57.5 
+## 2 No Mangrove   0.898 0.0243    6.13 0.0333           20.8         3.63</code></pre>
 <p>The data do not appear to be normally distributed from looking at these boxplots.</p>
 <pre class="r"><code>ggplot(x, aes(x = mangrove, y = DO)) + geom_boxplot() + theme_ipsum()</code></pre>
 <p><img src="/post/2019-03-15-heeia_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
@@ -100,21 +101,21 @@ x %&gt;% group_by(mangrove) %&gt;%
 ##  Welch Two Sample t-test
 ## 
 ## data:  x$DO by x$mangrove
-## t = 8.0141, df = 13.654, p-value = 1.586e-06
+## t = -8.0141, df = 13.654, p-value = 1.586e-06
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  0.2628558 0.4555887
+##  -0.4555887 -0.2628558
 ## sample estimates:
-## mean in group FALSE  mean in group TRUE 
-##           0.8981111           0.5388889</code></pre>
+##    mean in group Mangrove mean in group No Mangrove 
+##                 0.5388889                 0.8981111</code></pre>
 <pre class="r"><code>wilcox.test(x$DO ~ x$mangrove)</code></pre>
-<pre><code>## Warning in wilcox.test.default(x = c(0.851, 0.829, 0.92, 0.988, 0.982,
-## 0.988, : cannot compute exact p-value with ties</code></pre>
+<pre><code>## Warning in wilcox.test.default(x = c(0.473, 0.52, 0.582, 0.7, 0.5, 0.678, :
+## cannot compute exact p-value with ties</code></pre>
 <pre><code>## 
 ##  Wilcoxon rank sum test with continuity correction
 ## 
 ## data:  x$DO by x$mangrove
-## W = 81, p-value = 0.0004095
+## W = 0, p-value = 0.0004095
 ## alternative hypothesis: true location shift is not equal to 0</code></pre>
 <pre class="r"><code>x %&gt;% group_by(mangrove) %&gt;% summarize(
   mean.DO = mean(DO), 
@@ -125,9 +126,9 @@ x %&gt;% group_by(mangrove) %&gt;%
            color = &quot;black&quot;,
            fill = &quot;#99cccc&quot;
            ) +
-  geom_errorbar(aes(ymin = mean.DO - se.DO, ymax = mean.DO + se.DO),
-                width = 0.2,
-                position=position_dodge(0.9)) +
+  # geom_errorbar(aes(ymin = mean.DO - se.DO, ymax = mean.DO + se.DO),
+  #               width = 0.2,
+  #               position=position_dodge(0.9)) +
   ggtitle(&quot;Dissolved Oxygen by Mangrove Presence&quot;) +
   xlab(&quot;Mangrove Presence&quot;) +
   ylab(&quot;Dissolved Oxygen (%)&quot;) +
@@ -143,21 +144,21 @@ x %&gt;% group_by(mangrove) %&gt;%
 ##  Welch Two Sample t-test
 ## 
 ## data:  x$pH by x$mangrove
-## t = -2.5, df = 15.754, p-value = 0.02387
+## t = 2.5, df = 15.754, p-value = 0.02387
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  -0.20544891 -0.01677331
+##  0.01677331 0.20544891
 ## sample estimates:
-## mean in group FALSE  mean in group TRUE 
-##            6.133333            6.244444</code></pre>
+##    mean in group Mangrove mean in group No Mangrove 
+##                  6.244444                  6.133333</code></pre>
 <pre class="r"><code>wilcox.test(x$pH ~ x$mangrove)</code></pre>
-<pre><code>## Warning in wilcox.test.default(x = c(6.2, 6.2, 6, 6, 6.2, 6.2, 6.2, 6, 6.2:
+<pre><code>## Warning in wilcox.test.default(x = c(6.4, 6.3, 6.3, 6.2, 6.2, 6.3, 6.2, :
 ## cannot compute exact p-value with ties</code></pre>
 <pre><code>## 
 ##  Wilcoxon rank sum test with continuity correction
 ## 
 ## data:  x$pH by x$mangrove
-## W = 18, p-value = 0.03208
+## W = 63, p-value = 0.03208
 ## alternative hypothesis: true location shift is not equal to 0</code></pre>
 <pre class="r"><code>x %&gt;% group_by(mangrove) %&gt;% 
 summarize(
@@ -168,9 +169,9 @@ summarize(
   geom_bar(stat=&#39;identity&#39;,
            color = &quot;black&quot;,
            fill = &quot;#99cccc&quot;) +
-  geom_errorbar(aes(ymin = mean.pH - se.pH, ymax = mean.pH + se.pH),
-                width = 0.2,
-                position=position_dodge(0.9)) +
+  # geom_errorbar(aes(ymin = mean.pH - se.pH, ymax = mean.pH + se.pH),
+  #               width = 0.2,
+  #               position=position_dodge(0.9)) +
   ggtitle(&quot;pH by Mangrove Presence&quot;) +
   xlab(&quot;Mangrove Presence&quot;) +
   ylab(&quot;pH&quot;) +
@@ -185,19 +186,19 @@ summarize(
 ##  Welch Two Sample t-test
 ## 
 ## data:  x$turbidity by x$mangrove
-## t = -2.4267, df = 8.0638, p-value = 0.04119
+## t = 2.4267, df = 8.0638, p-value = 0.04119
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
-##  -272.465627   -7.134373
+##    7.134373 272.465627
 ## sample estimates:
-## mean in group FALSE  mean in group TRUE 
-##                20.8               160.6</code></pre>
+##    mean in group Mangrove mean in group No Mangrove 
+##                     160.6                      20.8</code></pre>
 <pre class="r"><code>wilcox.test(x$turbidity ~ x$mangrove)</code></pre>
 <pre><code>## 
 ##  Wilcoxon rank sum test
 ## 
 ## data:  x$turbidity by x$mangrove
-## W = 12, p-value = 0.01061
+## W = 69, p-value = 0.01061
 ## alternative hypothesis: true location shift is not equal to 0</code></pre>
 <pre class="r"><code>x %&gt;% group_by(mangrove) %&gt;% summarize(
   mean.turbidity = mean(turbidity), 
@@ -207,10 +208,10 @@ summarize(
   geom_bar(stat=&#39;identity&#39;,
            color = &quot;black&quot;,
            fill = &quot;#99cccc&quot;) +
-  geom_errorbar(aes(ymin = mean.turbidity - se.turbidity, 
-                    ymax = mean.turbidity + se.turbidity),
-                width = 0.2,
-                position=position_dodge(0.9)) +
+  # geom_errorbar(aes(ymin = mean.turbidity - se.turbidity, 
+  #                   ymax = mean.turbidity + se.turbidity),
+  #               width = 0.2,
+  #               position=position_dodge(0.9)) +
   ggtitle(&quot;Turbidity by Mangrove Presence&quot;) +
   xlab(&quot;Mangrove Presence&quot;) +
   ylab(&quot;Turbidity&quot;) +
@@ -232,8 +233,8 @@ summary(model1)</code></pre>
 ## 
 ## Coefficients:
 ##                                  Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)                       0.87544    0.03343   26.18 2.71e-13 ***
-## x$mangroveTRUE                   -0.35922    0.03343  -10.74 3.81e-08 ***
+## (Intercept)                       0.51622    0.03343   15.44 3.47e-10 ***
+## x$mangroveNo Mangrove             0.35922    0.03343   10.74 3.81e-08 ***
 ## as.factor(x$coll_date)2019-03-09  0.11017    0.04095    2.69   0.0176 *  
 ## as.factor(x$coll_date)2019-03-15 -0.04217    0.04095   -1.03   0.3206    
 ## ---

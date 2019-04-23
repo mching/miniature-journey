@@ -42,6 +42,8 @@ x <- gs_read(fb)
 ```{r}
 x <- as_tibble(x)
 x
+
+x <- x %>% mutate(mangrove, mangrove = if_else(mangrove, "Mangrove", "No Mangrove"))
 ```
 
 ## Description of Mean Dissolved Oxygen, pH, and Turbidity by Mangrove Presence
@@ -84,9 +86,9 @@ x %>% group_by(mangrove) %>% summarize(
            color = "black",
            fill = "#99cccc"
            ) +
-  geom_errorbar(aes(ymin = mean.DO - se.DO, ymax = mean.DO + se.DO),
-                width = 0.2,
-                position=position_dodge(0.9)) +
+  # geom_errorbar(aes(ymin = mean.DO - se.DO, ymax = mean.DO + se.DO),
+  #               width = 0.2,
+  #               position=position_dodge(0.9)) +
   ggtitle("Dissolved Oxygen by Mangrove Presence") +
   xlab("Mangrove Presence") +
   ylab("Dissolved Oxygen (%)") +
@@ -113,9 +115,9 @@ summarize(
   geom_bar(stat='identity',
            color = "black",
            fill = "#99cccc") +
-  geom_errorbar(aes(ymin = mean.pH - se.pH, ymax = mean.pH + se.pH),
-                width = 0.2,
-                position=position_dodge(0.9)) +
+  # geom_errorbar(aes(ymin = mean.pH - se.pH, ymax = mean.pH + se.pH),
+  #               width = 0.2,
+  #               position=position_dodge(0.9)) +
   ggtitle("pH by Mangrove Presence") +
   xlab("Mangrove Presence") +
   ylab("pH") +
@@ -140,10 +142,10 @@ x %>% group_by(mangrove) %>% summarize(
   geom_bar(stat='identity',
            color = "black",
            fill = "#99cccc") +
-  geom_errorbar(aes(ymin = mean.turbidity - se.turbidity, 
-                    ymax = mean.turbidity + se.turbidity),
-                width = 0.2,
-                position=position_dodge(0.9)) +
+  # geom_errorbar(aes(ymin = mean.turbidity - se.turbidity, 
+  #                   ymax = mean.turbidity + se.turbidity),
+  #               width = 0.2,
+  #               position=position_dodge(0.9)) +
   ggtitle("Turbidity by Mangrove Presence") +
   xlab("Mangrove Presence") +
   ylab("Turbidity") +
@@ -159,3 +161,5 @@ summary(model1)
 
 # Discussion
 I will leave the discussion up to my daughter and her teammate to figure out.
+
+
