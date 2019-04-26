@@ -1,0 +1,252 @@
+---
+title: Religious and Medical Vaccine Exemptions in Hawaii Schools
+author: ~
+date: '2019-04-25'
+slug: school-vaccines
+categories: 
+  - R
+tags: 
+  - vaccines
+  - immunizations
+  - public health
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>Vaccination has recently been a hot topic in the news because of measles outbreaks in Washington state, Los Angeles, and New York City. The outbreaks may be caused by waning herd immunity as parents choose not to vaccinate their children.</p>
+<p>We have been having a conversation about this in Hawaii recently because the state is updating its vaccine requirements for school entry. This week, the state Department of Health released a dataset on <a href="http://www.hawaiinewsnow.com/2019/04/24/what-percentage-kids-arent-vaccinated-your-childs-school-heres-list/">immunization exemption at schools in Hawaii</a>.</p>
+<p>The data were in pdf format, so it seemed like a good idea to look closer at it.</p>
+<pre class="r"><code>library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+library(hrbrthemes)</code></pre>
+<pre><code>## NOTE: Either Arial Narrow or Roboto Condensed fonts are required to use these themes.</code></pre>
+<pre><code>##       Please use hrbrthemes::import_roboto_condensed() to install Roboto Condensed and</code></pre>
+<pre><code>##       if Arial Narrow is not on your system, please see http://bit.ly/arialnarrow</code></pre>
+<pre class="r"><code>my_sheets &lt;- gs_ls()
+fb &lt;- gs_title(&quot;school_vaccine_exemption&quot;)</code></pre>
+<pre><code>## Sheet successfully identified: &quot;school_vaccine_exemption&quot;</code></pre>
+<pre class="r"><code>x &lt;- gs_read(fb)</code></pre>
+<pre><code>## Accessing worksheet titled &#39;Sheet1&#39;.</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   school = col_character(),
+##   type = col_character(),
+##   island = col_character(),
+##   enrollment = col_double(),
+##   religious = col_double(),
+##   medical = col_double()
+## )</code></pre>
+<pre class="r"><code>x &lt;- tbl_df(x)
+glimpse(x)</code></pre>
+<pre><code>## Observations: 409
+## Variables: 6
+## $ school     &lt;chr&gt; &quot;CHIEFESS KAPIOLANI SCHOOL&quot;, &quot;CHRISTIAN LIBERTY ACADE…
+## $ type       &lt;chr&gt; &quot;PUBLIC&quot;, &quot;PRIVATE&quot;, &quot;PRIVATE&quot;, &quot;CHARTER&quot;, &quot;PUBLIC&quot;, …
+## $ island     &lt;chr&gt; &quot;HAWAII&quot;, &quot;HAWAII&quot;, &quot;HAWAII&quot;, &quot;HAWAII&quot;, &quot;HAWAII&quot;, &quot;HA…
+## $ enrollment &lt;dbl&gt; 363, 46, 136, 349, 455, 196, 117, 672, NA, 7, 620, 11…
+## $ religious  &lt;dbl&gt; 0.3, 2.2, 0.0, 14.0, 4.0, 9.2, 4.3, 2.4, NA, 0.0, 9.0…
+## $ medical    &lt;dbl&gt; 0.0, 0.0, 0.0, 0.3, 0.0, 0.0, 4.3, 0.0, NA, 0.0, 0.0,…</code></pre>
+<pre class="r"><code>x$type &lt;- factor(x$type)
+x$island &lt;- factor(x$island, levels = c(&quot;NIIHAU&quot;, &quot;KAUAI&quot;, &quot;OAHU&quot;, &quot;MOLOKAI&quot;, &quot;LANAI&quot;, &quot;MAUI&quot;, &quot;HAWAII&quot;))</code></pre>
+<pre class="r"><code>x &lt;- x %&gt;% mutate(n_religious = enrollment*religious/100, n_medical = enrollment*medical/100)</code></pre>
+<div id="what-is-the-overall-total-and-percentage-of-religious-and-medical-exemption" class="section level1">
+<h1>What is the overall total and percentage of religious and medical exemption?</h1>
+<p>The report only provides the percentage of relgious and medical exemptions by school. To get better estimates I calculated the absolute number of exemptions. As a result, the overall totals include fractional students, but it’s probably pretty close to the real number.</p>
+<div id="religion-total-and-overall-percentage" class="section level2">
+<h2>Religion Total and Overall Percentage</h2>
+<pre class="r"><code>sum(x$n_religious, na.rm = T)</code></pre>
+<pre><code>## [1] 3783.76</code></pre>
+<pre class="r"><code>sum(x$n_religious, na.rm = T) / sum(x$enrollment, na.rm = T)</code></pre>
+<pre><code>## [1] 0.01919171</code></pre>
+</div>
+<div id="medical-total-and-overall-percentage" class="section level2">
+<h2>Medical Total and Overall Percentage</h2>
+<pre class="r"><code>sum(x$n_medical, na.rm = T)</code></pre>
+<pre><code>## [1] 108.638</code></pre>
+<pre class="r"><code>sum(x$n_medical, na.rm = T) / sum(x$enrollment, na.rm = T)</code></pre>
+<pre><code>## [1] 0.0005510256</code></pre>
+<p>Religious exemption is pretty high at about 2%. Medical exemption is very low, about 6 in 10000.</p>
+</div>
+</div>
+<div id="what-is-the-overall-percentage-of-religious-and-medical-exemption-by-island" class="section level1">
+<h1>What is the overall percentage of religious and medical exemption by island?</h1>
+<pre class="r"><code>x %&gt;% group_by(island) %&gt;% 
+  summarize(religious_exemption = sum(n_religious, na.rm = T) / sum(enrollment, na.rm = T)) </code></pre>
+<pre><code>## # A tibble: 7 x 2
+##   island  religious_exemption
+##   &lt;fct&gt;                 &lt;dbl&gt;
+## 1 NIIHAU            NaN      
+## 2 KAUAI               0.0570 
+## 3 OAHU                0.00880
+## 4 MOLOKAI             0.00754
+## 5 LANAI               0.027  
+## 6 MAUI                0.0325 
+## 7 HAWAII              0.0432</code></pre>
+<pre class="r"><code>x %&gt;% group_by(island) %&gt;% summarize(medical_exemption = sum(n_medical, na.rm = T) / sum(enrollment, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 7 x 2
+##   island  medical_exemption
+##   &lt;fct&gt;               &lt;dbl&gt;
+## 1 NIIHAU         NaN       
+## 2 KAUAI            0.000520
+## 3 OAHU             0.000532
+## 4 MOLOKAI          0       
+## 5 LANAI            0       
+## 6 MAUI             0.000629
+## 7 HAWAII           0.000629</code></pre>
+<p>It looks like Niihau’s schools had no data for religious or medical exemptions so I will just remove Niihau from the dataset.</p>
+<pre class="r"><code>x &lt;- x %&gt;% filter(island != &quot;NIIHAU&quot;)</code></pre>
+<p>Here’s a graph by island of the vaccine exemption rates.</p>
+<pre class="r"><code>x %&gt;% group_by(island) %&gt;% 
+  summarize(religious_exemption = sum(n_religious, na.rm = T) / sum(enrollment, na.rm = T)) %&gt;%
+  ggplot(aes(x = island, y = religious_exemption)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  ggtitle(&quot;Overall Rate of Vaccine Religious Exemption by Island&quot;) +
+  xlab(&quot;Island&quot;) +
+  ylab(&quot;Relgious Exemptions (%)&quot;) +
+  theme_ipsum() +
+  scale_y_percent()</code></pre>
+<p><img src="/post/2019-04-25-school-vaccines_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>x %&gt;% group_by(island) %&gt;% 
+  summarize(medical_exemption = sum(n_medical, na.rm = T) / sum(enrollment, na.rm = T)) %&gt;%
+  ggplot(aes(x = island, y = medical_exemption)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  ggtitle(&quot;Overall Rate of Vaccine Medical Exemption by Island&quot;) +
+  xlab(&quot;Island&quot;) +
+  ylab(&quot;Medical Exemptions (%)&quot;) +
+  theme_ipsum() +
+  scale_y_percent()</code></pre>
+<p><img src="/post/2019-04-25-school-vaccines_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+<div id="which-schools-have-the-most-exemptions-by-percentage-and-absolute-number" class="section level1">
+<h1>Which schools have the most exemptions by percentage and absolute number?</h1>
+<pre class="r"><code>x %&gt;% arrange(-religious)</code></pre>
+<pre><code>## # A tibble: 408 x 8
+##    school   type  island enrollment religious medical n_religious n_medical
+##    &lt;chr&gt;    &lt;fct&gt; &lt;fct&gt;       &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+##  1 HALEAKA… PRIV… MAUI          245      52.7     0         129.      0    
+##  2 MALAMAL… PRIV… HAWAII         95      46.3     0          44.0     0    
+##  3 ROOTS S… PRIV… MAUI           53      41.5     0          22.0     0    
+##  4 ALAKAI … CHAR… KAUAI         130      40       0          52       0    
+##  5 KONA PA… CHAR… HAWAII        222      37.4     0          83.0     0    
+##  6 MONTESS… PRIV… MAUI          181      35.4     1.7        64.1     3.08 
+##  7 KILAUEA… PUBL… KAUAI         312      33       0.3       103.      0.936
+##  8 KANUIKA… CHAR… KAUAI         207      32.9     0          68.1     0    
+##  9 HANALEI… PUBL… KAUAI         252      29       0          73.1     0    
+## 10 KAUAI C… PRIV… KAUAI          73      21.9     0          16.0     0    
+## # … with 398 more rows</code></pre>
+<pre class="r"><code>x %&gt;% arrange(-medical)</code></pre>
+<pre><code>## # A tibble: 408 x 8
+##    school   type  island enrollment religious medical n_religious n_medical
+##    &lt;chr&gt;    &lt;fct&gt; &lt;fct&gt;       &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+##  1 HAILI C… PRIV… HAWAII        117       4.3     4.3       5.03      5.03 
+##  2 MONTESS… PRIV… MAUI          181      35.4     1.7      64.1       3.08 
+##  3 CHRISTI… PRIV… OAHU          183       4.4     1.6       8.05      2.93 
+##  4 HANAHAU… PRIV… OAHU          182       1.6     1.6       2.91      2.91 
+##  5 VOYAGER… CHAR… OAHU          189       0.5     1.6       0.945     3.02 
+##  6 HALAU K… CHAR… OAHU          132       2.3     1.5       3.04      1.98 
+##  7 DORIS T… PRIV… MAUI          145      11.7     1.4      17.0       2.03 
+##  8 AIKAHI … PUBL… OAHU          470       2.8     1.1      13.2       5.17 
+##  9 HAWAII … PUBL… OAHU           89       0       1.1       0         0.979
+## 10 ASSETS … PRIV… OAHU          198       1.5     1         2.97      1.98 
+## # … with 398 more rows</code></pre>
+<pre class="r"><code>x %&gt;% arrange(-n_religious)</code></pre>
+<pre><code>## # A tibble: 408 x 8
+##    school   type  island enrollment religious medical n_religious n_medical
+##    &lt;chr&gt;    &lt;fct&gt; &lt;fct&gt;       &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+##  1 HALEAKA… PRIV… MAUI          245      52.7     0         129.      0    
+##  2 HAWAII … CHAR… OAHU         1101      10       0.1       110.      1.10 
+##  3 KILAUEA… PUBL… KAUAI         312      33       0.3       103.      0.936
+##  4 MYRON B… CHAR… OAHU          519      17.5     0          90.8     0    
+##  5 KONA PA… CHAR… HAWAII        222      37.4     0          83.0     0    
+##  6 SUNSET … PUBL… OAHU          403      18.9     0          76.2     0    
+##  7 KIHEI C… CHAR… MAUI          624      12       0.3        74.9     1.87 
+##  8 HANALEI… PUBL… KAUAI         252      29       0          73.1     0    
+##  9 KALAMA … PUBL… MAUI          888       7.9     0          70.2     0    
+## 10 KANUIKA… CHAR… KAUAI         207      32.9     0          68.1     0    
+## # … with 398 more rows</code></pre>
+<pre class="r"><code>x %&gt;% arrange(-n_medical)</code></pre>
+<pre><code>## # A tibble: 408 x 8
+##    school   type  island enrollment religious medical n_religious n_medical
+##    &lt;chr&gt;    &lt;fct&gt; &lt;fct&gt;       &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+##  1 AIKAHI … PUBL… OAHU          470       2.8     1.1      13.2        5.17
+##  2 HAILI C… PRIV… HAWAII        117       4.3     4.3       5.03       5.03
+##  3 MAEMAE … PUBL… OAHU          679       0.7     0.7       4.75       4.75
+##  4 MID-PAC… PRIV… OAHU         1547       1.4     0.3      21.7        4.64
+##  5 MONTESS… PRIV… MAUI          181      35.4     1.7      64.1        3.08
+##  6 VOYAGER… CHAR… OAHU          189       0.5     1.6       0.945      3.02
+##  7 CHRISTI… PRIV… OAHU          183       4.4     1.6       8.05       2.93
+##  8 HANAHAU… PRIV… OAHU          182       1.6     1.6       2.91       2.91
+##  9 TRINITY… PRIV… OAHU          290       2.8     1         8.12       2.9 
+## 10 KALANI … PUBL… OAHU         1425       0.8     0.2      11.4        2.85
+## # … with 398 more rows</code></pre>
+</div>
+<div id="what-is-the-distribution-of-exemptions-overall-and-by-island" class="section level1">
+<h1>What is the distribution of exemptions overall and by island?</h1>
+<pre class="r"><code>x %&gt;% mutate(religious = religious/100) %&gt;%
+  ggplot(aes(x = religious)) +
+  geom_histogram() +
+  ggtitle(&quot;Vaccine Religious Exemptions&quot;) +
+  xlab(&quot;Percentage Religious Exemptions&quot;) +
+  ylab(&quot;count&quot;) +
+  theme_ipsum() +
+  scale_x_percent()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 26 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="/post/2019-04-25-school-vaccines_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<pre class="r"><code>x %&gt;% mutate(medical = medical/100) %&gt;%
+  ggplot(aes(x = medical)) +
+  geom_histogram() +
+  ggtitle(&quot;Vaccine Medical Exemptions&quot;) +
+  xlab(&quot;Percentage Medical Exemptions&quot;) +
+  ylab(&quot;count&quot;) +
+  theme_ipsum() +
+  scale_x_percent()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 26 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="/post/2019-04-25-school-vaccines_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p>Let’s compare the boxplots by island.</p>
+<pre class="r"><code>x %&gt;% mutate(religious = religious/100) %&gt;%
+  ggplot(aes(x = island, y = religious)) +
+  geom_boxplot() +
+  ggtitle(&quot;Vaccine Religious Exemptions&quot;) +
+  xlab(&quot;Island&quot;) +
+  ylab(&quot;Perecentage Religious Exemptions&quot;) +
+  theme_ipsum() +
+  scale_y_percent()</code></pre>
+<pre><code>## Warning: Removed 26 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="/post/2019-04-25-school-vaccines_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>x %&gt;% mutate(medical = medical/100) %&gt;%
+  ggplot(aes(x = island, y = medical)) +
+  geom_boxplot() +
+  ggtitle(&quot;Vaccine Medical Exemptions&quot;) +
+  xlab(&quot;Island&quot;) +
+  ylab(&quot;Perecentage Medical Exemptions&quot;) +
+  theme_ipsum() +
+  scale_y_percent()</code></pre>
+<pre><code>## Warning: Removed 26 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="/post/2019-04-25-school-vaccines_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+</div>
+<div id="private-vs.public-schools" class="section level1">
+<h1>Private vs. Public Schools</h1>
+<pre class="r"><code>x %&gt;% group_by(type) %&gt;% 
+  summarize(religious_exemption = sum(n_religious, na.rm = T) / sum(enrollment, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   type    religious_exemption
+##   &lt;fct&gt;                 &lt;dbl&gt;
+## 1 CHARTER              0.0806
+## 2 PRIVATE              0.0255
+## 3 PUBLIC               0.0135</code></pre>
+<pre class="r"><code>x %&gt;% group_by(type) %&gt;% 
+  summarize(medical_exemption = sum(n_medical, na.rm = T) / sum(enrollment, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   type    medical_exemption
+##   &lt;fct&gt;               &lt;dbl&gt;
+## 1 CHARTER          0.000897
+## 2 PRIVATE          0.00137 
+## 3 PUBLIC           0.000362</code></pre>
+<p>That’s it for tonight. I will add some more text tomorrow and fill in the analysis.</p>
+</div>

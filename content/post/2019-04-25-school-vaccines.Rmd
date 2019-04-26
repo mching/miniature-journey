@@ -1,0 +1,186 @@
+---
+title: Religious and Medical Vaccine Exemptions in Hawaii Schools
+author: ~
+date: '2019-04-25'
+slug: school-vaccines
+categories: 
+  - R
+tags: 
+  - vaccines
+  - immunizations
+  - public health
+type: ''
+subtitle: ''
+image: ''
+---
+
+Vaccination has recently been a hot topic in the news because of measles outbreaks in Washington state, Los Angeles, and New York City. The outbreaks may be caused by waning herd immunity as parents choose not to vaccinate their children. 
+
+We have been having a conversation about this in Hawaii recently because the state is updating its vaccine requirements for school entry. This week, the state Department of Health released a dataset on [immunization exemption at schools in Hawaii](http://www.hawaiinewsnow.com/2019/04/24/what-percentage-kids-arent-vaccinated-your-childs-school-heres-list/).
+
+The data were in pdf format, so it seemed like a good idea to look closer at it.
+
+```{r}
+library(googlesheets)
+suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+library(hrbrthemes)
+```
+
+```{r}
+my_sheets <- gs_ls()
+fb <- gs_title("school_vaccine_exemption")
+x <- gs_read(fb)
+```
+
+```{r}
+x <- tbl_df(x)
+glimpse(x)
+x$type <- factor(x$type)
+x$island <- factor(x$island, levels = c("NIIHAU", "KAUAI", "OAHU", "MOLOKAI", "LANAI", "MAUI", "HAWAII"))
+```
+
+```{r}
+x <- x %>% mutate(n_religious = enrollment*religious/100, n_medical = enrollment*medical/100)
+```
+
+# What is the overall total and percentage of religious and medical exemption?
+
+The report only provides the percentage of relgious and medical exemptions by school. To get better estimates I calculated the absolute number of exemptions. As a result, the overall totals include fractional students, but it's probably pretty close to the real number.
+
+## Religion Total and Overall Percentage
+```{r}
+sum(x$n_religious, na.rm = T)
+sum(x$n_religious, na.rm = T) / sum(x$enrollment, na.rm = T)
+```
+
+## Medical Total and Overall Percentage
+```{r}
+sum(x$n_medical, na.rm = T)
+sum(x$n_medical, na.rm = T) / sum(x$enrollment, na.rm = T)
+```
+
+Religious exemption is pretty high at about 2%. Medical exemption is very low, about 6 in 10000.
+
+# What is the overall percentage of religious and medical exemption by island?
+
+```{r}
+x %>% group_by(island) %>% 
+  summarize(religious_exemption = sum(n_religious, na.rm = T) / sum(enrollment, na.rm = T)) 
+```
+
+```{r}
+x %>% group_by(island) %>% summarize(medical_exemption = sum(n_medical, na.rm = T) / sum(enrollment, na.rm = T))
+```
+
+It looks like Niihau's schools had no data for religious or medical exemptions so I will just remove Niihau from the dataset.
+
+```{r}
+x <- x %>% filter(island != "NIIHAU")
+```
+
+Here's a graph by island of the vaccine exemption rates.
+```{r}
+x %>% group_by(island) %>% 
+  summarize(religious_exemption = sum(n_religious, na.rm = T) / sum(enrollment, na.rm = T)) %>%
+  ggplot(aes(x = island, y = religious_exemption)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Overall Rate of Vaccine Religious Exemption by Island") +
+  xlab("Island") +
+  ylab("Relgious Exemptions (%)") +
+  theme_ipsum() +
+  scale_y_percent()
+```
+
+```{r}
+x %>% group_by(island) %>% 
+  summarize(medical_exemption = sum(n_medical, na.rm = T) / sum(enrollment, na.rm = T)) %>%
+  ggplot(aes(x = island, y = medical_exemption)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Overall Rate of Vaccine Medical Exemption by Island") +
+  xlab("Island") +
+  ylab("Medical Exemptions (%)") +
+  theme_ipsum() +
+  scale_y_percent()
+```
+
+# Which schools have the most exemptions by percentage and absolute number?
+
+```{r}
+x %>% arrange(-religious)
+```
+
+```{r}
+x %>% arrange(-medical)
+```
+
+```{r}
+x %>% arrange(-n_religious)
+```
+
+```{r}
+x %>% arrange(-n_medical)
+```
+
+
+# What is the distribution of exemptions overall and by island?
+
+```{r}
+x %>% mutate(religious = religious/100) %>%
+  ggplot(aes(x = religious)) +
+  geom_histogram() +
+  ggtitle("Vaccine Religious Exemptions") +
+  xlab("Percentage Religious Exemptions") +
+  ylab("count") +
+  theme_ipsum() +
+  scale_x_percent()
+```
+
+
+```{r}
+x %>% mutate(medical = medical/100) %>%
+  ggplot(aes(x = medical)) +
+  geom_histogram() +
+  ggtitle("Vaccine Medical Exemptions") +
+  xlab("Percentage Medical Exemptions") +
+  ylab("count") +
+  theme_ipsum() +
+  scale_x_percent()
+```
+
+Let's compare the boxplots by island.
+
+```{r}
+x %>% mutate(religious = religious/100) %>%
+  ggplot(aes(x = island, y = religious)) +
+  geom_boxplot() +
+  ggtitle("Vaccine Religious Exemptions") +
+  xlab("Island") +
+  ylab("Perecentage Religious Exemptions") +
+  theme_ipsum() +
+  scale_y_percent()
+```
+
+```{r}
+x %>% mutate(medical = medical/100) %>%
+  ggplot(aes(x = island, y = medical)) +
+  geom_boxplot() +
+  ggtitle("Vaccine Medical Exemptions") +
+  xlab("Island") +
+  ylab("Perecentage Medical Exemptions") +
+  theme_ipsum() +
+  scale_y_percent()
+```
+
+# Private vs. Public Schools
+```{r}
+x %>% group_by(type) %>% 
+  summarize(religious_exemption = sum(n_religious, na.rm = T) / sum(enrollment, na.rm = T))
+```
+
+```{r}
+x %>% group_by(type) %>% 
+  summarize(medical_exemption = sum(n_medical, na.rm = T) / sum(enrollment, na.rm = T))
+```
+
+That's it for tonight. I will add some more text tomorrow and fill in the analysis.
