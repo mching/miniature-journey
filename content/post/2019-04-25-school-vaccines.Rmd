@@ -41,7 +41,8 @@ x$island <- factor(x$island, levels = c("NIIHAU", "KAUAI", "OAHU", "MOLOKAI", "L
 ```
 
 ```{r}
-x <- x %>% mutate(n_religious = enrollment*religious/100, n_medical = enrollment*medical/100)
+x <- x %>% mutate(n_religious = enrollment*religious/100, n_medical =
+                    enrollment*medical/100)
 ```
 
 # What is the overall total and percentage of religious and medical exemption?
