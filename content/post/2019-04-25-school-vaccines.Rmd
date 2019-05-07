@@ -40,6 +40,7 @@ x$type <- factor(x$type)
 x$island <- factor(x$island, levels = c("NIIHAU", "KAUAI", "OAHU", "MOLOKAI", "LANAI", "MAUI", "HAWAII"))
 ```
 
+To make it a little more precise, I calculated the actual number of religious exemptions and medical exemptions per school. 
 ```{r}
 x <- x %>% mutate(n_religious = enrollment*religious/100, n_medical =
                     enrollment*medical/100)
