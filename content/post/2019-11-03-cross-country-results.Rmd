@@ -1,0 +1,193 @@
+---
+title: Cross Country Results
+author: ~
+date: '2019-11-03'
+slug: cross-country-results
+categories:
+  - R
+tags: 
+  - sports
+  - running
+---
+The Hawaii high school cross country championship was held this weekend. At first, only the live time and place results were displayed, and there were no team scores calculated. That made me want to figure out how to get team scores out of the live results. Doing this also let me figure out some hypotheticals like what if the teams from division 1 and division 2 were combined in one race. 
+
+
+# Data Munging
+I downloaded the data from https://hhsaa.org/sports/cross_country/tournament/2019. 
+```{r}
+library(dplyr)
+library(lubridate)
+dc1 <- tbl_df(read.csv("../datasets/xcountry2019.csv", colClasses = "character"))
+```
+
+```{r}
+dc1$place_overall <- as.numeric(dc1$place_overall)
+dc1$place_team <- as.numeric(dc1$place_team)
+dc1$division <- as.factor(dc1$division)
+dc1$school <- as.factor(dc1$school)
+dc1$gender <- as.factor(dc1$gender)
+```
+
+I had to convert the running time in mm:ss format into a format that I could manipulate. 
+```{r}
+dc1$runtime <- ms(dc1$run_time)
+dc1$runtime_seconds <- period_to_seconds(ms(dc1$run_time))
+```
+
+Here's the data format.
+```{r}
+glimpse(dc1)
+```
+
+Division place (i.e., boys division 1) was not provided in the original table so I had to calculate this.
+```{r}
+dc1 <- dc1 %>% filter(!is.na(place_team)) %>%
+  group_by(division, gender) %>% 
+  arrange(runtime_seconds) %>%
+  mutate(place_division = dense_rank(runtime_seconds))
+```
+
+# Results: Division Winners by Team Score
+
+I was able to replicate the team scores from the official website.
+## Division 1 Boys
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>%
+  filter(division == 1, gender == "m") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_division)) %>%
+  arrange(team_score)
+```
+
+## Division 2 Boys
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>%
+  filter(division == 2, gender == "m") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_division)) %>%
+  arrange(team_score)
+```
+
+
+## Combined Boys
+As a hypothetical, I calculated the team scores with the two divisions combined.
+
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>% 
+  filter(gender == "m") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_team)) %>%
+  arrange(team_score)
+```
+
+The top division 2 team was able to finish 3rd in the combined race. Interestingly enough the top division 2 team in the combined race (HBA) did not win the division 2 race. Seabury Hall actually won that race. There must have been a bunch of div 1 runners between the last runners for HBA and Seabury Hall.
+
+## Division 1 Girls
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>%
+  filter(division == 1, gender == "f") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_division)) %>%
+  arrange(team_score)
+```
+Punahou had a huge margin of victory in the division 1 race.
+
+## Division 2 Girls
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>%
+  filter(division == 2, gender == "f") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_division)) %>%
+  arrange(team_score)
+```
+HBA was able to hold off Seabury hall in the division 2 race. 
+
+## Combined Girls
+```{r}
+dc1 %>% filter(!is.na(place_team), gender == "f") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_team)) %>%
+  arrange(team_score)
+```
+
+In the hypothetical combined race, HBA (Div 2), would have finished 2nd, defeating the Div 1 second place team Iolani handily.
+
+# Results: Division Winners by Time
+I recently noticed that collegiate cross country scores show the total team time as well. I wanted to see what that would look like for the high schoolers.
+
+## Division 1 Boys
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>%
+  filter(division == 1, gender == "m") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_division), team_time = sum(runtime_seconds)) %>%
+  arrange(team_time)
+```
+Interestingly enough, Maui was second place by runner place but actually first in total time! Radford and Moanalua also moved up in rankings based on total time.
+
+## Division 2 Boys
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>%
+  filter(division == 2, gender == "m") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_division), team_time = sum(runtime_seconds)) %>%
+  arrange(team_time)
+```
+
+The Division 2 race also showed some schools moving up based on total time including Hanalani and Hawaii Prep. 
+
+## Combined Boys
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>% 
+  filter(gender == "m") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_team), team_time = sum(runtime_seconds)) %>%
+  arrange(team_time)
+```
+
+Unlike the place-based score, the division 2 winner (Seabury Hall) remains ahead of the second place division 2 team (HBA). Two other division 2 teams sneaked into the top 10 (Island School and Hanalani).
+
+## Division 1 Girls
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>%
+  filter(division == 1, gender == "f") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_division), team_time = sum(runtime_seconds)) %>%
+  arrange(team_time)
+```
+There wasn't much difference here in the overall standings based on time other than Kamehameha-Kapalama falling a couple of places in total time.
+
+## Division 2 Girls
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>%
+  filter(division == 2, gender == "f") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_division), team_time = sum(runtime_seconds)) %>%
+  arrange(team_time)
+```
+
+The Division 2 race was exactly the same as the team score based places. 
+
+## Combined Girls
+```{r}
+dc1 %>% filter(!is.na(place_team)) %>% 
+  filter(gender == "f") %>%
+  group_by(school) %>%
+  top_n(5, -runtime_seconds) %>%
+  summarize(team_score = sum(place_team), team_time = sum(runtime_seconds)) %>%
+  arrange(team_time)
+```
+
+No real surprises here either other than KS-Kapalama moving down and Kalaheo moving up in total time. 
+

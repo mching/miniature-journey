@@ -1,0 +1,351 @@
+---
+title: Cross Country Results
+author: ~
+date: '2019-11-03'
+slug: cross-country-results
+categories:
+  - R
+tags: 
+  - sports
+  - running
+---
+
+
+
+<p>The Hawaii high school cross country championship was held this weekend. At first, only the live time and place results were displayed, and there were no team scores calculated. That made me want to figure out how to get team scores out of the live results. Doing this also let me figure out some hypotheticals like what if the teams from division 1 and division 2 were combined in one race.</p>
+<div id="data-munging" class="section level1">
+<h1>Data Munging</h1>
+<p>I downloaded the data from <a href="https://hhsaa.org/sports/cross_country/tournament/2019" class="uri">https://hhsaa.org/sports/cross_country/tournament/2019</a>.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     date</code></pre>
+<pre class="r"><code>dc1 &lt;- tbl_df(read.csv(&quot;../datasets/xcountry2019.csv&quot;, colClasses = &quot;character&quot;))</code></pre>
+<pre class="r"><code>dc1$place_overall &lt;- as.numeric(dc1$place_overall)
+dc1$place_team &lt;- as.numeric(dc1$place_team)
+dc1$division &lt;- as.factor(dc1$division)
+dc1$school &lt;- as.factor(dc1$school)
+dc1$gender &lt;- as.factor(dc1$gender)</code></pre>
+<p>I had to convert the running time in mm:ss format into a format that I could manipulate.</p>
+<pre class="r"><code>dc1$runtime &lt;- ms(dc1$run_time)
+dc1$runtime_seconds &lt;- period_to_seconds(ms(dc1$run_time))</code></pre>
+<p>Here’s the data format.</p>
+<pre class="r"><code>glimpse(dc1)</code></pre>
+<pre><code>## Observations: 394
+## Variables: 11
+## $ run_time        &lt;chr&gt; &quot;16:15.6&quot;, &quot;16:19.5&quot;, &quot;16:34.0&quot;, &quot;16:46.9&quot;, &quot;16:…
+## $ place_overall   &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1…
+## $ place_team      &lt;dbl&gt; 1, 2, 3, 4, 5, NA, 6, NA, 7, 8, 9, 10, 11, 12, 1…
+## $ bib             &lt;chr&gt; &quot;1&quot;, &quot;21&quot;, &quot;3&quot;, &quot;2&quot;, &quot;149&quot;, &quot;47&quot;, &quot;33&quot;, &quot;137&quot;, &quot;…
+## $ division        &lt;fct&gt; 1, 2, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, …
+## $ name            &lt;chr&gt; &quot;Hunter Shields&quot;, &quot;Adam Harder&quot;, &quot;Damon Wakefiel…
+## $ school          &lt;fct&gt; Maui High, Hanalani, Maui High, Maui High, Moana…
+## $ pace            &lt;chr&gt; &quot;05:15&quot;, &quot;05:16&quot;, &quot;05:20&quot;, &quot;05:25&quot;, &quot;05:26&quot;, &quot;05…
+## $ gender          &lt;fct&gt; m, m, m, m, m, m, m, m, m, m, m, m, m, m, m, m, …
+## $ runtime         &lt;Period&gt; 16M 15.6S, 16M 19.5S, 16M 34S, 16M 46.9S, 16M…
+## $ runtime_seconds &lt;dbl&gt; 975.6, 979.5, 994.0, 1006.9, 1011.8, 1014.2, 101…</code></pre>
+<p>Division place (i.e., boys division 1) was not provided in the original table so I had to calculate this.</p>
+<pre class="r"><code>dc1 &lt;- dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
+  group_by(division, gender) %&gt;% 
+  arrange(runtime_seconds) %&gt;%
+  mutate(place_division = dense_rank(runtime_seconds))</code></pre>
+</div>
+<div id="results-division-winners-by-team-score" class="section level1">
+<h1>Results: Division Winners by Team Score</h1>
+<p>I was able to replicate the team scores from the official website.
+## Division 1 Boys</p>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
+  filter(division == 1, gender == &quot;m&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_division)) %&gt;%
+  arrange(team_score)</code></pre>
+<pre><code>## # A tibble: 14 x 2
+##    school                 team_score
+##    &lt;fct&gt;                       &lt;int&gt;
+##  1 Punahou                        41
+##  2 Maui High                      57
+##  3 Kalani High School            129
+##  4 Kamehameha-Kapalama           135
+##  5 Waiakea                       160
+##  6 Radford High School           164
+##  7 Pearl City High School        187
+##  8 Moanalua High School          207
+##  9 Kalaheo High School           227
+## 10 Mililani High School          228
+## 11 Kealakehe                     238
+## 12 Hilo                          286
+## 13 Campbell High School          316
+## 14 Kea&#39;au                        378</code></pre>
+<div id="division-2-boys" class="section level2">
+<h2>Division 2 Boys</h2>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
+  filter(division == 2, gender == &quot;m&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_division)) %&gt;%
+  arrange(team_score)</code></pre>
+<pre><code>## # A tibble: 7 x 2
+##   school                 team_score
+##   &lt;fct&gt;                       &lt;int&gt;
+## 1 Seabury Hall                   47
+## 2 Hawaii Baptist Academy         51
+## 3 Island School                  86
+## 4 Kamehameha-Hi                 112
+## 5 Kauai High School             118
+## 6 Hawaii Prep                   119
+## 7 Hanalani                      120</code></pre>
+</div>
+<div id="combined-boys" class="section level2">
+<h2>Combined Boys</h2>
+<p>As a hypothetical, I calculated the team scores with the two divisions combined.</p>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;% 
+  filter(gender == &quot;m&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_team)) %&gt;%
+  arrange(team_score)</code></pre>
+<pre><code>## # A tibble: 21 x 2
+##    school                 team_score
+##    &lt;fct&gt;                       &lt;dbl&gt;
+##  1 Punahou                        56
+##  2 Maui High                      85
+##  3 Hawaii Baptist Academy        138
+##  4 Seabury Hall                  141
+##  5 Kalani High School            197
+##  6 Kamehameha-Kapalama           210
+##  7 Waiakea                       244
+##  8 Radford High School           248
+##  9 Island School                 251
+## 10 Pearl City High School        293
+## # … with 11 more rows</code></pre>
+<p>The top division 2 team was able to finish 3rd in the combined race. Interestingly enough the top division 2 team in the combined race (HBA) did not win the division 2 race. Seabury Hall actually won that race. There must have been a bunch of div 1 runners between the last runners for HBA and Seabury Hall.</p>
+</div>
+<div id="division-1-girls" class="section level2">
+<h2>Division 1 Girls</h2>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
+  filter(division == 1, gender == &quot;f&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_division)) %&gt;%
+  arrange(team_score)</code></pre>
+<pre><code>## # A tibble: 17 x 2
+##    school                 team_score
+##    &lt;fct&gt;                       &lt;int&gt;
+##  1 Punahou                        26
+##  2 Iolani                         92
+##  3 Hilo                          123
+##  4 Kamehameha-Kapalama           131
+##  5 Radford High School           147
+##  6 Kalaheo High School           152
+##  7 King Kekaulike                218
+##  8 Kealakehe                     238
+##  9 Campbell High School          254
+## 10 Waiakea                       281
+## 11 Kalani High School            293
+## 12 Roosevelt High School         329
+## 13 Kea&#39;au                        340
+## 14 Baldwin                       346
+## 15 Pearl City High School        365
+## 16 Mililani High School          367
+## 17 Hawaii Prep                   396</code></pre>
+<p>Punahou had a huge margin of victory in the division 1 race.</p>
+</div>
+<div id="division-2-girls" class="section level2">
+<h2>Division 2 Girls</h2>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
+  filter(division == 2, gender == &quot;f&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_division)) %&gt;%
+  arrange(team_score)</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   school                 team_score
+##   &lt;fct&gt;                       &lt;int&gt;
+## 1 Hawaii Baptist Academy         29
+## 2 Seabury Hall                   40
+## 3 Kamehameha-Hi                  85
+## 4 Kauai High School              88</code></pre>
+<p>HBA was able to hold off Seabury hall in the division 2 race.</p>
+</div>
+<div id="combined-girls" class="section level2">
+<h2>Combined Girls</h2>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team), gender == &quot;f&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_team)) %&gt;%
+  arrange(team_score)</code></pre>
+<pre><code>## # A tibble: 21 x 2
+##    school                 team_score
+##    &lt;fct&gt;                       &lt;dbl&gt;
+##  1 Punahou                        43
+##  2 Hawaii Baptist Academy         68
+##  3 Iolani                        131
+##  4 Seabury Hall                  137
+##  5 Hilo                          182
+##  6 Kamehameha-Kapalama           194
+##  7 Radford High School           206
+##  8 Kalaheo High School           210
+##  9 King Kekaulike                288
+## 10 Kealakehe                     320
+## # … with 11 more rows</code></pre>
+<p>In the hypothetical combined race, HBA (Div 2), would have finished 2nd, defeating the Div 1 second place team Iolani handily.</p>
+</div>
+</div>
+<div id="results-division-winners-by-time" class="section level1">
+<h1>Results: Division Winners by Time</h1>
+<p>I recently noticed that collegiate cross country scores show the total team time as well. I wanted to see what that would look like for the high schoolers.</p>
+<div id="division-1-boys" class="section level2">
+<h2>Division 1 Boys</h2>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
+  filter(division == 1, gender == &quot;m&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_division), team_time = sum(runtime_seconds)) %&gt;%
+  arrange(team_time)</code></pre>
+<pre><code>## # A tibble: 14 x 3
+##    school                 team_score team_time
+##    &lt;fct&gt;                       &lt;int&gt;     &lt;dbl&gt;
+##  1 Maui High                      57     5162.
+##  2 Punahou                        41     5181.
+##  3 Kalani High School            129     5461.
+##  4 Kamehameha-Kapalama           135     5512.
+##  5 Radford High School           164     5528.
+##  6 Waiakea                       160     5539.
+##  7 Moanalua High School          207     5611.
+##  8 Pearl City High School        187     5616.
+##  9 Kalaheo High School           227     5664 
+## 10 Mililani High School          228     5682 
+## 11 Kealakehe                     238     5683 
+## 12 Hilo                          286     5835.
+## 13 Campbell High School          316     5866.
+## 14 Kea&#39;au                        378     6001.</code></pre>
+<p>Interestingly enough, Maui was second place by runner place but actually first in total time! Radford and Moanalua also moved up in rankings based on total time.</p>
+</div>
+<div id="division-2-boys-1" class="section level2">
+<h2>Division 2 Boys</h2>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
+  filter(division == 2, gender == &quot;m&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_division), team_time = sum(runtime_seconds)) %&gt;%
+  arrange(team_time)</code></pre>
+<pre><code>## # A tibble: 7 x 3
+##   school                 team_score team_time
+##   &lt;fct&gt;                       &lt;int&gt;     &lt;dbl&gt;
+## 1 Seabury Hall                   47     5357.
+## 2 Hawaii Baptist Academy         51     5375.
+## 3 Island School                  86     5538.
+## 4 Hanalani                      120     5592.
+## 5 Hawaii Prep                   119     5604 
+## 6 Kamehameha-Hi                 112     5622.
+## 7 Kauai High School             118     5652.</code></pre>
+<p>The Division 2 race also showed some schools moving up based on total time including Hanalani and Hawaii Prep.</p>
+</div>
+<div id="combined-boys-1" class="section level2">
+<h2>Combined Boys</h2>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;% 
+  filter(gender == &quot;m&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_team), team_time = sum(runtime_seconds)) %&gt;%
+  arrange(team_time)</code></pre>
+<pre><code>## # A tibble: 21 x 3
+##    school                 team_score team_time
+##    &lt;fct&gt;                       &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Maui High                      85     5162.
+##  2 Punahou                        56     5181.
+##  3 Seabury Hall                  141     5357.
+##  4 Hawaii Baptist Academy        138     5375.
+##  5 Kalani High School            197     5461.
+##  6 Kamehameha-Kapalama           210     5512.
+##  7 Radford High School           248     5528.
+##  8 Island School                 251     5538.
+##  9 Waiakea                       244     5539.
+## 10 Hanalani                      330     5592.
+## # … with 11 more rows</code></pre>
+<p>Unlike the place-based score, the division 2 winner (Seabury Hall) remains ahead of the second place division 2 team (HBA). Two other division 2 teams sneaked into the top 10 (Island School and Hanalani).</p>
+</div>
+<div id="division-1-girls-1" class="section level2">
+<h2>Division 1 Girls</h2>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
+  filter(division == 1, gender == &quot;f&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_division), team_time = sum(runtime_seconds)) %&gt;%
+  arrange(team_time)</code></pre>
+<pre><code>## # A tibble: 17 x 3
+##    school                 team_score team_time
+##    &lt;fct&gt;                       &lt;int&gt;     &lt;dbl&gt;
+##  1 Punahou                        26     6112.
+##  2 Iolani                         92     6370.
+##  3 Hilo                          123     6559.
+##  4 Kalaheo High School           152     6584.
+##  5 Radford High School           147     6591.
+##  6 Kamehameha-Kapalama           131     6619.
+##  7 King Kekaulike                218     6774.
+##  8 Kealakehe                     238     6896.
+##  9 Campbell High School          254     6902.
+## 10 Waiakea                       281     6951.
+## 11 Kalani High School            293     6970.
+## 12 Roosevelt High School         329     7058.
+## 13 Baldwin                       346     7100.
+## 14 Hawaii Prep                   396     7203.
+## 15 Kea&#39;au                        340     7242.
+## 16 Pearl City High School        365     7291.
+## 17 Mililani High School          367     7309.</code></pre>
+<p>There wasn’t much difference here in the overall standings based on time other than Kamehameha-Kapalama falling a couple of places in total time.</p>
+</div>
+<div id="division-2-girls-1" class="section level2">
+<h2>Division 2 Girls</h2>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
+  filter(division == 2, gender == &quot;f&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_division), team_time = sum(runtime_seconds)) %&gt;%
+  arrange(team_time)</code></pre>
+<pre><code>## # A tibble: 4 x 3
+##   school                 team_score team_time
+##   &lt;fct&gt;                       &lt;int&gt;     &lt;dbl&gt;
+## 1 Hawaii Baptist Academy         29     6179.
+## 2 Seabury Hall                   40     6389.
+## 3 Kamehameha-Hi                  85     6931.
+## 4 Kauai High School              88     6987.</code></pre>
+<p>The Division 2 race was exactly the same as the team score based places.</p>
+</div>
+<div id="combined-girls-1" class="section level2">
+<h2>Combined Girls</h2>
+<pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;% 
+  filter(gender == &quot;f&quot;) %&gt;%
+  group_by(school) %&gt;%
+  top_n(5, -runtime_seconds) %&gt;%
+  summarize(team_score = sum(place_team), team_time = sum(runtime_seconds)) %&gt;%
+  arrange(team_time)</code></pre>
+<pre><code>## # A tibble: 21 x 3
+##    school                 team_score team_time
+##    &lt;fct&gt;                       &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Punahou                        43     6112.
+##  2 Hawaii Baptist Academy         68     6179.
+##  3 Iolani                        131     6370.
+##  4 Seabury Hall                  137     6389.
+##  5 Hilo                          182     6559.
+##  6 Kalaheo High School           210     6584.
+##  7 Radford High School           206     6591.
+##  8 Kamehameha-Kapalama           194     6619.
+##  9 King Kekaulike                288     6774.
+## 10 Kealakehe                     320     6896.
+## # … with 11 more rows</code></pre>
+<p>No real surprises here either other than KS-Kapalama moving down and Kalaheo moving up in total time.</p>
+</div>
+</div>
