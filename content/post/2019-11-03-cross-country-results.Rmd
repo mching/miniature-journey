@@ -189,5 +189,4 @@ dc1 %>% filter(!is.na(place_team)) %>%
   arrange(team_time)
 ```
 
-No real surprises here either other than KS-Kapalama moving down and Kalaheo moving up in total time. 
-
+No real surprises here either other than KS-Kapalama moving down and Kalaheo moving up in total time.

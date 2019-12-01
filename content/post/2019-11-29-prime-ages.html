@@ -1,0 +1,37 @@
+---
+title: Prime Ages
+author: ~
+date: '2019-11-29'
+slug: prime-ages
+categories: 
+  - R
+tags:
+  - birthdays
+---
+
+
+
+<p>This past year our family members were 43, 43, 13, and 11 years old, which are all prime numbers. I wondered if there was or will be any other year where this will happen. There was probably a real math way to figure this out, but it was easier just to brute force calculate each year.</p>
+<p>I took out the obvious years (where we are even ages), so starting when our daughter was born, I calculated how old each of us was or will be.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(primes)
+ages &lt;- tibble(yr = seq(2011, 2075, 2))
+ages &lt;- ages %&gt;% mutate(parents = yr - 1976, boy = yr - 2006, girl = yr - 2008)
+ages %&gt;% mutate(parents_prime = is_prime(parents), boy_prime = is_prime(boy), girl_prime = is_prime(girl)) %&gt;%
+  filter(parents_prime, boy_prime, girl_prime)</code></pre>
+<pre><code>## # A tibble: 4 x 7
+##      yr parents   boy  girl parents_prime boy_prime girl_prime
+##   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;         &lt;lgl&gt;     &lt;lgl&gt;     
+## 1  2013      37     7     5 TRUE          TRUE      TRUE      
+## 2  2019      43    13    11 TRUE          TRUE      TRUE      
+## 3  2037      61    31    29 TRUE          TRUE      TRUE      
+## 4  2049      73    43    41 TRUE          TRUE      TRUE</code></pre>
+<p>After the calculation, 2013, 2019, 2037, and 2049 were the only years in which all our ages were prime numbers. Hopefully we will still be around in 2037 to enjoy our next prime age!</p>
