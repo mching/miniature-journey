@@ -16,6 +16,8 @@ An unexpected update problem was that the googlesheets package has been updated 
 
 ```{r}
 library(ggplot2)
+library(googlesheets4)
+library(googledrive)
 suppressPackageStartupMessages(library(dplyr))
 token <- token_fetch()
 turkedy_id <- drive_get("Turkey_temp")
