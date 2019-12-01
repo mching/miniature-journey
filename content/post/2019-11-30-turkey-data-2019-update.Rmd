@@ -16,16 +16,8 @@ An unexpected update problem was that the googlesheets package has been updated 
 
 ```{r}
 library(ggplot2)
-library(googlesheets4)
-library(googledrive)
 suppressPackageStartupMessages(library(dplyr))
-token <- token_fetch()
-turkedy_id <- drive_get("Turkey_temp")
-turkey_id
-turkey <- sheets_get(turkey_id)
-turkey
-sheets_sheets(turkey_id)
-turkey_data <- read_sheet(turkey_id)
+turkey_data <- read.csv("../datasets/Turkey_temp_2019.csv")
 ```
 
 After a few minutes of figuring out the new googlesheets4 methods with the help of the package website, I was able to plot the temperature curve this year and compare to the prior years. Apparently I was not as good as taking data this year so there are a lot fewer points than prior years.
