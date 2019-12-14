@@ -12,7 +12,7 @@ tags:
 
 Another Thanksgiving has come and gone and I have new data from this year's 16 lb bird to add to [the last time I updated this post](https://mching.github.io/2017/12/04/turkey-temp-2017/).
 
-An unexpected update problem was that the googlesheets package has been updated to googlesheets4 with new methods. I was able to figure out how to use the methods in blogdown and it opened a browser tab for me to authenticate. However it did so every time, so when I went to knit the actual HTML page, it hung, probably because I was not able to authenticate via the browser. There's probably some way around this, but it was too much effort to figure out so I just downloaded the data as a csv file.
+An unexpected update problem was that the `googlesheets` package has been updated to `googlesheets4` with new methods. I was able to figure out how to use the methods in blogdown and it opened a browser tab for me to authenticate. However it did so every time, so when I went to knit the actual HTML page, it hung, probably because I was not able to authenticate via the browser. There's probably some way around this, but it was too much effort to figure out so I just downloaded the data as a csv file.
 
 ```{r}
 library(ggplot2)
@@ -20,7 +20,7 @@ suppressPackageStartupMessages(library(dplyr))
 turkey_data <- read.csv("../datasets/Turkey_temp_2019.csv")
 ```
 
-After a few minutes of figuring out the new googlesheets4 methods with the help of the package website, I was able to plot the temperature curve this year and compare to the prior years. Apparently I was not as good as taking data this year so there are a lot fewer points than prior years.
+I was able to plot the temperature curve this year and compare to the prior years. Apparently I was not as good as taking data this year so there are many fewer points than prior years.
 
 ```{r}
 turkey_data$Year <- as.factor(turkey_data$Year)

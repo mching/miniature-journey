@@ -63,8 +63,9 @@ dc1$runtime_seconds &lt;- period_to_seconds(ms(dc1$run_time))</code></pre>
 </div>
 <div id="results-division-winners-by-team-score" class="section level1">
 <h1>Results: Division Winners by Team Score</h1>
-<p>I was able to replicate the team scores from the official website.
-## Division 1 Boys</p>
+<p>I was able to replicate the team scores from the official website.</p>
+<div id="division-1-boys" class="section level2">
+<h2>Division 1 Boys</h2>
 <pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
   filter(division == 1, gender == &quot;m&quot;) %&gt;%
   group_by(school) %&gt;%
@@ -88,6 +89,7 @@ dc1$runtime_seconds &lt;- period_to_seconds(ms(dc1$run_time))</code></pre>
 ## 12 Hilo                          286
 ## 13 Campbell High School          316
 ## 14 Kea&#39;au                        378</code></pre>
+</div>
 <div id="division-2-boys" class="section level2">
 <h2>Division 2 Boys</h2>
 <pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
@@ -206,7 +208,7 @@ dc1$runtime_seconds &lt;- period_to_seconds(ms(dc1$run_time))</code></pre>
 <div id="results-division-winners-by-time" class="section level1">
 <h1>Results: Division Winners by Time</h1>
 <p>I recently noticed that collegiate cross country scores show the total team time as well. I wanted to see what that would look like for the high schoolers.</p>
-<div id="division-1-boys" class="section level2">
+<div id="division-1-boys-1" class="section level2">
 <h2>Division 1 Boys</h2>
 <pre class="r"><code>dc1 %&gt;% filter(!is.na(place_team)) %&gt;%
   filter(division == 1, gender == &quot;m&quot;) %&gt;%

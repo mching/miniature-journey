@@ -50,6 +50,7 @@ dc1 <- dc1 %>% filter(!is.na(place_team)) %>%
 # Results: Division Winners by Team Score
 
 I was able to replicate the team scores from the official website.
+
 ## Division 1 Boys
 ```{r}
 dc1 %>% filter(!is.na(place_team)) %>%

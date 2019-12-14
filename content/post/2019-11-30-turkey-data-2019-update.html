@@ -13,11 +13,11 @@ tags:
 
 
 <p>Another Thanksgiving has come and gone and I have new data from this year’s 16 lb bird to add to <a href="https://mching.github.io/2017/12/04/turkey-temp-2017/">the last time I updated this post</a>.</p>
-<p>An unexpected update problem was that the googlesheets package has been updated to googlesheets4 with new methods. I was able to figure out how to use the methods in blogdown and it opened a browser tab for me to authenticate. However it did so every time, so when I went to knit the actual HTML page, it hung, probably because I was not able to authenticate via the browser. There’s probably some way around this, but it was too much effort to figure out so I just downloaded the data as a csv file.</p>
+<p>An unexpected update problem was that the <code>googlesheets</code> package has been updated to <code>googlesheets4</code> with new methods. I was able to figure out how to use the methods in blogdown and it opened a browser tab for me to authenticate. However it did so every time, so when I went to knit the actual HTML page, it hung, probably because I was not able to authenticate via the browser. There’s probably some way around this, but it was too much effort to figure out so I just downloaded the data as a csv file.</p>
 <pre class="r"><code>library(ggplot2)
 suppressPackageStartupMessages(library(dplyr))
 turkey_data &lt;- read.csv(&quot;../datasets/Turkey_temp_2019.csv&quot;)</code></pre>
-<p>After a few minutes of figuring out the new googlesheets4 methods with the help of the package website, I was able to plot the temperature curve this year and compare to the prior years. Apparently I was not as good as taking data this year so there are a lot fewer points than prior years.</p>
+<p>I was able to plot the temperature curve this year and compare to the prior years. Apparently I was not as good as taking data this year so there are many fewer points than prior years.</p>
 <pre class="r"><code>turkey_data$Year &lt;- as.factor(turkey_data$Year)
 ggplot(turkey_data, aes(x=Minutes, y = Bird_temp, shape = Year, 
                    color = Year)) + 
