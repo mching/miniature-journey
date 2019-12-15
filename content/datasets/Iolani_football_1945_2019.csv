@@ -1,0 +1,860 @@
+rowid,date,opponent,result,Iolani_score,opp_score,stadium,pass_leader,pass_yds,rush_leader,rush_yds,receive_leader,receive_yds
+1,2019-11-29,Hilo,L,17,20,Aloha Stadium,Jonah Chong,118,Brock Hedani,26,Carter Kamana,45
+2,2019-11-23,at Moanalua,W,35,9,,Jonah Chong,168,Brock Hedani,90,Carter Kamana,73
+3,2019-10-25,Damien,W,21,14,Aloha Stadium,Jonah Chong,183,Brock Hedani,85,Carter Kamana,117
+4,2019-10-11,at Castle,W,33,28,,Jonah Chong,148,Jonah Chong,45,Wailoa Manuel,67
+5,2019-10-05,Leilehua,L,25,28,Aloha Stadium,Jonah Chong,256,Brock Hedani,17,Wailoa Manuel,119
+6,2019-09-27,Radford,W,38,0,,Jonah Chong,82,Brody Bantolina,66,Wailoa Manuel,57
+7,2019-09-20,Damien,W,38,21,Aloha Stadium,Jonah Chong,85,Brock Hedani,102,Wailoa Manuel,59
+8,2019-09-13,Waipahu,W,48,14,Aloha Stadium,Jonah Chong,192,Brock Hedani,58,Wailoa Manuel,121
+9,2019-09-06,at Kailua,W,40,13,,Jonah Chong,177,Brock Hedani,71,Wailoa Manuel,98
+10,2019-08-24,Kaimuki,W,34,24,,Jonah Chong,118,Brody Bantolina,99,Wailoa Manuel,57
+11,2019-08-16,at Aiea,W,31,10,,Sam Faumuina,135,Brody Bantolina,90,Cole Ichikawa,101
+12,2019-08-10,at Moanalua,L,20,21,,Jonah Chong,83,Brock Hedani,94,Carter Kamana,42
+13,2019-08-03,at KS-Hawaii,W,47,10,,Jonah Chong,178,Brody Bantolina,48,Wailoa Manuel,89
+14,2018-11-09,at Waipahu,L,19,20,,Jonah Chong,208,Kaua Nishigaya,29,Carter Kamana,90
+15,2018-10-12,at Aiea,W,30,3,,Jonah Chong,207,Kaua Nishigaya,109,Rayden Kaneshiro,83
+16,2018-10-05,at Castle,W,41,14,,Jonah Chong,105,Kaua Nishigaya,164,Carter Kamana,41
+17,2018-09-29,at Nanakuli,W,39,0,,Jonah Chong,179,Kaua Nishigaya,102,Rayden Kaneshiro,70
+18,2018-09-21,Radford,W,42,6,,Jonah Chong,236,Kaua Nishigaya,44,Carter Kamana,121
+19,2018-09-15,Damien,W,30,19,Aloha Stadium,Jonah Chong,203,Kaua Nishigaya,226,Carter Kamana,142
+20,2018-09-08,at Leilehua,L,20,31,,Jonah Chong,312,Kaua Nishigaya,60,Carter Kamana,139
+21,2018-08-31,Clackamas (Ore.),L,0,7,,Jonah Chong,97,Kaua Nishigaya,59,Carter Kamana,60
+22,2018-08-24,at Moanalua,CCL.,,,,,,,,,
+23,2018-08-17,at Kailua,W,33,12,,Jonah Chong,258,Kaua Nishigaya,102,Carter Kamana,146
+24,2018-08-11,Waipahu,W,55,14,,Jonah Chong,221,Kaua Nishigaya,33,Jonah Miyazawa,89
+25,2018-08-04,Kalani,W,63,0,Kaiser,Jonah Chong,136,Rexton Suzuki,58,Jonah Miyazawa,59
+26,2017-11-03,Lahainaluna,L,27,35,War Memorial,Tai-John Mizutani,290,Tai-John Mizutani,130,Jonah Miyazawa,193
+27,2017-10-13,St. Francis,L,19,43,,Tai-John Mizutani,305,Jake Lee,45,Carter Kamana,103
+28,2017-10-07,Pac-Five,W,34,0,,Tai-John Mizutani,209,Kaua Nishigaya,48,Jonah Miyazawa,121
+29,2017-09-29,St. Francis,W,45,29,Aloha Stadium,Tai-John Mizutani,430,Kaua Nishigaya,21,Jonah Miyazawa,132
+30,2017-09-29,,,,,,,,,,Carter Kamana,130
+31,2017-09-22,Damien,L (OT),35,42,,Tai-John Mizutani,303,Tai-John Mizutani,52,Justin Genovia,165
+32,2017-09-16,Pac-Five,W,55,20,Aloha Stadium,Tai-John Mizutani,426,Tai-John Mizutani,65,Carter Kamana,222
+33,2017-09-08,St. Francis,L,26,43,,Tai-John Mizutani,251,Tai-John Mizutani,12,Justin Genovia,113
+34,2017-09-02,Damien,L,21,35,Farrington,Tai-John Mizutani,238,Kaua Nishigaya,45,Justin Genovia,74
+35,2017-08-26,Kaimuki,W,57,34,,Tai-John Mizutani,503,Kaua Nishigaya,64,Justin Genovia,153
+36,2017-08-26,,,,,,,,,,Jonah Miyazawa,115
+37,2017-08-12,Hilo,L,35,62,,Tai-John Mizutani,255,Kaua Nishigaya,67,Justin Genovia,103
+38,2016-11-18,Mililani,L,20,31,Aloha Stadium,Tai-John Mizutani,262,KJ Pascua,2,KJ Pascua,102
+39,2016-11-11,Campbell,W,35,12,Mililani,Tai-John Mizutani,178,KJ Pascua,82,Rayden Kaneshiro,54
+40,2016-11-04,Moanalua,W,17,14,Roosevelt,Tai-John Mizutani,234,KJ Pascua,132,Justin Genovia,156
+41,2016-10-14,Saint Louis,L,0,33,Aloha Stadium,Jarin Yokogawa,81,Isaac Anderson,77,Justin Genovia,68
+42,2016-10-07,at Punahou,L,14,38,,Jarin Yokogawa,96,KJ Pascua,108,Justin Genovia,80
+43,2016-09-30,Kamehameha,L,16,21,Aloha Stadium,Tai-John Mizutani,240,KJ Pascua,48,Justin Genovia,134
+44,2016-09-23,Saint Louis,L,24,42,,Tai-John Mizutani,266,KJ Pascua,122,Justin Genovia,140
+45,2016-09-17,Punahou,L,24,49,,Tai-John Mizutani,239,KJ Pascua,68,Brent Nagami,109
+46,2016-09-10,at Kamehameha,L,20,50,,Tai-John Mizutani,192,Tai-John Mizutani,33,Justin Genovia,77
+47,2016-09-02,Saint Louis,L,7,49,Aloha Stadium,Tai-John Mizutani,141,KJ Pascua,29,Isaac Anderson,43
+48,2016-08-27,La Jolla Country Day (Calif.),W,27,19,,Tai-John Mizutani,217,KJ Pascua,159,Justin Genovia,145
+49,2016-08-20,Waimea,W,35,3,,Tai-John Mizutani,236,KJ Pascua,43,Justin Genovia,102
+50,2016-08-06,Radford,W,42,6,Aiea,Tai-John Mizutani,240,KJ Pascua,70,Justin Genovia,140
+51,2015-10-16,Kamehameha,L,24,39,,Tai-John Mizutani,485,KJ Pascua,40,Keoni-Kordell Makekau,169
+52,2015-10-16,,,,,,,,,,Nicholas Kennedy,159
+53,2015-10-16,,,,,,,,,,Conor Hannum,107
+54,2015-10-09,Saint Louis,L,7,31,Aloha Stadium,Tai-John Mizutani,137,Tamatane Aga,37,Brent Nagami,57
+55,2015-10-02,at Punahou,L,23,35,,Tai-John Mizutani,329,KJ Pascua,70,Nicholas Kennedy,169
+56,2015-09-25,at Kamehameha,L,21,63,,Tai-John Mizutani,178,KJ Pascua,16,Keoni-Kordell Makekau,127
+57,2015-09-18,Saint Louis,L,17,28,Aloha Stadium,Tai-John Mizutani,285,KJ Pascua,31,Keoni-Kordell Makekau,125
+58,2015-09-11,Punahou,L,22,59,,Tai-John Mizutani,175,KJ Pascua,131,Keoni-Kordell Makekau,107
+59,2015-08-22,Farrington,L,8,52,,Tai-John Mizutani,99,Gafoaleata Fetui-Salavea,31,Keoni-Kordell Makekau,90
+60,2015-08-15,Kealakehe,W,37,0,,Tai-John Mizutani,89,KJ Pascua,59,Conor Hannum,77
+61,2015-08-08,KS-Maui,W,48,14,Aloha Stadium,Tai-John Mizutani,78,Troy Hanaoka,76,Tamatane Aga,62
+63,2014-11-21,Lahainaluna,W,31,14,Aloha Stadium,Austin Jim On,239,KJ Pascua,60,Keoni-Kordell Makekau,105
+64,2014-11-15,Kapaa,W,29,24,,Austin Jim On,221,KJ Pascua,53,Keoni-Kordell Makekau,87
+65,2014-10-24,Damien,W,34,14,Aloha Stadium,Austin Jim On,130,Storm Lotomau,110,Connor Ohira,50
+66,2014-10-17,St. Francis,W,28,6,,Austin Jim On,164,KJ Pascua,70,Connor Ohira,63
+67,2014-10-10,St. Francis,W,44,7,,Austin Jim On,72,KJ Pascua,78,Conor Hannum,47
+68,2014-10-03,at Kamehameha,L,28,42,,Austin Jim On,299,KJ Pascua,125,Keoni-Kordell Makekau,162
+69,2014-09-26,at Punahou,L,22,59,,Austin Jim On,139,KJ Pascua,64,Keoni-Kordell Makekau,74
+70,2014-09-20,Pac-Five,W,62,19,Aloha Stadium,Austin Jim On,158,KJ Pascua,190,Tyler Teruya,62
+71,2014-09-20,,,,,,,,Storm Lotomau,122,,
+72,2014-09-13,Saint Louis,L,20,55,,Austin Jim On,146,KJ Pascua,81,Tyler Teruya,63
+73,2014-08-29,Damien,W,37,14,,Austin Jim On,241,KJ Pascua,132,Keoni-Kordell Makekau,132
+74,2014-08-16,Mino Jiyu Gauken (Japan),W,45,21,,Austin Jim On,89,KJ Pascua,120,Conor Hannum,31
+75,2014-08-09,Kamehameha-Maui,CCL.,,,Aloha Stadium,,,,,,
+76,2013-11-16,Kauai,L,7,28,,Austin Jim On,189,Tamatane Aga,12,Chad Hanaoka,58
+77,2013-10-25,Damien,W,28,7,Aloha Stadium,Austin Jim On,253,Tamatane Aga,82,Tyler Teruya,129
+78,2013-10-19,St. Francis,W,47,18,Aloha Stadium,Austin Jim On,245,Tamatane Aga,63,Keoni-Kordell Makekau,145
+79,2013-10-04,Pac-Five,W,31,19,Aloha Stadium,Austin Jim On,367,Tamatane Aga,154,Keoni-Kordell Makekau,220
+80,2013-09-28,Punahou,L,0,56,,Austin Jim On,136,Tamatane Aga,50,Chase Kanekuni,107
+81,2013-09-21,Damien,W,19,3,Aloha Stadium,Easton Tsubata,127,Jordan Ross,37,Keoni-Kordell Makekau,153
+82,2013-09-21,,,,,,Austin Jim On,111,,,,
+83,2013-09-14,Saint Louis,L,13,49,Aloha Stadium,Easton Tsubata,142,Jordan Ross,60,Keoni-Kordell Makekau,65
+84,2013-09-06,Kamehameha,L,22,38,Aloha Stadium,Easton Tsubata,152,Jordan Ross,48,Chad Hanaoka,82
+85,2013-08-30,St. Francis,W,35,0,,Austin Jim On,95,Jordan Ross,131,Chase Kanekuni,71
+86,2013-08-24,Kamehameha-Hawaii,W,36,0,,Austin Jim On,114,Jordan Ross,206,Tyler Teruya,41
+87,2013-08-17,Leilehua,L,35,56,,Austin Jim On,143,Jordan Ross,76,Chad Hanaoka,66
+88,2013-08-10,Kalani,W,51,36,Aloha Stadium,Easton Tsubata,201,Jordan Ross,100,Keoni-Kordell Makekau,111
+89,2012-11-23,Lahainaluna,W,36,33,Aloha Stadium,Reece Foy,299,Yuuya Kato,103,Tanner Nishioka,138
+90,2012-11-17,Radford,W,43,0,Aloha Stadium,Reece Foy,215,Yuuya Kato,103,Tanner Nishioka,125
+91,2012-10-27,Pac-Five,W,28,10,,Reece Foy,181,Yuuya Kato,155,Chad Hanaoka,94
+92,2012-10-19,Damien,W,36,10,Aloha Stadium,Reece Foy,209,Yuuya Kato,114,Chad Hanaoka,77
+93,2012-10-05,at Punahou,L,14,56,,Reece Foy,214,Yuuya Kato,41,Chad Hanaoka,71
+94,2012-09-28,Damien,W,48,16,Aloha Stadium,Reece Foy,124,Yuuya Kato,138,Chad Hanaoka,73
+95,2012-09-20,at Kamehameha,L,34,42,,Reece Foy,219,Yuuya Kato,66,Tanner Nishioka,175
+96,2012-09-08,Saint Louis,L,39,68,Aloha Stadium,Reece Foy,274,Kody Mento,45,Tanner Nishioka,105
+97,2012-08-31,Pac-Five,W,16,10,Aloha Stadium,Reece Foy,118,Reece Foy,69,Austin Ohira,37
+98,2012-08-25,Hawaii Prep,W,44,6,,Easton Tsubata,75,Kody Mento,89,Connor Ohira,52
+99,2012-08-18,at Waipahu,W,35,34,,Reece Foy,364,Yuuya Kato,24,Tanner Nishioka,108
+100,2012-08-11,Konawaena,W,43,40,Aloha Stadium,Reece Foy,286,Yuuya Kato,50,Chase Kanekuni,130
+102,2011-11-25,Waipahu,W,34,0,Aloha Stadium,Reece Foy,158,Jordan Lee,177,Tanner Nishioka,93
+103,2011-11-19,Kapaa,W,17,13,,Reece Foy,115,Jordan Lee,134,Tanner Nishioka,50
+104,2011-10-28,Damien,W,38,3,,Reece Foy,162,Jordan Lee,124,Tanner Nishioka,98
+105,2011-10-15,Pac-Five,W,21,6,Aloha Stadium,Reece Foy,159,Jordan Lee,93,Sheldon Gallarde,87
+106,2011-10-08,Kamehameha,L,14,55,,Reece Foy,185,Kody Mento,45,Tanner Nishioka,67
+107,2011-09-23,Saint Louis,L,35,42,Aloha Stadium,Reece Foy,212,Kody Mento,64,Tanner Nishioka,110
+108,2011-09-16,Pac-Five,W,13,3,Aloha Stadium,Reece Foy,87,Kody Mento,49,Sheldon Gallarde,46
+109,2011-09-09,Punahou,L,18,38,,Reece Foy,391,Reece Foy,42,Dane Arakawa,113
+110,2011-09-02,Damien,W,42,0,Aloha Stadium,Reece Foy,220,Kody Mento,100,Jordan Lee,72
+111,2011-08-27,Waianae,W,21,14,,Reece Foy,319,Jordan Lee,69,Sheldon Gallarde,118
+112,2011-08-20,Farrington,L,7,42,,Reece Foy,71,Jordan Lee,63,Tanner Nishioka,33
+113,2011-08-13,Radford,W,26,7,Aloha Stadium,Reece Foy,156,Kody Mento,118,Sheldon Gallarde,62
+115,2010-11-26,Kaimuki,W,49,14,Aloha Stadium,Reece Foy,297,Ammon Baldomero,105,Trevyn Tulonghari,99
+116,2010-11-20,Kauai,W,14,0,,Reece Foy,107,Ammon Baldomero,73,Kevin Barayuga,67
+117,2010-10-29,Damien,W,42,7,,Reece Foy,168,Ammon Baldomero,97,Sheldon Gallarde,48
+118,2010-10-15,Pac-Five,W,31,8,Aloha Stadium,Reece Foy,63,Ammon Baldomero,76,Josiah Sukumaran,31
+119,2010-10-09,Saint Louis,L,14,41,Aloha Stadium,Reece Foy,67,Ammon Baldomero,66,Ammon Baldomero,21
+120,2010-09-24,at Punahou,L,19,24,,Reece Foy,205,Ammon Baldomero,13,Bret Christman,129
+121,2010-09-17,Pac-Five,W,26,7,Aloha Stadium,Reece Foy,63,Ammon Baldomero,66,Bret Christman,31
+122,2010-09-11,Kamehameha,W,13,6,Aloha Stadium,Reece Foy,167,Ammon Baldomero,50,Bret Christman,75
+123,2010-09-04,Damien,W,23,0,Aloha Stadium,Reece Foy,133,Sheldon Galarde,34,Josiah Sukumaran,58
+124,2010-08-28,Kaiser,W,35,0,,Reece Foy,299,Ammon Baldomero,22,Sheldon Gallarde,68
+125,2010-08-20,at Mililani,L,23,43,,Reece Foy,176,Ammon Baldomero,42,Tanner Nishioka,96
+126,2010-08-14,Waialua,W,37,7,Aloha Stadium,Josiah Situmeang,128,Ammon Baldomero,64,Josiah Sukumaran,87
+128,2009-12-04,Kauai,W,24,17,Aloha Stadium,Jarrett Arakawa,251,Ammon Baldomero,108,Trevyn Tulonghari,134
+129,2009-11-27,Aiea,W,21,7,Radford,Jarrett Arakawa,201,Ammon Baldomero,139,Trevyn Tulonghari,74
+130,2009-11-07,Damien,W,38,14,,Jarrett Arakawa,243,Ammon Baldomero,21,Trevyn Tulonghari,108
+131,2009-10-30,Word of Life,W,39,7,,Jarrett Arakawa,196,Alex Matsunami,65,Trevyn Tulonghari,93
+132,2009-10-17,Pac-Five,W,42,17,Aloha Stadium,Jarrett Arakawa,254,Alex Matsunami,48,Kevin Barayuga,97
+133,2009-10-09,Saint Louis,L,0,28,Aloha Stadium,Jarrett Arakawa,184,Ammon Baldomero,18,Trevyn Tulonghari,108
+134,2009-10-03,Damien,W,35,6,Aloha Stadium,Jarrett Arakawa,159,Ammon Baldomero,106,Kasey Takahashi,59
+135,2009-10-03,,,,,,,,,,Kevin Barayuga,59
+136,2009-09-25,Punahou,W,35,12,,Jarrett Arakawa,189,Ammon Baldomero,75,Kevin Barayuga,68
+137,2009-09-19,Pac-Five,W,31,3,Kamehameha,Jarrett Arakawa,142,Alex Matsunami,45,Trevyn Tulonghari,71
+138,2009-09-12,Word of Life,W,42,0,Aloha Stadium,Jarrett Arakawa,166,Ammon Baldomero,58,Trevyn Tulonghari,50
+139,2009-09-05,Kamehameha,W,20,17,Aloha Stadium,Jarrett Arakawa,248,Ammon Baldomero,83,Trevyn Tulonghari,134
+140,2009-08-29,Kapolei,W,23,21,,Jarrett Arakawa,222,Ammon Baldomero,128,Trevyn Tulonghari,90
+141,2009-08-21,at Castle,L,21,42,,Jarrett Arakawa,240,Ammon Baldomero,54,Kasey Takahashi,70
+142,2009-08-15,Kaiser,W,30,19,Aloha Stadium,Jarrett Arakawa,238,Alex Matsunami,47,Bret Christman,110
+143,2009-08-15,,,,,,,,,,Kevin Barayuga,102
+145,2008-12-05,Radford,W,35,20,Aloha Stadium,Jarrett Arakawa,65,Kellen Imada,119,Trevyn Tulonghari,39
+146,2008-11-28,Campbell,W,24,6,Roosevelt,Jarrett Arakawa,141,Kellen Imada,83,Brandon Ball,50
+147,2008-11-08,Pac-Five,W,48,23,,Jarrett Arakawa,153,Kellen Imada,98,Trevyn Tulonghari,71
+148,2008-10-31,Word of Life,W,28,6,,Jarrett Arakawa,219,Kellen Imada,83,Keenan Hoohuli,49
+149,2008-10-17,at Punahou,L,7,49,,Kela Marciel,150,Kellen Imada,12,Trevyn Tulonghari,72
+150,2008-10-11,at Kamehameha,L,0,9,,Jarrett Arakawa,73,Kellen Imada,29,Trevyn Tulonghari,42
+151,2008-10-04,Saint Louis,W,35,30,Aloha Stadium,Jarrett Arakawa,153,Kellen Imada,54,Keenan Hoohuli,83
+152,2008-09-27,Damien,W,33,6,,Jarrett Arakawa,204,Kellen Imada,129,Kela Marciel,104
+153,2008-09-19,Pac-Five,W,48,17,Aloha Stadium,Jarrett Arakawa,262,Kellen Imada,75,Kela Marciel,103
+154,2008-09-12,Word of Life,W,35,0,,Jarrett Arakawa,87,Kellen Imada,102,Keenan Hoohuli,50
+155,2008-09-05,Damien,W,27,21,Aloha Stadium,Jarrett Arakawa,302,Kellen Imada,97,Brandon Ball,119
+156,2008-08-30,Kaimuki,W,11,8,,Jarrett Arakawa,189,Kellen Imada,40,Kela Marciel,145
+157,2008-08-22,at Leilehua,L,14,33,,Kela Marciel,140,Kela Marciel,61,Brandon Ball,90
+158,2008-08-16,Kamehameha-Maui,W,39,0,Aloha Stadium,Kela Marciel,161,Kellen Imada,90,Brandon Ball,54
+160,2007-11-30,Lahainaluna,W,28,21,Aloha Stadium,Kela Marciel,290,Justin Yamamoto,88,Reid Furukawa,134
+161,2007-11-24,Kauai,W,35,21,,Kela Marciel,253,Justin Yamamoto,138,Lionel Fujioka,139
+162,2007-11-02,Punahou,L,14,48,,Jarrett Arakawa,41,Kellen Imada,57,Aaron Fong,19
+163,2007-10-26,Kamehameha,L,21,35,Aloha Stadium,Kela Marciel,214,Kela Marciel,64,Lionel Fujioka,140
+164,2007-10-20,Pac-Five,L,14,21,Aloha Stadium,Kela Marciel,276,Kela Marciel,18,Ronnie Hirokawa,100
+165,2007-10-12,Damien,W,28,21,Aloha Stadium,Kela Marciel,172,Justin Yamamoto,123,Lionel Fujioka,78
+166,2007-10-12,,,,,,,,Kela Marciel,108,,
+167,2007-10-05,Saint Louis,L,34,49,Aloha Stadium,Kela Marciel,189,Kela Marciel,122,Ronnie Hirokawa,79
+168,2007-09-21,Pac-Five,W,27,12,Aloha Stadium,Kela Marciel,236,Justin Yamamoto,108,Lionel Fujioka,90
+169,2007-09-14,Damien,W,46,19,Aloha Stadium,Kela Marciel,341,Justin Yamamoto,124,Reid Furukawa,122
+170,2007-09-14,,,,,,,,,,Ronnie Hirokawa,102
+171,2007-08-31,at Waianae,L,19,22,,Kela Marciel,170,Justin Yamamoto,96,Lionel Fujioka,120
+172,2007-08-25,Kalaheo,L,25,28,,Kela Marciel,271,Kela Marciel,43,Reid Furukawa,160
+173,2007-08-25,,,,,,,,,,Lionel Fujioka,115
+174,2007-08-18,Kaiser,W,44,0,Aloha Stadium,Kela Marciel,105,Justin Yamamoto,38,Jordan Nakamura,52
+176,2006-11-24,King Kekaulike,L,37,38,War Memorial,Ryan Dung,369,Justin Yamamoto,22,Aaron Fong,127
+177,2006-11-18,Kaimuki,W,41,40,,Ryan Dung,240,Justin Yamamoto,51,Ronnie Hirokawa,106
+178,2006-11-11,Damien,W,33,19,Kaiser,Ryan Dung,131,Ryan Dung,122,Aaron Fong,110
+179,2006-11-11,,,,,,,,Justin Yamamoto,113,,
+180,2006-11-04,Saint Louis,L,21,44,Aloha Stadium,Ryan Dung,105,Ryan Dung,63,Aaron Fong,45
+181,2006-10-27,Kamehameha,L,0,23,,,,,,,
+182,2006-10-20,Pac-Five,W,29,22,Aloha Stadium,Ryan Dung,170,Justin Yamamoto,119,Lionel Fujioka,72
+183,2006-10-14,Damien,L,10,14,,Ryan Dung,163,Ryan Dung,79,Ronnie Hirokawa,73
+184,2006-10-06,at Punahou,L,25,52,,Ryan Dung,299,Justin Yamamoto,83,Ronnie Hirokawa,143
+185,2006-09-23,Pac-Five,W,24,14,Aloha Stadium,Ryan Dung,91,Justin Yamamoto,182,Ronnie Hirokawa,48
+186,2006-09-09,Damien,T,34,34,Aloha Stadium,Ryan Dung,254,Justin Yamamoto,132,Ronnie Hirokawa,102
+187,2006-09-02,Moanalua,W,26,7,,Ryan Dung,149,Justin Yamamoto,95,Lionel Fujioka,67
+188,2006-08-25,at Mililani,L,23,26,,Ryan Dung,187,Justin Yamamoto,31,Lionel Fujioka,166
+189,2006-08-19,Radford,W,22,16,Aloha Stadium,Ryan Dung,217,Justin Yamamoto,32,Aaron Fong,99
+191,2005-12-02,Radford,W,34,20,Aloha Stadium,Kiran Kepoo,187,Mike Hirokawa,217,Mike Hirokawa,52
+192,2005-11-26,Moanlaua,W,48,20,,Kiran Kepoo,355,Justin Yamamoto,75,Travis Nishioka,132
+193,2005-11-26,,,,,,,,,,Kekai Kealoha,120
+194,2005-11-04,Damien,W,57,49,,Kiran Kepoo,272,Mike Hirokawa,210,Travis Nishioka,100
+195,2005-10-28,Punahou,L,20,24,,Kiran Kepoo,247,Mike Hirokawa,84,Travis Nishioka,133
+196,2005-10-22,Saint Louis,L,3,35,Aloha Stadium,Kiran Kepoo,108,Mike Hirokawa,91,Mike Hirokawa,38
+197,2005-10-14,Pac-Five,W,40,0,Aloha Stadium,Ryan Dung,212,Reid Furukawa,69,Travis Nishioka,83
+198,2005-10-08,Kamehameha,L,29,37,Aloha Stadium,Kiran Kepoo,219,Mike Hirokawa,40,Travis Nishioka,66
+199,2005-09-30,Pac-Five,W,42,0,Aloha Stadium,Kiran Kepoo,220,Mike Hirokawa,34,Mark May,75
+200,2005-09-24,Damien,W,24,7,Aloha Stadium,Kiran Kepoo,257,Mike Hirokawa,118,Kekai Kealoha,97
+201,2005-09-10,Capital (Wash.),L,27,30,Tacoma Dome,Kiran Kepoo,297,Mike Hirokawa,124,Travis Nishioka,118
+202,2005-09-02,Castle,W,42,27,Aloha Stadium,Kiran Kepoo,315,Mike Hirokawa,128,Travis Nishioka,141
+203,2005-09-02,,,,,,,,,,Kekai Kealoha,108
+204,2005-08-26,at Nanakuli,W,44,6,,,,,,,
+205,2005-08-20,Farrington,W,48,15,Aloha Stadium,Kiran Kepoo,106,Mike Hirokawa,144,Kekai Kealoha,73
+207,2004-12-03,Campbell,L,7,28,Aloha Stadium,Kiran Kepoo,210,Mike Hirokawa,29,Travis Nishioka,55
+208,2004-11-27,Hawaii Prep,W,17,7,,Kiran Kepoo,161,Mike Hirokawa,112,Kekai Kealoha,90
+209,2004-11-05,at Punahou,L,22,25,,Kiran Kepoo,183,Mike Hirokawa,99,Travis Nishioka,91
+210,2004-10-29,Damien,W,49,7,,Kiran Kepoo,133,Mike Hirokawa,120,Travis Nishioka,45
+211,2004-10-22,Pac-Five,W,44,20,Aloha Stadium,Kai Iwasaki,54,Mike Hirokawa,189,Micah Kalama,25
+212,2004-10-16,Saint Louis,W,36,31,Aloha Stadium,Kiran Kepoo,266,Mike Hirokawa,62,Travis Nishioka,89
+213,2004-10-08,at Kamehameha,L,20,51,,Kiran Kepoo,182,Jon Takemura,29,Travis Nishioka,85
+214,2004-10-01,Pac-Five,W,38,13,Aloha Stadium,Kiran Kepoo,381,Mike Hirokawa,36,Micah Kalama,189
+215,2004-10-01,,,,,,,,,,Kekai Kealoha,107
+216,2004-10-01,,,,,,,,,,Travis Nishioka,102
+217,2004-09-18,Damien,W,28,25,Aloha Stadium,Kiran Kepoo,265,Mike Hirokawa,7,Travis Nishioka,91
+218,2004-09-04,at Pearl City,W,10,9,,Kiran Kepoo,219,Kai Iwasaki,45,Kekai Kealoha,87
+219,2004-08-28,McKinley,W,41,18,,Kiran Kepoo,150,Mike Hirokawa,114,Kekai Kealoha,72
+220,2004-08-21,Farrington,W,24,7,Aloha Stadium,Kiran Kepoo,386,Mike Hirokawa,101,Micah Kalama,159
+222,2003-10-31,Damien,L,21,28,,Kiran Kepoo,226,Raynold Stowers,81,Lee Korenaga,67
+223,2003-10-24,Saint Louis,L,20,33,Aloha Stadium,Kiran Kepoo,114,Raynold Stowers,197,Raynold Stowers,71
+224,2003-10-17,Punahou,L,9,41,,Kiran Kepoo,235,Raynold Stowers,70,Raynold Stowers,103
+225,2003-10-10,Pac-Five,T,13,13,Aloha Stadium,Kiran Kepoo,89,Raynold Stowers,203,Raynold Stowers,45
+226,2003-10-04,Kamehameha,L,3,28,Aloha Stadium,Kiran Kepoo,60,Peter Heimerdinger,20,Peter Heimerdinger,20
+227,2003-09-26,Damien,W,21,6,Aloha Stadium,Kiran Kepoo,184,Mike Hirokawa,27,Kekai Kealoha,88
+228,2003-09-20,Pac-Five,W,14,8,Aloha Stadium,Peter Heimerdinger,113,Mike Hirokawa,84,Paul Bennett,52
+229,2003-09-12,at Punahou,L,19,27,,Peter Heimerdinger,115,Raynold Stowers,121,Raynold Stowers,78
+230,2003-09-06,Keaau,W,41,0,,Peter Heimerdinger,91,Mike Hirokawa,115,Kekai Kealoha,55
+231,2003-08-30,at Hawaii Prep,W,41,7,,,,,,,
+232,2003-08-23,McKinley,L,12,25,Aloha Stadium,Peter Heimerdinger,105,Raynold Stowers,182,Paul Bennett,71
+234,2002-11-08,at Punahou,L,35,40,,Robert Mageo,300,Raynold Stowers,95,Raynold Stowers,146
+235,2002-11-08,,,,,,,,,,Tonee Suetsugu,115
+236,2002-11-01,Damien,W,23,12,,Robert Mageo,99,Raynold Stowers,237,Tonee Suetsugu,55
+237,2002-10-26,Saint Louis,L,3,35,Aloha Stadium,Peter Heimerdinger,51,Raynold Stowers,51,Karl Motoyama,44
+238,2002-10-18,Kamehameha,L,0,28,Aloha Stadium,Robert Mageo,110,Raynold Stowers,58,Tonee Suetsugu,54
+239,2002-10-11,Pac-Five,W,35,14,Aloha Stadium,Robert Mageo,181,Raynold Stowers,114,Tonee Suetsugu,54
+240,2002-09-27,Punahou,L,6,7,,,,,,,
+241,2002-09-20,Pac-Five,W,35,27,Aloha Stadium,Robert Mageo,101,Raynold Stowers,261,Karl Motoyama,25
+242,2002-09-14,Damien,W,16,0,Punahou,Robert Mageo,115,Raynold Stowers,218,Lee Korenaga,60
+243,2002-09-06,Edison (Calif.),W,34,20,Aloha Stadium,Robert Mageo,170,Raynold Stowers,127,Matt Choy,69
+244,2002-08-24,Radford,W,48,20,Aloha Stadium,,,Raynold Stowers,184,,
+245,2002-08-24,,,,,,,,Kelly Teramoto,136,,
+247,2001-11-02,Punahou,W,14,7,,Kila Kaaihue,49,Teo Bennett,103,Jay Marcouiller,30
+248,2001-10-27,Kamehameha,L,14,28,Kaiser,Kila Kaaihue,104,Teo Bennett,10,Teo Bennett,36
+249,2001-10-19,Damien,W,47,0,,Kila Kaaihue,126,Raynold Stowers,122,Teo Bennett,50
+250,2001-10-19,,,,,,,,,,Nate Kawamura,50
+251,2001-10-12,Pac-Five,W,33,0,Aloha Stadium,Kila Kaaihue,71,Teo Bennett,185,Jay Marcouiller,39
+252,2001-10-06,Saint Louis,L,7,13,Aloha Stadium,Kila Kaaihue,98,Teo Bennett,38,Royce Yokono,39
+253,2001-09-28,Pac-Five,W,37,21,Aloha Stadium,Kila Kaaihue,139,Kila Kaaihue,30,Nate Kawamura,50
+254,2001-09-07,Damien,W,48,16,Aloha Stadium,Kila Kaaihue,90,Teo Bennett,112,Jay Marcouiller,39
+255,2001-08-24,Kearny (Calif.),W,56,0,,Kila Kaaihue,129,Blake Wong,103,Jay Marcouiller,80
+256,2001-08-18,Kaimuki,W,22,0,Aloha Stadium,Kila Kaaihue,212,Teo Bennett,93,,
+258,2000-11-03,Pac-Five,W,38,0,,Kila Kaaihue,213,Justin McClain,77,Jay Marcouiller,142
+259,2000-10-27,at Punahou,L,17,21,,Kila Kaaihue,223,Teo Bennett,22,Ikaika Goo,84
+260,2000-10-21,Kamehameha,L,0,40,Aloha Stadium,,,,,,
+261,2000-10-13,Damien,W,46,6,,Kila Kaaihue,128,Teo Bennett,71,Jay Marcouiller,67
+262,2000-10-07,Saint Louis,L,0,35,Aloha Stadium,,,,,,
+263,2000-09-29,Punahou,W,22,21,,Kila Kaaihue,196,Teo Bennett,134,Ikaika Goo,62
+264,2000-09-23,Damien,W,19,0,Aloha Stadium,Kila Kaaihue,53,Teo Bennett,111,Ikaika Goo,18
+265,2000-09-23,,,,,,,,,,Royce Yokono,18
+266,2000-09-15,Pac-Five,W,49,6,Aloha Stadium,Kila Kaaihue,95,Teo Bennett,146,Ikaika Goo,61
+267,2000-09-08,Saint Louis,L,14,45,Aloha Stadium,Kila Kaaihue,86,Teo Bennett,89,Ikaika Goo,57
+268,2000-09-01,Kamehameha,L,14,34,Aloha Stadium,Kila Kaaihue,180,Teo Bennett,17,Ikaika Goo,62
+269,2000-08-26,Buchanan (Calif.),L,0,35,,Robert Mageo,109,Blake Wong,59,Ikaika Goo,52
+270,2000-08-18,Leilehua,W,51,0,Aloha Stadium,,,Teo Bennett,75,Ikaika Goo,65
+272,1999-11-06,Pac-Five,W,38,25,Aloha Stadium,Brent Wong,195,Landon Paikai,81,Matt Alices,103
+273,1999-10-29,Punahou,L,28,41,,Brent Wong,215,Brent Wong,84,Marc Contee,69
+274,1999-10-23,Damien,W,41,12,,Brent Wong,300,Landon Paikai,28,Matt Alices,145
+275,1999-10-16,Kamehameha,L,12,14,,Brent Wong,308,Teo Bennett,21,Marc Contee,106
+276,1999-10-08,Saint Louis,L,7,42,,Brent Wong,86,Landen Paikai,28,Matt Alices,47
+277,1999-10-02,Punahou,W,14,7,,,,,,,
+278,1999-09-25,Kamehameha,L,20,36,,Brent Wong,174,Brent Wong,35,Matt Alices,87
+279,1999-09-17,Saint Louis,L,9,48,,Kila Kaaihue,205,Justin McClain,28,Kyle La Benz,86
+280,1999-09-11,Pac-Five,W,14,0,,Kila Kaaihue,34,Landen Paikai,50,Marc Contee,11
+281,1999-09-03,Damien,W,29,7,,Daniel Chong,103,Teo Bennett,37,Kyle La Benz,58
+282,1999-08-28,Waiakea,W,51,3,Aloha Stadium,,,Teo Bennett,137,,
+283,1999-08-21,at Kohala,W,35,0,,,,,,,
+285,1998-11-13,Damien,W,31,7,,Brent Wong,31,Joe Igber,278,Kyle LaBenz,21
+286,1998-11-06,at Punahou,W,26,19,,Brent Wong,128,Joe Igber,118,Matt Alices,85
+287,1998-10-31,Kamehameha,L,3,24,,Brent Wong,80,Joe Igber,54,Zach Toyofuku,67
+288,1998-10-23,Pac-Five,W,45,35,,Brent Wong,88,Joe Igber,352,Matt Alices,38
+289,1998-10-16,Saint Louis,L,42,77,Aloha Stadium,Brent Wong,190,Joe Igber,204,Matt Alices,88
+290,1998-10-09,Damien,W,49,32,,Brent Wong,141,Joe Igber,251,Zack Toyofuku,78
+291,1998-10-02,Punahou,L,15,38,,Brent Wong,75,Joe Igber,118,Joe Igber,56
+292,1998-09-25,Saint Louis,L,19,54,,Danny Chong,80,Joe Igber,148,Matt Alices,80
+293,1998-09-19,Pac-Five,W,40,29,,Danny Chong,113,Joe Igber,312,Zach Toyofuku,76
+294,1998-09-12,Kamehameha,W,34,24,,Brent Wong,94,Joe Igber,177,Matt Alices,51
+295,1998-08-29,Baldwin,W,14,12,Aloha Stadium,,,Joe Igber,178,,
+296,1998-08-22,Waiakea,W,41,33,Wong Stadium,,,,,,
+298,1997-11-15,Damien,W,17,12,,Ben Kamuth,64,Joe Igber,240,Matt Alices,25
+299,1997-11-08,Kamehameha,L,13,38,Aloha Stadium,Ben Karnuth,145,Joe Igber,58,Reinaldo Pacheco,47
+300,1997-10-31,Punahou,W,35,13,,Ben Karnuth,196,Joe Igber,153,Reinaldo Pacheco,105
+301,1997-10-24,Pac-Five,W,56,28,,Ben Karnuth,212,Joe Igber,142,Reinaldo Pacheco,154
+302,1997-10-18,Saint Louis,L,7,51,Aloha Stadium,Ben Karnuth,79,Joe Igber,48,Reinaldo Pacheco,70
+303,1997-10-10,at Punahou,W,35,7,,,,Joe Igber,216,,
+304,1997-10-04,Pac-Five,W,45,7,Aloha Stadium,Ben Karnuth,165,Joe Igber,262,Reinaldo Pacheco,107
+305,1997-09-27,Kamehameha,W,27,26,Aloha Stadium,Ben Karnuth,203,Joe Igber,202,Reinaldo Pacheco,110
+306,1997-09-20,Saint Louis,L,7,54,Aloha Stadium,Ben Karnuth,28,Joe Igber,83,Gavin Keintop,13
+307,1997-09-12,Damien,W,21,0,,,,Joe Igber,146,,
+308,1997-08-29,Waipahu,W,42,19,Aloha Stadium,,,,,,
+309,1997-08-22,at Baldwin,W,40,14,,,,,,,
+311,1996-11-15,at Punahou,L,16,41,,Marvin Wong,146,Joe Igber,68,Joe Igber,61
+312,1996-11-08,Saint Louis,L,10,38,,Marvin Wong,185,Joe Igber,8,Corin Korenaga,95
+313,1996-11-02,Pac-Five,W,27,7,Aloha Stadium,Marvin Wong,114,Joe Igber,150,Akoni Ah Yat,40
+314,1996-10-26,Kamehameha,W,30,6,Aloha Stadium,Marvin Wong,231,Joe Igber,95,Reinaldo Pacheco,96
+315,1996-10-18,Damien,W,28,21,Aloha Stadium,Marvin Wong,179,Joe Igber,60,Corin Korenaga,98
+316,1996-10-12,Pac-Five,W,17,14,Aloha Stadium,Marvin Wong,218,Joe Igber,99,Corin Korenaga,105
+317,1996-10-05,Punahou,L,6,26,,Marvin Wong,155,Joe Igber,65,Corin Korenaga,127
+318,1996-09-28,Damien,L,20,21,Aloha Stadium,Marvin Wong,237,Joe Igber,108,Rhone Rarick,93
+319,1996-09-20,Saint Louis,L,0,42,Aloha Stadium,Marvin Wong,51,Joe Igber,42,Reinaldo Pacheco,21
+320,1996-09-14,Kamehameha,L,29,34,Aloha Stadium,Marvin Wong,217,Joe Igber,71,Corin Korenaga,71
+321,1996-08-30,St. Paul (Calif.),L,16,33,Aloha Stadium,,,,,,
+322,1996-08-23,Lahainaluna,W,35,0,War Memorial,,,,,,
+324,1995-11-11,Pac-Five,L,18,21,Aloha Stadium,Marvin Wong,82,Tracey Takamiya,120,Matt Sutton,73
+325,1995-11-03,Punahou,L,6,28,,Marvin Wong,156,Marvin Wong,3,Tracey Takamiya,51
+326,1995-10-28,Kamehameha,L,0,14,Aloha Stadium,Marvin Wong,143,Tracey Takamiya,31,Reinaldo Pacheco,72
+327,1995-10-20,Damien,W,14,12,,Marvin Wong,62,Tracey Takamiya,66,Reinaldo Pacheco,50
+328,1995-10-14,Saint Louis,L,3,34,Aloha Stadium,Marvin Wong,105,Tracey Takamiya,29,Marcus Fuller,36
+329,1995-10-07,Damien,W,12,7,Aloha Stadium,Marvin Wong,38,Tracey Takamiya,77,Marcus Fuller,23
+330,1995-09-30,Pac-Five,L,13,21,Aloha Stadium,Marvin Wong,150,Tracey Takamiya,42,Matt Sutton,92
+331,1995-09-22,at Punahou,L,0,43,,Brent Ah Yat,75,Derek Flores,62,Matt Sutton,75
+332,1995-09-16,Kamehameha,L,0,28,Aloha Stadium,Brent Ah Yat,15,Derek Flores,75,Matt Sutton,21
+333,1995-09-08,Saint Louis,L,7,28,Aloha Stadium,Marvin Wong,42,Derek Flores,64,Tracey Takamiya,30
+334,1995-09-01,Waianae,L,14,35,Aloha Stadium,,,,,,
+335,1995-08-01,Hawaii Prep,W,21,6,,,,,,,
+337,1994-11-10,Punahou,L,17,31,,Micah Banton,162,Sean Takamori,29,Tracey Takamiya,52
+338,1994-11-05,Damien,L,7,21,Aloha Stadium,Micah Banton,152,Ian Ferris,9,Tracey Takamiya,109
+339,1994-10-29,Pac-Five,W,24,14,Aloha Stadium,Micah Banton,138,Sean Takamori,79,Tracey Takamiya,59
+340,1994-10-22,Saint Louis,L,10,41,Aloha Stadium,Micah Banton,137,Michael Colosimo,31,Rodney Kawamura,58
+341,1994-10-15,Kamehameha,W,16,14,Aloha Stadium,Micah Banton,56,Sean Takamori,32,Tracey Takamiya,34
+342,1994-10-07,Damien,L,10,13,Aloha Stadium,Micah Banton,215,Michael Colosimo,52,Matthew Sutton,92
+343,1994-10-01,Kamehameha,L,7,21,Aloha Stadium,Micah Banton,71,Michael Colosimo,22,Tracey Takamiya,33
+344,1994-09-23,at Punahou,L,7,9,,Micah Banton,59,Sean Takamori,20,Tracey Takamiya,53
+345,1994-09-17,Saint Louis,L,0,27,Aloha Stadium,Micah Banton,18,Michael Colosimo,10,Tracey Takamiya,14
+346,1994-09-09,Pac-Five,W,23,6,Aloha Stadium,Micah Banton,65,Derek Flores,154,Tracey Takamiya,43
+347,1994-09-02,Waianae,L,15,33,Aloha Stadium,,,,,,
+348,1994-08-26,Lahainaluna,W,41,0,War Memorial,Micah Banton,161,Derek Flores,55,,
+350,1993-11-13,Pac-Five,W,49,12,Aloha Stadium,Brian Ah Yat,247,Derek Flores,102,Raul Pacheco,157
+351,1993-11-05,Punahou,L,13,28,,Brian Ah Yat,313,Micah Banton,-1,Raul Pacheco,142
+352,1993-11-05,,,,,,,,,,David Luedecke,104
+353,1993-10-30,Damien,W,31,14,Aloha Stadium,,,,,,
+354,1993-10-22,Kamehameha,L,8,16,Aloha Stadium,Brian Ah Yat,235,Derek Flores,-3,Raul Pacheco,119
+355,1993-10-16,Saint Louis,W,27,26,Aloha Stadium,Brian Ah Yat,334,Derek Flores,38,David Luedecke,133
+356,1993-10-16,,,,,,,,,,Raul Pacheco,120
+357,1993-10-08,Pac-Five,W,45,6,Aloha Stadium,Brian Ah Yat,168,Derek Flores,143,Raul Pacheco,75
+358,1993-10-02,Damien,W,42,6,Aloha Stadium,Brian Ah Yat,172,Derek Flores,62,Micah Banton,33
+359,1993-10-02,,,,,,,,,,David Luedecke,33
+360,1993-09-24,Kamehameha,W,21,2,,Brian Ah Yat,159,Derek Flores,33,Raul Pacheco,70
+361,1993-09-17,Punahou,W,21,6,Aloha Stadium,Brian Ah Yat,153,Micah Banton,49,Raul Pacheco,91
+362,1993-09-11,Saint Louis,L,7,21,Aloha Stadium,Brian Ah Yat,225,Micah Banton,24,Raul Pacheco,179
+363,1993-09-03,Waipahu,W,14,6,Aloha Stadium,Brian Ah Yat,151,,,Raul Pacheco,63
+364,1993-08-27,at Hilo,W,28,0,,,,,,,
+366,1992-11-27,Kahuku,W,28,12,Aloha Stadium,Brian Ah Yat,153,Kyle Chang,87,Raul Pacheco,118
+367,1992-11-20,Punahou,W,37,7,,Brian Ah Yat,67,Kyle Chang,103,Raul Pacheco,64
+368,1992-11-14,Saint Louis,L,14,42,Aloha Stadium,Brian Ah Yat,282,N/A,,Raul Pacheco,219
+369,1992-11-06,Kamehameha,W,20,19,,Brian Ah Yat,164,Kyle Chang,40,Raul Pacheco,81
+370,1992-10-31,Pac-Five,W,21,12,Aloha Stadium,Brian Ah Yat,50,Kyle Chang,115,Matt Kleintop,18
+371,1992-10-31,,,,,,,,,,Tommy Otake,18
+372,1992-10-23,Damien,W,14,0,Aloha Stadium,Brian Ah Yat,18,Kyle Chang,228,David Luedecke,15
+373,1992-10-16,at Punahou,W,26,7,,Brian Ah Yat,144,Kyle Chang,78,Raul Pacheco,65
+374,1992-10-10,Damien,W,18,14,Aloha Stadium,Brian Ah Yat,211,Kyle Chang,58,Raul Pacheco,93
+375,1992-10-02,Pac-Five,L,12,14,Aloha Stadium,Brian Ah Yat,115,Kyle Chang,92,Raul Pacheco,57
+376,1992-09-25,Kamehameha,W,38,12,Aloha Stadium,Brian Ah Yat,142,Kyle Chang,80,Matt Kleintop,62
+377,1992-09-19,Saint Louis,L,6,21,Aloha Stadium,Brian Ah Yat,76,Micah Banton,58,Raul Pacheco,41
+378,1992-09-05,Baldwin,W,23,21,Aloha Stadium,Brian Ah Yat,210,,,,
+379,1992-08-29,Hawaii Prep,W,28,21,Waimea,,,,,,
+381,1991-11-15,Punahou,W,20,12,,Shaun Shimizu,53,Tad Yamashita,189,Tad Yamashita,30
+382,1991-11-08,Kamehameha,T,7,7,Aloha Stadium,Shaun Shimizu,48,Tad Yamashita,69,Matt Kleintopp,22
+383,1991-10-31,Damien,W,13,7,Cooke Field,Shaun Shimizu,33,Tad Yamashita,111,Mark Watanabe,24
+384,1991-10-26,Saint Louis,L,19,32,Aloha Stadium,Darren Kimura,109,Tad Yamashita,81,Mark Watanabe,104
+385,1991-10-18,Pac-Five,L,14,21,Aloha Stadium,Brian Ah Yat,175,Shawn Haruno,43,Mark Watanabe,102
+386,1991-10-12,Kamehameha,L,17,44,Aloha Stadium,Brian Ah Yat,125,Eddie Choo,17,Mark Watanabe,102
+387,1991-10-04,Saint Louis,L,0,42,Aloha Stadium,Brian Ah Yat,31,Shawn Haruno,99,Matt Kleintopp,12
+388,1991-09-27,Punahou,L,0,17,Aloha Stadium,Brian Ah Yat,19,Asa Miyahira,27,Mark Watanabe,10
+389,1991-09-20,Damien,W,14,10,Cooke Field,Brian Ah Yat,93,Shawn Haruno,110,Matt Kleintopp,44
+390,1991-09-13,Pac-Five,W,17,14,Aloha Stadium,Brian Ah Yat,72,Asa Miyahira,126,Mark Watanabe,75
+391,1991-09-06,Mater Dei (Calif.),L,20,34,Aloha Stadium,Brian Ah Yat,185,,,,
+392,1991-08-01,Kapaa,W,28,6,,,,,,,
+394,1990-11-21,Punahou,L,14,17,Cooke Field,Paul Ah Yat,143,Ryan Hoopii,65,Mark Watanabe,49
+395,1990-11-09,Damien,W,35,13,Cooke Field,Paul Ah Yat,174,Ryan Hoopii,110,Tad Yamashita,112
+396,1990-11-01,Kamehameha,W,14,7,Cooke Field,Paul Ah Yat,114,Ryan Hoopii,71,Danny Garcia,87
+397,1990-10-26,Punahou,W,24,12,,Paul Ah Yat,63,Ryan Hoopii,158,Stuart Endo,25
+398,1990-10-19,Pac-Five,W,15,10,Aloha Stadium,Shaun Shimizu,112,Ryan Hoopii,192,Tad Yamashita,29
+399,1990-10-13,Saint Louis,L,0,34,Aloha Stadium,Paul Ah Yat,96,Meki Pei,42,Meki Pei,43
+400,1990-10-05,Pac-Five,W,26,19,Aloha Stadium,Paul Ah Yat,323,Ryan Hoopii,61,Danny Garcia,89
+401,1990-09-29,Damien,L,7,26,Aloha Stadium,Shaun Shimizu,121,Danny Ho,16,Danny Garcia,44
+402,1990-09-21,Saint Louis,L,3,41,Aloha Stadium,,,,,,
+403,1990-09-15,Punahou,L,14,21,Aloha Stadium,,,,,,
+404,1990-09-07,Kamehameha,L,0,10,Aloha Stadium,Paul Ah Yat,46,Danny Ho,60,Mark Watanabe,21
+405,1990-08-31,Edison (Calif.),L,0,12,Aloha Stadium,,,,,,
+406,1990-08-24,Rikkyo (Japan),W,13,0,,,,,,,
+408,1989-11-09,at Punahou,W,20,19,,Paul Ah Yat,149,Tashima,32,Ryan Hoopii,83
+409,1989-11-02,Pac-Five,L,9,20,Cooke Field,Paul Ah Yat,105,Tashima,12,Ashley Kai,36
+410,1989-10-26,Damien,W,24,21,Cooke Field,Paul Ah Yat,222,Danny Ho,40,Ryan Hoopii,112
+411,1989-10-20,Saint Louis,L,7,25,Aloha Stadium,Paul Ah Yat,87,Paul Ah Yat,17,Rand Ide,43
+412,1989-10-14,Kamehameha,L,0,21,Aloha Stadium,Paul Ah Yat,149,Ryan Hoopii,15,Ashley Kai,77
+413,1989-10-06,Pac-Five,W,24,21,Aloha Stadium,Paul Ah Yat,166,Tashima,74,Ashley Kai,92
+414,1989-09-29,Punahou,L,0,20,Cooke Field,Paul Ah Yat,71,Aaron Nakamura,28,Aaron Nakamura,19
+415,1989-09-29,,,,,,,,,,Hamura,19
+416,1989-09-22,Damien,W,28,6,Aloha Stadium,Paul Ah Yat,281,Aaron Nakamura,14,Ashley Kai,115
+417,1989-09-16,Kamehameha,W,14,6,Aloha Stadium,Paul Ah Yat,169,Aaron Nakamura,39,Ryan Hoopii,95
+418,1989-09-08,Saint Louis,L,9,16,Aloha Stadium,Paul Ah Yat,350,Tashima,47,Ashley Kai,134
+419,1989-09-01,Konawaena,W,31,6,Aloha Stadium,,,,,,
+420,1989-08-25,Kaimuki,W,35,0,Aloha Stadium,Kaala Shea,248,,,,
+422,1988-11-10,Punahou,L,6,35,,Kaala Shea,91,Ryan Takaki,36,Ashley Kai,60
+423,1988-11-03,Pac-Five,L,13,18,Cooke Field,Kaala Shea,191,Ryan Hoopii,24,Ashley Kai,87
+424,1988-10-28,Saint Louis,L,17,49,,John Stephens,79,Ryan Hoopii,35,Michael Pila,67
+425,1988-10-21,Damien,L,12,42,Aloha Stadium,John Stephens,157,Ryan Hoopii,11,Rand Ide,81
+426,1988-10-15,Kamehameha,W,24,0,Aloha Stadium,John Stephens,59,John Stephens,73,Michael Pila,40
+427,1988-10-07,Saint Louis,L,0,24,Aloha Stadium,John Stephens,51,John Stephens,16,Michael Pila,33
+428,1988-10-01,Damien,L,26,28,Aloha Stadium,John Stephens,92,Ryan Hoopii,66,Michael Pila,109
+429,1988-09-24,Punahou,L,7,29,Aloha Stadium,Kaala Shea,67,Ryan Hoopii,49,Ashley Kai,20
+430,1988-09-16,Kamehameha,L,11,14,Aloha Stadium,Kaala Shea,164,Ryan Hoopii,21,Michael Pila,120
+431,1988-09-10,Pac-Five,L,0,7,Aloha Stadium,Kaala Shea,145,Ryan Hoopii,30,Michael Pila,74
+432,1988-09-02,Kahuku,W,20,6,Aloha Stadium,Kaala Shea,168,,,,
+433,1988-08-27,at Kaiser,W,6,0,,,,,,,
+435,1987-11-13,Pac-Five,W,30,20,,John Stephens,269,Eddie Kealoha,59,Drue Apao,87
+436,1987-11-05,Kamehameha,W,20,19,Cooke Field,John Stephens,219,Eddie Kealoha,67,Ryan Takaki,84
+437,1987-10-30,at Punahou,W,14,7,,John Stephens,109,Eddie Kealoha,92,Michael Pila,34
+438,1987-10-23,Saint Louis,L,16,20,Aloha Stadium,John Stephens,135,Eddie Kealoha,21,Drue Apao,62
+439,1987-10-16,Damien,W,3,0,Cooke Field,John Stephens,123,Eddie Kealoha,32,Michael Pila,54
+440,1987-10-09,Saint Louis,L,7,21,Aloha Stadium,John Stephens,258,Eddie Kealoha,56,Branden Sumida,107
+441,1987-10-02,Pac-Five,L,8,21,Cooke Field,John Stephens,168,Eddie Kealoha,43,Branden Sumida,82
+442,1987-09-26,Kamehameha,W,21,0,Aloha Stadium,John Stephens,166,Brandon San Diego,36,Branden Sumida,108
+443,1987-09-18,Damien,W,30,20,Aloha Stadium,John Stephens,166,Erik Leong,34,Drue Apao,56
+444,1987-09-12,Punahou,W,20,7,Aloha Stadium,John Stephens,179,Eddie Kealoha,116,Eddie Kealoha,112
+445,1987-09-04,Farrington,W,27,7,Aloha Stadium,,,Eddie Kealoha,195,,
+446,1987-08-29,Kaiser,W,33,7,Cooke Field,,,,,,
+448,1986-11-14,Punahou,W,21,16,,Corey Fujii,25,Shayne Hoopii,75,Jim Wheeler,25
+449,1986-11-07,Saint Louis,L,6,17,Aloha Stadium,John Stephens,146,Eddie Kealoha,53,Branden Sumida,82
+450,1986-11-01,Kamehameha,W,28,14,Aloha Stadium,John Stephens,70,Eddie Kealoha,68,Eddie Kealoha,43
+451,1986-10-24,Damien,W,28,8,,John Stephens,94,Eddie Kealoha,37,Branden Sumida,77
+452,1986-10-18,Pac-FIve,L,9,14,Cooke Field,John Stephens,76,Eddie Kealoha,47,Branden Sumida,75
+453,1986-10-11,Damien,W,3,0,Aloha Stadium,Corey Fujii,28,Shayne Hoopii,44,Shayne Hoopii,22
+454,1986-10-03,Kamehameha,W,27,15,Cooke Field,Corey Fujii,8,Eddie Kealoha,141,Eddie Kealoha,8
+455,1986-09-26,Pac-FIve,W,35,13,Aloha Stadium,Corey Fujii,65,Eddie Kealoha,94,Eddie Kealoha,65
+456,1986-09-19,Punahou,W,27,7,Aloha Stadium,Corey Fujii,70,Eddie Kealoha,79,Jim Wheeler,56
+457,1986-09-13,Saint Louis,L,7,21,Aloha Stadium,Corey Fujii,6,Geoffrey Leong,12,Branden Sumida,6
+458,1986-09-05,Leilehua,W,17,0,Aloha Stadium,,,Shayne Hoopii,92,,
+459,1986-08-29,at Konawaena,W,20,7,,,,,,,
+461,1985-11-15,at Punahou,L,6,17,,Corey Fujii,41,Shayne Hoopii,59,Wheeler,30
+462,1985-11-08,Damien,W,14,7,,Derek Aki,12,Shayne Hoopii,122,Eddie Kealoha,13
+463,1985-11-01,Saint Louis,L,15,30,Cooke Field,Derek Aki,18,Okamura,94,Corey Fujii,10
+464,1985-10-26,Pac-Five,L,7,27,Aloha Stadium,Derek Aki,10,Okamura,44,Shayne Hoopii,7
+465,1985-10-18,Kamehameha,W,21,7,Aloha Stadium,Derek Aki,59,Shane Hoopii,106,E. Leong,37
+466,1985-10-12,Punahou,W,22,20,Aloha Stadium,Derek Aki,59,Eddie Kealoha,129,Wheeler,38
+467,1985-10-04,Damien,W,28,14,Aloha Stadium,Derek Aki,36,Shayne Hoopii,138,Leong,35
+468,1985-09-28,Saint Louis,L,10,14,Aloha Stadium,Derek Aki,43,Okamura,63,Fujimori,43
+469,1985-09-20,Kamehameha,L,7,17,Aloha Stadium,Derek Aki,22,Okamura,28,Fujimori,18
+470,1985-09-12,Pac-Five,L,6,27,Aloha Stadium,Derek Aki,13,Shayne Hoopii,45,Uyehara,7
+471,1985-09-07,Waipahu,W,14,7,Aloha Stadium,Derek Aki,116,Shayne Hoopii,60,Fujimori,61
+472,1985-08-30,at Mililani,W,13,0,,,,,,,
+474,1984-11-09,Punahou,W,16,15,,Michael Rodrigues,150,Daryl Okamura,67,Grant Fusato,39
+475,1984-11-02,Damien,L,7,32,Aloha Stadium,Michael Rodrigues,168,Michael Rodrigues,15,Bart Kihara,65
+476,1984-10-26,Saint Louis,L,6,14,Kaiser,Michael Rodrigues,88,Daryl Okamura,41,Bart Kihara,46
+477,1984-10-18,Pac-Five,L,6,34,Aloha Stadium,Michael Rodrigues,108,Corey Fujii,23,Grant Fusato,32
+478,1984-10-12,Kamehameha,L,8,14,Aloha Stadium,Michael Rodrigues,212,Daryl Okamura,49,Bart Kihara,75
+479,1984-10-05,Saint Louis,L,8,29,Aloha Stadium,Michael Rodrigues,141,Shane Hoopii,24,Bart Kihara,39
+480,1984-09-28,Pac-Five,L,15,38,Roosevelt,Michael Rodrigues,246,Shane Hoopii,18,Shane Hoopii,78
+481,1984-09-28,,,,,,,,,,Uyehara,78
+482,1984-09-21,Kamehameha,L,18,21,Aloha Stadium,Michael Rodrigues,249,Daryl Okamura,63,Grant Fusato,81
+483,1984-09-15,Damien,L,12,17,Aloha Stadium,Michael Rodrigues,57,Daryl Okamura,69,Paul Carlton,47
+484,1984-09-07,Punahou,W,24,20,Aloha Stadium,Michael Rodrigues,198,Michael Rodrigues,30,Danny Yamashiro,75
+485,1984-09-01,Leilehua,L,6,27,Aloha Stadium,,,,,,
+486,1984-08-24,Maui,W,22,6,War Memorial,,,,,,
+488,1983-11-10,Punahou,W,24,23,Aloha Stadium,Michael Rodrigues,47,Roland Ruff,144,Dennis Chong Kee,32
+489,1983-11-04,Pac-Five,L,0,15,Aloha Stadium,Danny Feldhaus,46,Roland Ruff,51,Dennis Chong Kee,20
+490,1983-10-27,Kamehameha,L,9,10,Aloha Stadium,Danny Feldhaus,66,Roland Ruff,104,Dennis Chong Kee,35
+491,1983-10-21,Damien,W,15,14,Aloha Stadium,Danny Feldhaus,51,Reid Tamanaha,79,Paul Carlton,24
+492,1983-10-15,Saint Louis,L,6,21,Aloha Stadium,Danny Feldhaus,60,Reid Tamanaha,91,Dennis Chong Kee,23
+493,1983-10-07,Kamehameha,L,6,24,Aloha Stadium,Michael Rodrigues,37,Reid Tamanaha,31,Paul Carlton,18
+494,1983-09-30,Pac-Five,L,17,18,Roosevelt,Michael Rodrigues,83,Reid Tamanaha,129,Dennis Chong Kee,25
+495,1983-09-23,Damien,L,9,10,Aloha Stadium,Michael Rodrigues,76,Reid Tamanaha,32,Dennis Chong Kee,36
+496,1983-09-15,Saint Louis,L,2,14,Aloha Stadium,Michael Rodrigues,60,Reid Tamanaha,20,Danny Feldhaus,34
+497,1983-09-09,Punahou,W,27,12,Aloha Stadium,Michael Rodrigues,181,Reid Tamanaha,49,Danny Feldhaus,74
+498,1983-08-27,Waipahu,W,17,14,Aloha Stadium,Michael Rodrigues,136,Reid Tamanaha,47,Danny Feldhaus,51
+499,1983-08-27,,,,,,,,Roland Ruff,47,,
+501,1982-11-11,Kamehameha,L,0,10,Aloha Stadium,Michael Rodrigues,14,Roland Ruff,55,Dodd Apao,14
+502,1982-11-05,Pac-Five,L,7,34,Aloha Stadium,Danny Feldhaus,78,Darin Lee,20,Frank Lutu,66
+503,1982-10-28,Punahou,W,20,7,Aloha Stadium,Michael Rodrigues,85,Darin Lee,90,Roland Ruff,46
+504,1982-10-23,Damien,L,7,14,Aloha Stadium,Michael Rodrigues,112,Roland Ruff,28,Scott Laboy,72
+505,1982-10-15,Saint Louis,W,10,9,Aloha Stadium,Michael Rodrigues,78,Roland Ruff,52,Frank Lutu,32
+506,1982-10-07,Punahou,T,13,13,Aloha Stadium,Michael Rodrigues,160,Roland Ruff,34,Darin Lee,98
+507,1982-10-01,Damien,W,14,6,Aloha Stadium,Michael Rodrigues,118,Ronnie Doi,33,Scott Laboy,66
+508,1982-09-24,Saint Louis,W,17,14,Kaiser,Michael Rodrigues,58,Ronnie Doi,94,Darin Lee,42
+509,1982-09-17,Pac-Five,L,7,10,Aloha Stadium,Craig Kaneshiro,105,Roland Ruff,24,Scott Laboy,69
+510,1982-09-10,Kamehameha,W,22,20,Aloha Stadium,Craig Kaneshiro,23,Darin Lee,65,Scott Laboy,20
+511,1982-08-27,Leilehua,W,29,6,Aloha Stadium,Craig Kaneshiro,69,Ronnie Doi,56,Dodd Apao,29
+513,1981-11-11,Damien,W,2,0,Aloha Stadium,Matt Bright,63,Ronnie Doi,58,Robbie Cundiff,38
+514,1981-11-06,Punahou,L,9,13,Aloha Stadium,Matt Bright,106,Ronnie Doi,28,Robbie Cundiff,82
+515,1981-10-30,Kamehameha,L,0,7,Aloha Stadium,Matt Bright,79,Darren Lee,17,Robbie Cundiff,46
+516,1981-10-24,Saint Louis,L,0,19,Aloha Stadium,Matt Bright,69,Ronnie Doi,35,Dodd Apao,16
+517,1981-10-16,Pac-Five,W,20,0,Aloha Stadium,Ronnie Doi,38,Ronnie Doi,65,Dodd Apao,38
+518,1981-10-09,Punahou,W,28,3,Aloha Stadium,Matt Bright,93,Roland Ruff,51,Frank Lutu,52
+519,1981-10-02,Kamehameha,W,14,7,Aloha Stadium,Matt Bright,72,Ronnie Doi,81,Roland Ruff,46
+520,1981-09-25,Pac-Five,W,27,0,Roosevelt,Matt Bright,15,Darren Lee,34,Frank Lutu,15
+521,1981-09-18,Damien,W,14,9,Aloha Stadium,Matt Bright,59,Roland Ruff,13,Roland Ruff,24
+522,1981-09-12,Saint Louis,L,15,37,Aloha Stadium,Matt Bright,68,Ronnie Doi,23,Robbie Cundiff,29
+523,1981-09-12,,,,,,,,,,Darren Lee,29
+524,1981-08-29,Waipahu,L,0,6,Aloha Stadium,Matt Bright,112,,,Frank Lutu,48
+526,1980-11-28,Waianae,T,7,7,Aloha Stadium,Matt Bright,146,Randy Kobayashi,66,Steve Wong,45
+527,1980-11-22,Kamehameha,W,21,13,Aloha Stadium,Matt Bright,186,Ross Nishioka,44,Steve Wong,77
+528,1980-11-13,Pac-Five,W,13,8,Aloha Stadium,Matt Bright,98,Ed Kobayashi,87,Steve Wong,51
+529,1980-11-07,Damien,W,14,6,Aloha Stadium,Matt Bright,218,Ross Nishioka,50,Dirk Apao,110
+530,1980-10-31,Saint Louis,W,13,12,Roosevelt,Matt Bright,190,Ronnie Doi,20,Frank Lutu,76
+531,1980-10-23,Kamehameha,L,12,18,Aloha Stadium,Matt Bright,171,Randy Kobayashi,33,Steve Wong,78
+532,1980-10-17,Punahou,W,3,0,Aloha Stadium,Dirk Apao,75,Dirk Apao,23,Steve Wong,60
+533,1980-10-10,Damien,W,7,0,,,,,,,
+534,1980-10-03,Pac-Five,W,14,6,Aloha Stadium,Dirk Apao,40,Scott Laboy,77,Steve Wong,26
+535,1980-09-25,Kamehameha,W,12,7,,,,,,,
+536,1980-09-18,Saint Louis,W,21,12,Aloha Stadium,Dirk Apao,88,Matt Bright,88,Steve Wong,69
+537,1980-09-12,Punahou,T,7,7,Aloha Stadium,Dirk Apao,44,Randy Kobayashi,43,Scott Hirashiki,36
+538,1980-09-12,,,,,,,,Matt Bright,43,,
+539,1980-08-30,Leilehua,L,7,14,Aloha Stadium,Dirk Apao,167,,,Steve Wong,119
+540,1980-08-22,at Kansai West (Japan),W,21,6,,,,,,,
+542,1979-11-07,Saint Louis,W,7,6,Aloha Stadium,,,,,,
+543,1979-11-02,Damien,W,22,0,Aloha Stadium,Dirk Apao,62,Haneda,45,Steve Wong,75
+544,1979-10-27,Punahou,L,7,14,Aloha Stadium,Randy Cundiff,129,,,,
+545,1979-10-19,Pac-Five,L,19,20,Aloha Stadium,Randy Cundiff,240,Dirk Apao,78,Steve Wong,136
+546,1979-10-13,Kamehameha,L,16,26,Aloha Stadium,Randy Cundiff,115,,,,
+547,1979-10-05,Saint Louis,L,14,15,Aloha Stadium,Randy Cundiff,22,Bobby Gocong,89,Robert Ichikawa,22
+548,1979-09-28,Damien,L,0,19,Aloha Stadium,Randy Cundiff,158,Bobby Gocong,48,Matt Bright,86
+549,1979-09-21,Punahou,L,12,15,Aloha Stadium,Randy Cundiff,141,Bobby Gocong,44,Steve Wong,141
+550,1979-09-15,Pac-Five,W,21,16,Aloha Stadium,Randy Cundiff,52,Bobby Gocong,85,,
+551,1979-09-06,Kamehameha,L,20,34,Aloha Stadium,Dirk Apao,97,Lau,15,Robert Ichikawa,110
+552,1979-08-25,Waipahu,W,14,0,Aloha Stadium,,,,,,
+554,1978-11-08,Punahou,W,35,27,Aloha Stadium,Armand Chong,18,Armand Chong,178,,
+555,1978-11-04,Pac-Five,L,37,56,Aloha Stadium,Dirk Apao,7,Frank Felix,93,Ishitani,7
+556,1978-10-28,Kamehameha,L,30,48,Aloha Stadium,Armand Chong,118,Frank Felix,116,,
+557,1978-10-20,Damien,W,36,28,Aloha Stadium,Armand Chong,113,Frank Felix,75,Steve Wong,113
+558,1978-10-14,Saint Louis,L,15,38,,Randy Cundiff,130,,,,
+559,1978-10-06,Punahou,L,21,27,Aloha Stadium,Randy Cundiff,43,Han,94,Kennedy,22
+560,1978-09-28,Pac-Five,W,27,10,Aloha Stadium,Randy Cundiff,59,Ishitani,80,Steve Wong,26
+561,1978-09-22,Kamehameha,L,6,28,Aloha Stadium,Randy Cundiff,138,Ishitani,47,Armand Chong,123
+562,1978-09-16,Damien,W,27,26,Aloha Stadium,Randy Cundiff,174,Frank Felix,94,Armond Chong,114
+563,1978-09-07,Saint Louis,L,19,21,Aloha Stadium,,,,,,
+564,1978-08-26,Leilehua,L,19,35,Aloha Stadium,,42,Frank Felix,150,,
+566,1977-11-10,Kamehameha,L,9,15,Aloha Stadium,Randy Camat,126,Gocong,22,Kurt Motogawa,34
+567,1977-11-05,Damien,W,28,12,,Randy Camat,94,Frank Felix,88,,
+568,1977-10-28,Punahou,L,19,42,Aloha Stadium,Randy Camat,216,Frank Felix,77,Seto,98
+569,1977-10-20,Pac-Five,W,27,4,Aloha Stadium,Randy Camat,94,Frank Felix,126,Armond Chong,48
+570,1977-10-14,Saint Louis,L,13,21,Aloha Stadium,Randy Camat,207,Frank Felix,75,Armond Chong,158
+571,1977-10-08,Kamehameha,L,15,20,Aloha Stadium,Randy Camat,139,,,,
+572,1977-09-30,Damien,W,28,0,Aloha Stadium,Randy Camat,143,Han,69,Armand Chong,79
+573,1977-09-22,Punahou,L,14,21,Aloha Stadium,Randy Camat,202,Han,47,Curtis Ching,83
+574,1977-09-16,Pac-Five,W,12,7,Aloha Stadium,Randy Camat,178,Han,46,Frank Felix,96
+575,1977-09-02,Waianae,L,30,58,Aloha Stadium,Randy Camat,299,,,Armand Chong,113
+576,1977-08-27,at Kapaa,W,34,6,,,,,,,
+578,1976-11-14,Damien,W,21,8,,Randy Camat,67,,,,
+579,1976-11-05,at Punahou,W,40,14,,Randy Camat,210,Walter Nishoka,96,Russell Loo,69
+580,1976-10-30,Saint Louis,L,6,7,Aloha Stadium,,,Jeffrey Freeman,71,,
+581,1976-10-22,Kamehameha,L,0,7,Aloha Stadium,Randy Camat,101,Russell Loo,32,David Sevey,45
+582,1976-10-15,Pac-Five,W,20,14,,Randy Camat,67,Frank Felix,150,David Sevey,47
+583,1976-10-08,Damien,W,34,12,Aloha Stadium,Randy Camat,168,Jeffrey Freeman,90,David Sevey,87
+584,1976-10-01,Punahou,W,15,10,,Randy Camat,148,,,Derek Yamada,60
+585,1976-09-24,Saint Louis,W,31,6,Aloha Stadium,Randy Camat,109,Jeffrey Freeman,67,David Sevey,85
+586,1976-09-17,Kamehameha,W,40,13,Aloha Stadium,Randy Camat,224,Neda,29,David Sevey,85
+587,1976-09-04,Waianae,W,17,0,,,,,,,
+588,1976-08-28,Waipahu,W,14,6,,Randy Camat,102,,,Derek Yamada,62
+590,1975-11-14,Pac-Five,W,42,35,,,,,,,
+591,1975-11-07,Punahou,W,17,8,Aloha Stadium,Len Tsuhako,53,Walter Nishoka,160,Derek Yamada,40
+592,1975-11-02,Saint Louis,L,6,13,,,,,,,
+593,1975-10-25,Damien,L,0,7,Aloha Stadium,Len Tsuhako,70,,,,
+594,1975-10-17,Kamehameha,L,13,26,Aloha Stadium,Randy Camat,80,Derek Yamada,103,Derek Yamada,80
+595,1975-10-11,Pac-Five,W,34,6,,,,,,,
+596,1975-10-04,Punahou,L,21,23,,Len Tsuhako,130,Russell Loo,70,Derek Yamada,100
+597,1975-09-25,Saint Louis,L,7,14,Aloha Stadium,Len Tsuhako,101,Norman Okimoto,18,Russell Loo,40
+598,1975-09-19,Damien,L,15,28,,Len Tsuhako,46,Russell Loo,59,Derek Yamada,37
+599,1975-09-06,Waipahu,W,6,0,,,,,,,
+600,1975-08-31,Maui,W,17,0,,,,Norman Okimoto,87,Norman Okimoto,82
+602,1974-11-16,Kamehameha,L,6,10,,Nolan Arakawa,31,Gene Tamashiro,40,,
+603,1974-11-09,Pac-Five,W,38,6,,Len Tsuhako,92,Gene Tamashiro,109,Kishimoto,40
+604,1974-11-02,Saint Louis,W,29,12,Honolulu Stadium,Nolan Arakawa,96,Gene Tamashiro,90,Espinda,46
+605,1974-10-26,Damien,T,7,7,,Nolan Arakawa,26,,,,
+606,1974-10-19,Punahou,L,14,24,,Nolan Arakawa,63,Russell Loo,84,Oka,36
+607,1974-10-13,Kamehameha,W,21,13,,Nolan Arakawa,84,,,,
+608,1974-10-05,Pac-Five,W,35,0,,Nolan Arakawa,158,Gene Tamashiro,108,Jerry Scanlan,49
+609,1974-09-28,Saint Louis,T,6,6,,Nolan Arakawa,25,,,,
+610,1974-09-20,Damien,W,33,14,,Nolan Arakawa,112,Gene Tamashiro,168,Jerry Scanlan,61
+611,1974-09-07,Waipahu,W,46,20,Honolulu,Nolan Arakawa,75,Gene Tamashiro,118,Oka,47
+612,1974-09-01,Maui,W,35,7,War Memorial,,,,,,
+614,1973-11-09,Kamehameha,L,9,13,,,,,,,
+615,1973-11-02,Damien,L,6,12,Honolulu Stadium,Ed Kobayashi,35,Ed Kobayashi,53,Jerry Scanlan,29
+616,1973-10-25,Punahou,L,14,21,,,,,,,
+617,1973-10-19,HUMMERS,W,28,7,,,,,,,
+618,1973-10-12,Saint Louis,L,7,30,,,,,,,
+619,1973-10-04,Kamehameha,L,19,21,,Ed Kobayashi,132,Wallace Ho,66,Jerry Scanlan,57
+620,1973-09-27,Damien,W,17,14,,Ed Kobayashi,26,Gene Tamashiro,129,Gene Tamashiro,14
+621,1973-09-20,Punahou,L,12,41,Honolulu Stadium,Ed Kobayashi,53,Gene Tamashiro,38,Jerry Scanlan,53
+622,1973-09-14,HUMMERS,W,28,0,Honolulu Stadium,Ed Kobayashi,23,Gene Tamashiro,98,Espinda,23
+623,1973-09-08,at Waianae,L,0,20,,,,,,,
+624,1973-09-02,Campbell,W,13,6,Honolulu Stadium,Ed Kobayashi,118,Gene Tamashiro,95,,
+626,1972-11-24,Punahou,W,34,25,Honolulu Stadium,Nolan Arakawa,0,Willie Keola,228,NONE,0
+627,1972-11-24,,,,,,,,Guy Ching,192,,
+628,1972-11-18,Damien,W,32,7,Honolulu Stadium,,,Guy Ching,101,,
+629,1972-11-10,Punahou,W,35,14,Honolulu Stadium,Nolan Arakawa,57,Guy Ching,203,Russell Chinen,57
+630,1972-10-27,Kamehameha,W,27,14,Honolulu Stadium,,,Willie Keola,131,,
+631,1972-10-27,,,,,,,,Guy Ching,117,,
+632,1972-10-21,Saint Louis,W,17,0,Honolulu Stadium,,,Guy Ching,89,,
+633,1972-10-13,Damien,W,22,0,Honolulu Stadium,,,Guy Ching,85,,
+634,1972-10-06,Punahou,L,25,27,Honolulu Stadium,,,Brian Hamada,92,,
+635,1972-09-22,Kamehameha,L,6,14,Honolulu Stadium,Nolan Arakawa,45,Willie Keola,71,,
+636,1972-09-15,Saint Louis,W,13,0,Cooke Field,Nolan Arakawa,88,Willie Keola,57,,
+637,1972-09-09,Kaimuki,L,13,14,Honolulu Stadium,,,,,,
+638,1972-09-01,at Waianae,L,7,14,,,,,,,
+640,1971-11-20,Damien,W,35,8,Honolulu Stadium,,,,,,
+641,1971-11-12,St. Louis,L,14,28,Honolulu Stadium,Rusty Kekuewa,46,Wilfred Keola,98,,
+642,1971-10-30,Punahou,L,0,6,Honolulu Stadium,,,,,Mufi Hannemann,32
+643,1971-10-23,Kamehameha,L,0,25,Honolulu Stadium,,,,,,
+644,1971-10-16,Damien,L,6,7,Honolulu Stadium,Rusty Kekuewa,66,Dave Furtado,68,,
+645,1971-10-09,St. Louis,W,6,0,Honolulu Stadium,,,Dave Furtado,54,,
+646,1971-09-25,Punahou,T,0,0,Honolulu Stadium,Rusty Kekuewa,0,Dave Furtado,45,NONE,0
+647,1971-09-17,Kamehameha,L,6,7,Honolulu Stadium,Rusty Kekuewa,18,Darrel Tamaru,68,Mufi Hannemann,18
+648,1971-09-11,Maui,W,32,14,Honolulu Stadium,,,,,,
+649,1971-09-04,Kaimuki,L,13,14,Honolulu Stadium,Rusty Kekuewa,75,,,,
+651,1970-11-14,Damien,T,22,22,Honolulu Stadium,Sanford Saito,27,,,,
+652,1970-11-07,Saint Louis,L,14,26,Honolulu Stadium,Sanford Saito,92,,,,
+653,1970-10-30,Punahou,L,0,28,Honolulu Stadium,,,,,,
+654,1970-10-24,Kamehameha,L,0,10,Honolulu Stadium,,,,,,
+655,1970-10-10,Damien,L,15,27,Honolulu Stadium,,,,,,
+656,1970-10-03,Saint Louis,L,12,24,Honolulu Stadium,Leonard Castillio,89,,,,
+657,1970-09-26,Punahou,L,0,7,Honolulu Stadium,,,,,,
+658,1970-09-19,Kamehameha,L,0,28,Honolulu Stadium,,,,,,
+659,1970-09-04,at Maui,W,28,6,,,,,,,
+660,1970-08-29,Leilehua,L,0,18,Honolulu Stadium,,,,,,
+662,1969-11-22,Kaimuki,W,15,8,Honolulu Stadium,,,Doug Nakoa,47,,
+663,1969-11-15,Punahou,L,0,19,Honolulu Stadium,,,,,,
+664,1969-11-08,Saint Louis,L,0,36,Honolulu Stadium,,,,,,
+665,1969-10-24,Farrington,L,0,21,Honolulu Stadium,,,,,,
+666,1969-10-18,Kamehameha,L,8,27,Honolulu Stadium,,,Doug Nakoa,100,,
+667,1969-10-10,McKinley,L,6,34,Honolulu Stadium,,,,,,
+668,1969-10-04,Damien,L,6,14,Honolulu Stadium,,,,,,
+669,1969-09-26,Kalani,L,0,35,Honolulu Stadium,,,,,,
+670,1969-09-19,at Roosevelt,W,7,6,,,,,,,
+671,1969-09-12,at Waipahu,L,16,42,,,,,,,
+672,1969-08-29,Waianae,L,0,18,Honolulu Stadium,,,,,,
+674,1968-11-28,McKinley,W,7,0,Honolulu Stadium,Elroy Chong,0,Doug Nakoa,102,NONE,0
+675,1968-11-22,Saint Louis,W,33,0,Honolulu Stadium,Elroy Chong,111,,,,
+676,1968-11-15,Farrington,W,20,12,Honolulu Stadium,Elroy Chong,66,Doug Nakoa,125,,
+677,1968-11-08,Damien,W,24,6,Honolulu Stadium,Elroy Chong,70,Doug Nakoa,95,,
+678,1968-11-02,Kalani,W,22,15,Honolulu Stadium,Elroy Chong,129,Doug Nakoa,108,,
+679,1968-10-26,Kaimuki,W,21,13,Honolulu Stadium,,,,,,
+680,1968-10-12,Punahou,W,23,6,Honolulu Stadium,Elroy Chong,98,Jeffrey Nishikawa,72,,
+681,1968-10-05,Roosevelt,W,25,6,Honolulu Stadium,,,Doug Nakoa,57,,
+682,1968-09-27,Kamehameha,W,14,6,Honolulu Stadium,,,,,,
+683,1968-09-21,McKinley,T,21,21,Honolulu Stadium,Elroy Chong,78,Doug Nakoa,90,,
+684,1968-09-13,at Waianae,W,13,6,,,,,,,
+685,1968-09-07,Waipahu,W,20,0,Honolulu Stadium,,,,,,
+687,1967-11-23,Kamehameha,L,6,29,Honolulu Stadium,,,,,,
+688,1967-11-18,Farrington,L,0,27,Honolulu Stadium,Elroy Chong,96,,,Crow,63
+689,1967-11-09,Damien,W,36,6,Honolulu Stadium,Elroy Chong,92,Stan Sadowski,88,Crow,35
+690,1967-11-03,McKinley,L,0,10,Honolulu Stadium,Elroy Chong,95,,,,
+691,1967-10-28,Roosevelt,W,20,0,Honolulu Stadium,Elroy Chong,173,,,,
+692,1967-10-20,Kamehameha,W,24,0,Honolulu Stadium,Elroy Chong,172,,,,
+693,1967-10-06,Kaimuki,W,7,6,Honolulu Stadium,,,Doug Nakoa,91,,
+694,1967-09-29,Punahou,W,24,7,Honolulu Stadium,Elroy Chong,105,,,,
+695,1967-09-22,Saint Louis,L,8,34,Honolulu Stadium,,,,,,
+696,1967-09-16,Kalani,W,7,0,Honolulu Stadium,,,,,,
+697,1967-09-09,Maui,W,45,8,,,,,,,
+698,1967-09-02,Waipahu,L,7,14,,Elroy Chong,53,Stan Sadowski,90,,
+700,1966-11-19,Farrington,L,8,18,,,,,,,
+701,1966-11-12,Kaimuki,W,34,14,Honolulu Stadium,,,John Sadowski,83,,
+702,1966-11-04,Kalani,W,14,12,,NONE,0,,,NONE,0
+703,1966-10-22,Kamehameha,L,0,14,Honolulu Stadium,,,,,,
+704,1966-10-14,Saint Louis,L,6,9,Honolulu Stadium,,,,,,
+705,1966-10-08,Punahou,L,7,27,Roosevelt,,,,,,
+706,1966-09-30,McKinley,L,6,9,Honolulu Stadium,,,,,,
+707,1966-09-24,Damien,W,33,8,Honolulu Stadium,,,Dudley Ogata,60,,
+708,1966-09-16,Roosevelt,L,0,14,Honolulu Stadium,,,,,,
+709,1966-09-09,Kailua,L,0,7,Honolulu Stadium,,,,,,
+710,1966-09-03,Hawaii Prep,W,34,24,,Elroy Chong,132,Gary Fong,87,,
+712,1965-11-25,Punahou,W,20,6,Honolulu Stadium,,,,,,
+713,1965-11-19,McKinley,W,20,7,,,,Dale Lee,93,,
+714,1965-11-15,Damien,W,34,6,,,,Dale Lee,90,,
+715,1965-11-06,Saint Louis,L,15,28,Honolulu Stadium,,,,,,
+716,1965-10-30,Kalani,W,32,24,Honolulu Stadium,Lambert Nahulu,147,,,,
+717,1965-10-22,Kamehameha,L,7,14,Honolulu Stadium,,,,,,
+718,1965-10-15,Kaimuki,W,20,0,Honolulu Stadium,,,Cael Thompson,91,,
+719,1965-10-08,Punahou,W,17,15,Honolulu Stadium,,,,,,
+720,1965-10-01,Roosevelt,W,27,26,Honolulu Stadium,,,,,,
+721,1965-09-25,Farrington,L,6,25,,,,,,,
+722,1965-09-11,at Maui,W,31,7,fairgrounds,,,,,,
+723,1965-09-04,Hilo,W,27,0,,,,,,,
+725,1964-11-14,Saint Louis,W,21,12,Honolulu Stadium,,,,,,
+726,1964-11-07,Kalani,W,7,6,Honolulu Stadium,,,,,,
+727,1964-10-30,Roosevelt,L,0,7,Honolulu Stadium,,,,,,
+728,1964-10-17,Punahou,L,12,47,Honolulu Stadium,,,Jon Eckman,65,,
+729,1964-10-09,Kamehameha,L,8,21,Honolulu Stadium,,,,,,
+730,1964-10-03,Farrington,L,2,6,Honolulu Stadium,,,,,,
+731,1964-09-26,McKinley,L,0,25,Honolulu Stadium,,,Jon Ekman,80,,
+732,1964-09-19,Kaimuki,L,14,21,Honolulu Stadium,,,,,,
+733,1964-09-12,at Aiea,L,2,21,,,,,,,
+734,1964-09-05,at Hilo,W,18,6,,,,,,,
+736,1963-11-26,Saint Louis,W,14,8,Honolulu Stadium,,,Ray Minami,91,,
+737,1963-11-16,Kalani,L,6,14,Honolulu Stadium,Howie Tan,129,,,,
+738,1963-11-08,Kamehameha,T,0,0,Honolulu Stadium,,,,,,
+739,1963-11-01,Farrington,L,6,21,Honolulu Stadium,,,,,,
+740,1963-10-19,Roosevelt,W,14,13,Honolulu Stadium,Howard Tan,56,Ray Minami,76,,
+741,1963-10-12,Kaimuki,L,7,12,Honolulu Stadium,,,,,,
+742,1963-10-05,McKinley,W,14,6,Honolulu Stadium,,,,,,
+743,1963-09-21,Punahou,L,13,21,Honolulu Stadium,,,,,,
+744,1963-09-14,Kahuku,W,21,0,Honolulu Stadium,,,,,,
+745,1963-09-07,at Honokaa,W,21,6,Hoolulu Park,,,,,,
+747,1962-11-17,Kalani,W,14,6,Honolulu Stadium,Howie Tan,64,Dick Yokogawa,72,,
+748,1962-11-10,Kamehameha,L,2,21,Honolulu Stadium,,,,,,
+749,1962-11-02,Kaimuki,W,19,7,Honolulu Stadium,,,,,,
+750,1962-10-27,McKinley,W,21,6,Honolulu Stadium,,,,,,
+751,1962-10-20,Roosevelt,L,14,26,Honolulu Stadium,,,,,,
+752,1962-10-12,Farrington,W,7,0,,,,,,,
+753,1962-10-06,Punahou,L,2,12,,,,,,,
+754,1962-09-22,Saint Louis,T,20,20,Honolulu Stadium,Howie Tan,149,,,Ray Teshima,106
+755,1962-09-15,at Maui,W,19,6,,,,,,,
+756,1962-09-08,Kapaa,W,32,0,Honolulu Stadium,Howie Tan,99,Dick Yokogawa,58,,
+758,1961-11-17,Kamehameha,L,0,19,Honolulu Stadium,,,,,,
+759,1961-11-11,Kaimuki,L,12,14,Honolulu Stadium,Howard Tan,,Lawson Wakuzawa,61,,
+760,1961-11-04,Punahou,L,7,21,Honolulu Stadium,Howard Tan,53,Earl Hedani,54,,
+761,1961-10-21,Farrington,L,6,20,Honolulu Stadium,,,,,,
+762,1961-10-14,McKinley,W,20,6,Honolulu Stadium,,,Earl Hedani,75,Earl Hedani,59
+763,1961-10-06,Roosevelt,L,6,20,Honolulu Stadium,,,,,,
+764,1961-09-29,Saint Louis,L,0,18,Honolulu Stadium,,,,,,
+765,1961-09-22,Kalani,W,6,0,Honolulu Stadium,,,Richard Yokogawa,84,,
+766,1961-09-15,at Kapaa,W,26,0,Isenberg Field,,,,,,
+767,1961-09-09,Maui,W,22,6,Honolulu Stadium,,,,,,
+769,1960-11-19,Kaimuki,L,7,12,Honolulu Stadium,,,,,,
+770,1960-11-12,Punahou,L,7,40,Honolulu Stadium,,,,,,
+771,1960-11-05,Roosevelt,L,0,25,Honolulu Stadium,,,,,,
+772,1960-10-28,Farrington,L,0,26,Honolulu Stadium,Milt Oshiro,40,,,,
+773,1960-10-20,McKinley,W,12,0,Honolulu Stadium,,,,,Dwight Kealoha,36
+774,1960-10-07,Saint Louis,T,0,0,Honolulu Stadium,,,George Fujikawa,69,,
+775,1960-09-30,Kalani,W,25,0,Honolulu Stadium,Milton Oshiro,113,James MIyashiro,,,
+776,1960-09-25,Kamehameha,L,0,28,Honolulu Stadium,,,,,,
+777,1960-09-10,Lahainaluna,W,2,0,Honolulu Stadium,,,George Fujikawa,64,,
+778,1960-09-03,at Castle,L,12,20,,,,,,,
+780,1959-11-26,Roosevelt,L,0,25,Honolulu Stadium,Milt Oshiro,13,Miyashiro,16,,
+781,1959-11-13,Farrington,W,6,2,Honolulu Stadium,Al Yamashiro,32,Al Yamashiro,58,,
+782,1959-11-06,Punahou,L,7,25,Honolulu Stadium,Milt Oshiro,31,Roger Lopes,29,,
+783,1959-11-01,McKinley,W,12,7,Honolulu Stadium,,,,,,
+784,1959-10-24,Roosevelt,L,7,19,Honolulu Stadium,Nakasone,42,Al Yamashiro,52,,
+785,1959-10-17,Kamehameha,W,14,13,Honolulu Stadium,Milt Oshiro,6,Al Yamashiro,116,,
+786,1959-10-03,Saint Louis,W,25,12,Honolulu Stadium,Milt Oshiro,0,Al Yamashiro,194,,
+787,1959-09-25,Kaimuki,L,13,25,Honolulu Stadium,,,Al Yamashiro,85,,
+788,1959-09-18,Waipahu,W,20,6,Honolulu Stadium,Andrew Kualii,31,Roger Lopes,80,,
+789,1959-09-11,Hilo,W,33,13,Honolulu Stadium,Andrew Kualii,60,Al Yamashiro,124,,
+790,1959-09-04,at Lahainaluna,W,20,0,,,,,,,
+792,1958-11-27,Kamehameha,L,7,14,Honolulu Stadium,,,,,,
+793,1958-11-15,Kamehameha,W,20,12,Honolulu Stadium,,,,,,
+794,1958-11-08,Punahou,L,6,28,Honolulu Stadium,,,,,,
+795,1958-10-31,Saint Louis,W,21,18,Honolulu Stadium,,,,,,
+796,1958-10-18,McKinley,W,21,20,Honolulu Stadium,,,,,,
+797,1958-10-10,Kaimuki,L,12,20,Honolulu Stadium,,,,,,
+798,1958-10-03,Roosevelt,T,12,12,Honolulu Stadium,,,,,,
+799,1958-09-26,Farrington,W,32,14,Honolulu Stadium,,,,,,
+800,1958-09-20,at Leilehua,T,13,13,,,,,,,
+801,1958-09-13,Maui,W,32,0,Honolulu Stadium,,,,,,
+802,1958-09-06,at Hilo,W,33,20,,,,,,,
+804,1957-11-23,Saint Louis,L,19,37,Honolulu Stadium,,,,,,
+805,1957-11-15,Kaimuki,L,14,19,Honolulu Stadium,Gary Sing,115,Wilfred Chang,69,,
+806,1957-11-09,Farrington,W,20,12,Honolulu Stadium,,,,,,
+807,1957-10-26,Punahou,L,6,40,Honolulu Stadium,,,,,,
+808,1957-10-18,McKinley,W,31,12,Honolulu Stadium,,,Fred Koga,123,,
+809,1957-10-05,Roosevelt,L,14,32,Honolulu Stadium,,,,,,
+810,1957-09-27,Kamehameha,W,13,7,Honolulu Stadium,Gary Sing,,Tennyson Lum,93,,
+811,1957-09-14,Waimea,W,37,13,Honolulu Stadium,,,,,,
+813,1956-11-22,Kamehameha,T,18,18,Honolulu Stadium,,,,,,
+814,1956-11-17,Kaimuki,W,26,0,Honolulu Stadium,,,,,,
+815,1956-11-10,Farrington,W,12,7,Honolulu Stadium,,,,,,
+816,1956-11-02,Kamehameha,W,27,12,Honolulu Stadium,,,,,,
+817,1956-10-20,McKinley,W,24,12,Honolulu Stadium,,,,,,
+818,1956-10-06,Roosevelt,L,6,21,Honolulu Stadium,,,,,,
+819,1956-09-29,Punahou,L,12,18,Honolulu Stadium,,,,,,
+820,1956-09-22,Saint Louis,W,20,0,Honolulu Stadium,,,,,,
+821,1956-09-14,Maui,W,12,6,Honolulu Stadium,,,,,,
+822,1956-09-07,at Waimea,W,19,7,Honolulu Stadium,,,,,,
+824,1955-11-24,Saint Louis,L,0,7,Honolulu Stadium,,,,,,
+825,1955-11-19,Farrington,W,40,14,Honolulu Stadium,,,,,,
+826,1955-11-12,Kamehameha,L,0,7,Honolulu Stadium,,,,,,
+827,1955-10-29,McKinley,W,32,12,Honolulu Stadium,,,,,,
+828,1955-10-22,Roosevelt,L,6,19,Honolulu Stadium,,,,,,
+829,1955-10-08,Saint Louis,T,13,13,Honolulu Stadium,,,,,,
+830,1955-10-01,Punahou,L,6,14,Honolulu Stadium,,,,,,
+831,1955-09-23,Kaimuki,W,20,7,Honolulu Stadium,,,Paul Han,46,,
+832,1955-09-16,at Kahuku,W,35,0,,,,,,,
+833,1955-09-11,at Maui,L,6,13,,,,,,,
+835,1954-11-25,Punahou,W,26,7,Honolulu Stadium,,,,,,
+836,1954-11-20,Kamehameha,T,13,13,Honolulu Stadium,,,,,,
+837,1954-11-12,Saint Louis,W,21,0,Honolulu Stadium,,,,,,
+838,1954-10-30,Roosevelt,W,13,7,Honolulu Stadium,,,,,,
+839,1954-10-16,McKinley,W,13,6,Honolulu Stadium,,,,,,
+840,1954-10-09,Punahou,L,19,32,Honolulu Stadium,,,,,,
+841,1954-10-02,Kaimuki,W,13,0,Honolulu Stadium,,,,,,
+842,1954-09-25,Farrington,T,7,7,Honolulu Stadium,,,,,,
+843,1954-09-19,Maui,W,44,6,Honolulu Stadium,,,Paul Han,65,,
+844,1954-09-12,Hilo,W,44,0,,,,,,,
+846,1953-11-21,Saint Louis,L,7,19,Honolulu Stadium,,,,,,
+847,1953-11-07,Roosevelt,L,13,26,Honolulu Stadium,,,,,,
+848,1953-10-30,Kaimuki,L,14,20,Honolulu Stadium,,,,,,
+849,1953-10-23,Punahou,L,6,46,Honolulu Stadium,,,,,,
+850,1953-10-17,McKinley,T,14,14,Honolulu Stadium,,,,,,
+851,1953-10-09,Farrington,W,40,0,Honolulu Stadium,,,,,,
+852,1953-09-25,Kamehameha,L,7,12,Honolulu Stadium,,,,,,
+853,1953-09-13,Maui,W,32,7,,,,,,,
+854,1953-09-07,Hilo,W,35,0,Honolulu Stadium,,,,,,
+856,1952-11-21,Kaimuki,L,13,20,Honolulu Stadium,,,,,,
+857,1952-11-15,Roosevelt,W,7,6,Honolulu Stadium,,,,,,
+858,1952-11-07,Punahou,L,14,53,Honolulu Stadium,,,,,,
+859,1952-10-31,McKinley,L,7,13,Honolulu Stadium,,,,,,
+860,1952-10-25,Farrington,W,33,0,Honolulu Stadium,,,,,,
+861,1952-10-18,Kamehameha,L,0,33,Honolulu Stadium,,,,,,
+862,1952-10-11,Saint Louis,L,12,27,Honolulu Stadium,,,,,,
+863,1952-09-20,Kahuku,W,19,12,,,,,,,
+865,1951-09-22,Kaimuki,L,7,13,,,,,,,
+866,1951-09-28,McKinley,W,31,7,,,,,,,
+867,1951-10-13,Kamehameha,L,14,33,,,,,,,
+868,1951-10-19,Roosevelt,L,20,33,,,,,,,
+869,1951-10-27,Punahou,W,12,6,,,,Edwin Neves,109,,
+870,1951-11-02,Saint Louis,L,0,21,,,,Patrick Silva,126,,
+871,1951-11-10,Farrington,W,34,13,,,,,,,
+872,1951-11-22,Saint Louis,L,7,21,,,,,,,
+874,1950-11-23,Saint Louis,W,26,12,Honolulu Stadium,,,,,,
+875,1950-11-11,Kamehameha,W,35,14,Honolulu Stadium,,,,,,
+876,1950-11-04,Punahou,W,28,0,Honolulu Stadium,,,,,,
+877,1950-10-28,McKinley,W,41,6,Honolulu Stadium,,,,,,
+878,1950-10-14,Kaimuki,W,13,0,Honolulu Stadium,,,,,,
+879,1950-10-06,Saint Louis,W,25,6,Honolulu Stadium,,,,,,
+880,1950-09-30,Roosevelt,W,26,6,Honolulu Stadium,,,,,,
+881,1950-09-22,Farrington,L,2,7,Honolulu Stadium,,,,,,
+882,1950-09-08,at Kapaa,W,53,0,,,,,,,
+884,1949-11-24,Punahou,L,0,20,Honolulu Stadium,,,,,,
+885,1949-11-19,Saint Louis,L,20,28,Honolulu Stadium,,,,,,
+886,1949-11-05,Farrington,W,7,0,Honolulu Stadium,,,,,,
+887,1949-10-29,McKinley,L,20,26,Honolulu Stadium,,,,,,
+888,1949-10-21,Punahou,L,0,7,Honolulu Stadium,,,,,,
+889,1949-10-08,Kamehameha,W,26,12,Honolulu Stadium,,,,,,
+890,1949-10-01,Roosevelt,W,26,12,Honolulu Stadium,,,,,,
+891,1949-09-24,Kaimuki,W,46,7,Honolulu Stadium,,,,,,
+893,1948-11-19,Saint Louis,L,6,15,Honolulu Stadium,,,,,,
+894,1948-11-11,Kaimuki,W,14,12,Honolulu Stadium,,,,,,
+895,1948-11-05,Punahou,L,6,7,Honolulu Stadium,,,,,,
+896,1948-10-22,Kamehameha,L,0,20,Honolulu Stadium,,,,,,
+897,1948-10-15,Farrington,L,12,19,Honolulu Stadium,,,,,,
+898,1948-10-08,Roosevelt,W,26,6,Honolulu Stadium,,,,,,
+899,1948-09-25,McKinley,W,25,14,Honolulu Stadium,,,,,,
+901,1947-11-27,Saint Louis,W,7,2,Honolulu Stadium,,,,,,
+902,1947-11-14,Roosevelt,W,45,0,Honolulu Stadium,,,,,,
+903,1947-10-07,Punahou,L,0,20,Honolulu Stadium,,,,,,
+904,1947-11-01,Farrington,W,25,7,Honolulu Stadium,,,,,,
+905,1947-10-25,Saint Louis,W,12,0,Honolulu Stadium,,,,,,
+906,1947-10-11,Kamehameha,L,7,13,Honolulu Stadium,,,,,,
+907,1947-10-03,Kaimuki,W,20,6,Honolulu Stadium,,,,,,
+908,1947-09-26,McKinley,L,7,20,Honolulu Stadium,,,,,,
+910,1946-12-14,at Kapaa,L,19,20,,,,,,,
+911,1946-11-16,Saint Louis,L,7,18,Honolulu Stadium,,,,,,
+912,1946-11-01,Kamehameha,L,0,26,Honolulu Stadium,,,,,,
+913,1946-10-25,Farrington,W,7,0,Honolulu Stadium,,,,,,
+914,1946-10-18,McKinley,L,7,27,Honolulu Stadium,,,,,,
+915,1946-10-12,Punahou,L,13,20,Honolulu Stadium,,,,,,
+916,1946-10-05,Roosevelt,W,6,0,Honolulu Stadium,,,,,,
+917,1946-09-27,Kaimuki,W,3,0,Honolulu Stadium,,,,,,
+919,1945-12-16,Kamehameha,L,13,14,Hilo,,,,,,
+920,1945-12-01,Farrington,W,20,12,Honolulu Stadium,,,,,,
+921,1945-11-23,Kaimuki,L,6,21,Honolulu Stadium,,,,,,
+922,1945-11-16,McKinley,W,32,0,Honolulu Stadium,,,,,,
+923,1945-11-09,Roosevelt,L,0,13,Honolulu Stadium,,,,,,
+924,1945-10-27,Saint Louis,L,6,25,Honolulu Stadium,,,,,,
+925,1945-10-20,Farrington,L,7,13,Honolulu Stadium,,,,,,
+926,1945-10-13,Kamehameha,W,14,0,Honolulu Stadium,,,,,,
+927,1945-10-05,Punahou,L,7,12,Honolulu Stadium,,,,,,

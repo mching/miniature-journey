@@ -1,0 +1,198 @@
+---
+title: Iolani Football 1945-2019
+author: ~
+date: '2019-12-14'
+slug: iolani-football-1945-2019
+categories: 
+  - R
+tags: 
+  - football
+  - sports
+type: ''
+subtitle: ''
+image: ''
+---
+
+This week the local paper released a [season recap](https://www.hawaiiprepworld.com/football/closing-the-book-2019-iolani-raiders/) of my alma mater's football team. Included in the article was a link to [game results dating back to 1945](https://www.hawaiiprepworld.com/iolani-football/statistics/). It looked like there was an opportunity for a little data analysis on things like home and away records, records versus specific schools, etc. 
+
+I downloaded the data and cleaned it for analysis in Google Sheets. 
+
+```{r}
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+iolani <- tbl_df(read.csv("../datasets/iolani_football_1945_2019.csv"))
+iolani$date <- ymd(iolani$date)
+glimpse(iolani)
+```
+
+Overall the dataset held data for 859 games with 13 variables. 
+
+# Overall Records
+
+I looked at the game results first. Overall the Iolani football team has a record of 448-356-21. That's a winning percentage of `r round(448/(448+356+21)*100, 1)`%. Not bad!
+
+## Single Season Winning Percentage
+I looked at the single season winning percentage and sorted the top seasons.
+
+The top season was the 1968 team, which went 11-0-1 and won the Interscholastic League of Honolulu title. That team featured current Iolani teacher Chucky Nakoa!
+
+```{r}
+win_convert <- function(result) {
+  ifelse(result == "W", 1, 0)
+}
+
+iolani %>% filter(result != "") %>% 
+  mutate(gameyear = year(date), win = win_convert(result)) %>%
+  group_by(gameyear) %>%
+  summarize(win_percent = mean(win)) %>% arrange(-win_percent)
+```
+
+```{r}
+
+iolani %>% filter(result != "") %>% 
+  mutate(gameyear = year(date), win = win_convert(result)) %>%
+  group_by(gameyear) %>%
+  summarize(win_percent = mean(win)) %>%
+  ggplot(aes(x = gameyear, y = win_percent)) + geom_point() + geom_smooth(method = "loess") +
+  labs(title = "Winning Percentage, Iolani Football, 1945-2019", x = "Year", y = "Winning Percentage")
+```
+
+
+## Home and Away
+### Away games
+There were a lot of games with "at" in their opponent names. To separate out the opponent name from the location, I looked for all rows that began with "at." It turned out there were only `r length(grep("^at ", iolani$opponent))` games starting with "at." That's less than 10% of games.
+```{r}
+iolani %>% filter(grepl("^at", iolani$opponent)) %>%
+  group_by(result) %>%
+  summarize(n())
+```
+Iolani is 40-36-1 on the road, a winning percentage of `r round(40/(40+36+1)*100, 1)`%.
+
+## Stadium Location and Neutral Field Games
+I then looked at games with a stadium location. I had assumed that these games were neutral field games since a lot of them were at the island's football stadium, Aloha Stadium. I looked to see how many games were played at a stadium and where these were. There were `r length(grep("[[:alpha:]]", iolani$stadium))` games played at stadiums and only 274 without a label in the location.
+
+```{r}
+table(iolani$stadium)
+```
+
+Some of the games were played at schools so I wondered if those were actually games played against their hosts, rather than true neutral field games. By inspecting the data in Google Sheets I was able to confirm that all the games that were played at schools (e.g., Kaiser) were played against opponents from other schools (i.e., neutral field games). 
+
+Interestingly enough in 2005, Iolani played in the Tacoma Dome [against Capital High School (Washington)](https://www.maxpreps.com/high-schools/iolani-raiders-(honolulu,hi)/football-fall-05/schedule.htm), it was the first time Iolani had played an indoor football game and I assume the last since there aren't any local places that you can play indoors here. 
+
+Here's the neutral field record:
+```{r}
+iolani %>% filter(grepl("[[:alpha:]]", iolani$stadium)) %>%
+  group_by(result) %>%
+  summarize(n())
+```
+
+At neutral fields, Iolani is 305-261-18, a winning percentage of `r round(305/(305+261+18)*100, 1)`%.
+
+## Home Games
+That left the home record to calculate. I filtered out the "at" and neutral field games to come up with the following result.
+
+```{r}
+homegames <- iolani %>% filter(!grepl("[[:alpha:]]", iolani$stadium))
+homegames <- homegames %>% filter(!grepl("^at", homegames$opponent)) 
+homegames %>% group_by(result) %>%
+  summarize(n())
+```
+
+At home Iolani is 107-60-2, a winning percentage of `r round(107/(107+60+2)*100, 1)`%! 
+
+## Record against Specific Schools
+Calculating Iolani's record against specific schools is complicated by the fact that the away games have "at" in their opponent names. To remove this I used a regular expression substitution.
+
+```{r}
+iolani$opponent_school <- sub("at ", "", iolani$opponent)
+glimpse(iolani)
+```
+
+Now I could calculate records against specific schools, such as our rival Punahou. It turns out we're not that great against Punahou: 38-70-1 (`r round(38/(38+73),3)*100`%).
+```{r}
+iolani %>% filter(opponent_school == "Punahou") %>%
+  group_by(result) %>%
+  summarize(n())
+```
+
+How about perennial state champ Saint Louis? Even worse! 23-79-4 (`r round(23/(23+79+4),3)*100`%).
+```{r}
+iolani %>% filter(opponent_school == "Saint Louis") %>%
+  group_by(result) %>%
+  summarize(n())
+```
+
+Kamehameha? Just as bad. 33-72-4, (`r round(33/(33+72+4),3)*100`%).
+```{r}
+iolani %>% filter(opponent_school == "Kamehameha") %>%
+  group_by(result) %>%
+  summarize(n())
+```
+
+Recent rival Damien? Actually pretty good! 77-3-21 (`r round(77/(77+21+3),3)*100`%).
+```{r}
+iolani %>% filter(opponent_school == "Damien") %>%
+  group_by(result) %>%
+  summarize(n())
+```
+
+
+# Scoring Averages
+
+I calculated the points scored per game and the points allowed per game by Iolani. It looks like the offense has improved dramatically over time, probably in line with changes in the game of football overall.
+
+```{r}
+iolani %>% filter(!is.na(Iolani_score)) %>%
+  mutate(gameyear = year(date)) %>%
+  group_by(gameyear) %>%
+  summarize(off_scoring = mean(Iolani_score), def_scoring = mean(opp_score)) %>%
+  ggplot(aes(x = gameyear, y = off_scoring)) + geom_point() + geom_smooth(method = "loess") +
+  labs(title = "Mean Points Scored, Iolani Football, 1945-2019", x = "Year", y = "Points per Game")
+```
+
+
+I also looked at average points allowed per season.
+
+```{r}
+iolani %>% filter(!is.na(Iolani_score)) %>%
+  mutate(gameyear = year(date)) %>%
+  group_by(gameyear) %>%
+  summarize(off_scoring = mean(Iolani_score), def_scoring = mean(opp_score)) %>%
+  ggplot(aes(x = gameyear, y = def_scoring)) + geom_point() + geom_smooth(method = "loess") +
+  labs(title = "Mean Points Allowed, Iolani Football, 1945-2019", x = "Year", y = "Points per Game")
+```
+
+
+# Offensive Category Leaders
+
+There are only so many things that can be done with single game offensive yards leaders, but we can at least calculate the top 10 historical performances for each type (passing, rushing, receiving).
+
+## Top Passing Yard Games
+Tai-John Mizutani had the top 4 passing yard games in Iolani history, 3 of which came during the 2017 season. He is currently on the football team at Central Washington University. 
+
+```{r}
+iolani %>% select(pass_leader, pass_yds, date, opponent, result, Iolani_score, opp_score) %>%
+  arrange(-pass_yds)
+```
+
+## Top Rushing Yard Games
+
+Joe Igber has 6 of the top 10 on this list. He went on to play college football at California and [rushed for over 3000 yards](https://www.sports-reference.com/cfb/players/joe-igber-1.html) in college.
+
+```{r}
+iolani %>% select(rush_leader, rush_yds, date, opponent, result, Iolani_score, opp_score) %>%
+  arrange(-rush_yds)
+```
+
+## Top Receiving Yard Games
+
+Unlike the passing and rushing yard leaders, there are a lot of different names on this list. Carter Kamana finished his high school senior season this year. Keoni-Kordell Makekau plays Division 1 football at Navy. [Raul Pacheco](https://missoulian.com/sports/college/montana/raul-pacheco-s-biggest-play-wasn-t-a-pass-reception/article_6d520010-a875-11de-ae6a-001cc4c03286.html) won the national championship at Montana and had the most receptions in Montana history until 2019.
+
+```{r}
+iolani %>% select(receive_leader, receive_yds, date, opponent, result, Iolani_score, opp_score) %>%
+  arrange(-receive_yds)
+```
+
+# Discussion
+It was an interesting look back at Iolani football over the years. As a casual fan, I found some interesting stories and tidbits that I never knew, like that Tacoma game, or the fact that Raul Pacheco was the career leader in receptions at Montana for 20 years. I never knew about how successful Joe Igber was in college and I found out (again?) about the 1968 ILH champion team. It was also a pretty good way to brush off my `dplyr` skills. Iolani no ka oi!

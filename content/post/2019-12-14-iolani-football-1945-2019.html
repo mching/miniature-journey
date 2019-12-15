@@ -1,0 +1,309 @@
+---
+title: Iolani Football 1945-2019
+author: ~
+date: '2019-12-14'
+slug: iolani-football-1945-2019
+categories: 
+  - R
+tags: 
+  - football
+  - sports
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>This week the local paper released a <a href="https://www.hawaiiprepworld.com/football/closing-the-book-2019-iolani-raiders/">season recap</a> of my alma mater’s football team. Included in the article was a link to <a href="https://www.hawaiiprepworld.com/iolani-football/statistics/">game results dating back to 1945</a>. It looked like there was an opportunity for a little data analysis on things like home and away records, records versus specific schools, etc.</p>
+<p>I downloaded the data and cleaned it for analysis in Google Sheets.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     date</code></pre>
+<pre class="r"><code>library(ggplot2)
+iolani &lt;- tbl_df(read.csv(&quot;../datasets/iolani_football_1945_2019.csv&quot;))
+iolani$date &lt;- ymd(iolani$date)
+glimpse(iolani)</code></pre>
+<pre><code>## Observations: 859
+## Variables: 13
+## $ rowid          &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15…
+## $ date           &lt;date&gt; 2019-11-29, 2019-11-23, 2019-10-25, 2019-10-11, …
+## $ opponent       &lt;fct&gt; Hilo, at Moanalua, Damien, at Castle, Leilehua, R…
+## $ result         &lt;fct&gt; L, W, W, W, L, W, W, W, W, W, W, L, W, L, W, W, W…
+## $ Iolani_score   &lt;int&gt; 17, 35, 21, 33, 25, 38, 38, 48, 40, 34, 31, 20, 4…
+## $ opp_score      &lt;int&gt; 20, 9, 14, 28, 28, 0, 21, 14, 13, 24, 10, 21, 10,…
+## $ stadium        &lt;fct&gt; Aloha Stadium, , Aloha Stadium, , Aloha Stadium, …
+## $ pass_leader    &lt;fct&gt; Jonah Chong, Jonah Chong, Jonah Chong, Jonah Chon…
+## $ pass_yds       &lt;int&gt; 118, 168, 183, 148, 256, 82, 85, 192, 177, 118, 1…
+## $ rush_leader    &lt;fct&gt; Brock Hedani, Brock Hedani, Brock Hedani, Jonah C…
+## $ rush_yds       &lt;int&gt; 26, 90, 85, 45, 17, 66, 102, 58, 71, 99, 90, 94, …
+## $ receive_leader &lt;fct&gt; Carter Kamana, Carter Kamana, Carter Kamana, Wail…
+## $ receive_yds    &lt;int&gt; 45, 73, 117, 67, 119, 57, 59, 121, 98, 57, 101, 4…</code></pre>
+<p>Overall the dataset held data for 859 games with 13 variables.</p>
+<div id="overall-records" class="section level1">
+<h1>Overall Records</h1>
+<p>I looked at the game results first. Overall the Iolani football team has a record of 448-356-21. That’s a winning percentage of 54.3%. Not bad!</p>
+<div id="single-season-winning-percentage" class="section level2">
+<h2>Single Season Winning Percentage</h2>
+<p>I looked at the single season winning percentage and sorted the top seasons.</p>
+<p>The top season was the 1968 team, which went 11-0-1 and won the Interscholastic League of Honolulu title. That team featured current Iolani teacher Chucky Nakoa!</p>
+<pre class="r"><code>win_convert &lt;- function(result) {
+  ifelse(result == &quot;W&quot;, 1, 0)
+}
+
+iolani %&gt;% filter(result != &quot;&quot;) %&gt;% 
+  mutate(gameyear = year(date), win = win_convert(result)) %&gt;%
+  group_by(gameyear) %&gt;%
+  summarize(win_percent = mean(win)) %&gt;% arrange(-win_percent)</code></pre>
+<pre><code>## # A tibble: 75 x 2
+##    gameyear win_percent
+##       &lt;dbl&gt;       &lt;dbl&gt;
+##  1     1968       0.917
+##  2     1950       0.889
+##  3     2009       0.857
+##  4     1976       0.818
+##  5     2008       0.786
+##  6     2001       0.778
+##  7     1992       0.769
+##  8     2019       0.769
+##  9     1965       0.75 
+## 10     1986       0.75 
+## # … with 65 more rows</code></pre>
+<pre class="r"><code>iolani %&gt;% filter(result != &quot;&quot;) %&gt;% 
+  mutate(gameyear = year(date), win = win_convert(result)) %&gt;%
+  group_by(gameyear) %&gt;%
+  summarize(win_percent = mean(win)) %&gt;%
+  ggplot(aes(x = gameyear, y = win_percent)) + geom_point() + geom_smooth(method = &quot;loess&quot;) +
+  labs(title = &quot;Winning Percentage, Iolani Football, 1945-2019&quot;, x = &quot;Year&quot;, y = &quot;Winning Percentage&quot;)</code></pre>
+<p><img src="/post/2019-12-14-iolani-football-1945-2019_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="home-and-away" class="section level2">
+<h2>Home and Away</h2>
+<div id="away-games" class="section level3">
+<h3>Away games</h3>
+<p>There were a lot of games with “at” in their opponent names. To separate out the opponent name from the location, I looked for all rows that began with “at.” It turned out there were only 78 games starting with “at.” That’s less than 10% of games.</p>
+<pre class="r"><code>iolani %&gt;% filter(grepl(&quot;^at&quot;, iolani$opponent)) %&gt;%
+  group_by(result) %&gt;%
+  summarize(n())</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   result `n()`
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 CCL.       1
+## 2 L         36
+## 3 T          1
+## 4 W         40</code></pre>
+<p>Iolani is 40-36-1 on the road, a winning percentage of 51.9%.</p>
+</div>
+</div>
+<div id="stadium-location-and-neutral-field-games" class="section level2">
+<h2>Stadium Location and Neutral Field Games</h2>
+<p>I then looked at games with a stadium location. I had assumed that these games were neutral field games since a lot of them were at the island’s football stadium, Aloha Stadium. I looked to see how many games were played at a stadium and where these were. There were 585 games played at stadiums and only 274 without a label in the location.</p>
+<pre class="r"><code>table(iolani$stadium)</code></pre>
+<pre><code>## 
+##                              Aiea    Aloha Stadium      Cooke Field 
+##              274                1              302               17 
+##      fairgrounds       Farrington             Hilo         Honolulu 
+##                1                1                1                1 
+## Honolulu Stadium     Hoolulu Park   Isenberg Field           Kaiser 
+##              234                1                1                5 
+##       Kamehameha         Mililani          Punahou          Radford 
+##                1                1                1                1 
+##        Roosevelt      Tacoma Dome           Waimea     War Memorial 
+##                7                1                1                6 
+##     Wong Stadium 
+##                1</code></pre>
+<p>Some of the games were played at schools so I wondered if those were actually games played against their hosts, rather than true neutral field games. By inspecting the data in Google Sheets I was able to confirm that all the games that were played at schools (e.g., Kaiser) were played against opponents from other schools (i.e., neutral field games).</p>
+<p>Interestingly enough in 2005, Iolani played in the Tacoma Dome <a href="https://www.maxpreps.com/high-schools/iolani-raiders-(honolulu,hi)/football-fall-05/schedule.htm">against Capital High School (Washington)</a>, it was the first time Iolani had played an indoor football game and I assume the last since there aren’t any local places that you can play indoors here.</p>
+<p>Here’s the neutral field record:</p>
+<pre class="r"><code>iolani %&gt;% filter(grepl(&quot;[[:alpha:]]&quot;, iolani$stadium)) %&gt;%
+  group_by(result) %&gt;%
+  summarize(n())</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   result `n()`
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 CCL.       1
+## 2 L        261
+## 3 T         18
+## 4 W        305</code></pre>
+<p>At neutral fields, Iolani is 305-261-18, a winning percentage of 52.2%.</p>
+</div>
+<div id="home-games" class="section level2">
+<h2>Home Games</h2>
+<p>That left the home record to calculate. I filtered out the “at” and neutral field games to come up with the following result.</p>
+<pre class="r"><code>homegames &lt;- iolani %&gt;% filter(!grepl(&quot;[[:alpha:]]&quot;, iolani$stadium))
+homegames &lt;- homegames %&gt;% filter(!grepl(&quot;^at&quot;, homegames$opponent)) 
+homegames %&gt;% group_by(result) %&gt;%
+  summarize(n())</code></pre>
+<pre><code>## # A tibble: 5 x 2
+##   result `n()`
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 &quot;&quot;        31
+## 2 L         59
+## 3 L (OT)     1
+## 4 T          2
+## 5 W        107</code></pre>
+<p>At home Iolani is 107-60-2, a winning percentage of 63.3%!</p>
+</div>
+<div id="record-against-specific-schools" class="section level2">
+<h2>Record against Specific Schools</h2>
+<p>Calculating Iolani’s record against specific schools is complicated by the fact that the away games have “at” in their opponent names. To remove this I used a regular expression substitution.</p>
+<pre class="r"><code>iolani$opponent_school &lt;- sub(&quot;at &quot;, &quot;&quot;, iolani$opponent)
+glimpse(iolani)</code></pre>
+<pre><code>## Observations: 859
+## Variables: 14
+## $ rowid           &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1…
+## $ date            &lt;date&gt; 2019-11-29, 2019-11-23, 2019-10-25, 2019-10-11,…
+## $ opponent        &lt;fct&gt; Hilo, at Moanalua, Damien, at Castle, Leilehua, …
+## $ result          &lt;fct&gt; L, W, W, W, L, W, W, W, W, W, W, L, W, L, W, W, …
+## $ Iolani_score    &lt;int&gt; 17, 35, 21, 33, 25, 38, 38, 48, 40, 34, 31, 20, …
+## $ opp_score       &lt;int&gt; 20, 9, 14, 28, 28, 0, 21, 14, 13, 24, 10, 21, 10…
+## $ stadium         &lt;fct&gt; Aloha Stadium, , Aloha Stadium, , Aloha Stadium,…
+## $ pass_leader     &lt;fct&gt; Jonah Chong, Jonah Chong, Jonah Chong, Jonah Cho…
+## $ pass_yds        &lt;int&gt; 118, 168, 183, 148, 256, 82, 85, 192, 177, 118, …
+## $ rush_leader     &lt;fct&gt; Brock Hedani, Brock Hedani, Brock Hedani, Jonah …
+## $ rush_yds        &lt;int&gt; 26, 90, 85, 45, 17, 66, 102, 58, 71, 99, 90, 94,…
+## $ receive_leader  &lt;fct&gt; Carter Kamana, Carter Kamana, Carter Kamana, Wai…
+## $ receive_yds     &lt;int&gt; 45, 73, 117, 67, 119, 57, 59, 121, 98, 57, 101, …
+## $ opponent_school &lt;chr&gt; &quot;Hilo&quot;, &quot;Moanalua&quot;, &quot;Damien&quot;, &quot;Castle&quot;, &quot;Leilehu…</code></pre>
+<p>Now I could calculate records against specific schools, such as our rival Punahou. It turns out we’re not that great against Punahou: 38-70-1 (34.2%).</p>
+<pre class="r"><code>iolani %&gt;% filter(opponent_school == &quot;Punahou&quot;) %&gt;%
+  group_by(result) %&gt;%
+  summarize(n())</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   result `n()`
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 L         70
+## 2 T          3
+## 3 W         38</code></pre>
+<p>How about perennial state champ Saint Louis? Even worse! 23-79-4 (21.7%).</p>
+<pre class="r"><code>iolani %&gt;% filter(opponent_school == &quot;Saint Louis&quot;) %&gt;%
+  group_by(result) %&gt;%
+  summarize(n())</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   result `n()`
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 L         79
+## 2 T          4
+## 3 W         23</code></pre>
+<p>Kamehameha? Just as bad. 33-72-4, (30.3%).</p>
+<pre class="r"><code>iolani %&gt;% filter(opponent_school == &quot;Kamehameha&quot;) %&gt;%
+  group_by(result) %&gt;%
+  summarize(n())</code></pre>
+<pre><code>## # A tibble: 3 x 2
+##   result `n()`
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 L         72
+## 2 T          4
+## 3 W         33</code></pre>
+<p>Recent rival Damien? Actually pretty good! 77-3-21 (76.2%).</p>
+<pre class="r"><code>iolani %&gt;% filter(opponent_school == &quot;Damien&quot;) %&gt;%
+  group_by(result) %&gt;%
+  summarize(n())</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   result `n()`
+##   &lt;fct&gt;  &lt;int&gt;
+## 1 L         20
+## 2 L (OT)     1
+## 3 T          3
+## 4 W         77</code></pre>
+</div>
+</div>
+<div id="scoring-averages" class="section level1">
+<h1>Scoring Averages</h1>
+<p>I calculated the points scored per game and the points allowed per game by Iolani. It looks like the offense has improved dramatically over time, probably in line with changes in the game of football overall.</p>
+<pre class="r"><code>iolani %&gt;% filter(!is.na(Iolani_score)) %&gt;%
+  mutate(gameyear = year(date)) %&gt;%
+  group_by(gameyear) %&gt;%
+  summarize(off_scoring = mean(Iolani_score), def_scoring = mean(opp_score)) %&gt;%
+  ggplot(aes(x = gameyear, y = off_scoring)) + geom_point() + geom_smooth(method = &quot;loess&quot;) +
+  labs(title = &quot;Mean Points Scored, Iolani Football, 1945-2019&quot;, x = &quot;Year&quot;, y = &quot;Points per Game&quot;)</code></pre>
+<p><img src="/post/2019-12-14-iolani-football-1945-2019_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>I also looked at average points allowed per season.</p>
+<pre class="r"><code>iolani %&gt;% filter(!is.na(Iolani_score)) %&gt;%
+  mutate(gameyear = year(date)) %&gt;%
+  group_by(gameyear) %&gt;%
+  summarize(off_scoring = mean(Iolani_score), def_scoring = mean(opp_score)) %&gt;%
+  ggplot(aes(x = gameyear, y = def_scoring)) + geom_point() + geom_smooth(method = &quot;loess&quot;) +
+  labs(title = &quot;Mean Points Allowed, Iolani Football, 1945-2019&quot;, x = &quot;Year&quot;, y = &quot;Points per Game&quot;)</code></pre>
+<p><img src="/post/2019-12-14-iolani-football-1945-2019_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="offensive-category-leaders" class="section level1">
+<h1>Offensive Category Leaders</h1>
+<p>There are only so many things that can be done with single game offensive yards leaders, but we can at least calculate the top 10 historical performances for each type (passing, rushing, receiving).</p>
+<div id="top-passing-yard-games" class="section level2">
+<h2>Top Passing Yard Games</h2>
+<p>Tai-John Mizutani had the top 4 passing yard games in Iolani history, 3 of which came during the 2017 season. He is currently on the football team at Central Washington University.</p>
+<pre class="r"><code>iolani %&gt;% select(pass_leader, pass_yds, date, opponent, result, Iolani_score, opp_score) %&gt;%
+  arrange(-pass_yds)</code></pre>
+<pre><code>## # A tibble: 859 x 7
+##    pass_leader  pass_yds date       opponent  result Iolani_score opp_score
+##    &lt;fct&gt;           &lt;int&gt; &lt;date&gt;     &lt;fct&gt;     &lt;fct&gt;         &lt;int&gt;     &lt;int&gt;
+##  1 Tai-John Mi…      503 2017-08-26 Kaimuki   W                57        34
+##  2 Tai-John Mi…      485 2015-10-16 Kamehame… L                24        39
+##  3 Tai-John Mi…      430 2017-09-29 St. Fran… W                45        29
+##  4 Tai-John Mi…      426 2017-09-16 Pac-Five  W                55        20
+##  5 Reece Foy         391 2011-09-09 Punahou   L                18        38
+##  6 Kiran Kepoo       386 2004-08-21 Farringt… W                24         7
+##  7 Kiran Kepoo       381 2004-10-01 Pac-Five  W                38        13
+##  8 Ryan Dung         369 2006-11-24 King Kek… L                37        38
+##  9 Austin Jim …      367 2013-10-04 Pac-Five  W                31        19
+## 10 Reece Foy         364 2012-08-18 at Waipa… W                35        34
+## # … with 849 more rows</code></pre>
+</div>
+<div id="top-rushing-yard-games" class="section level2">
+<h2>Top Rushing Yard Games</h2>
+<p>Joe Igber has 6 of the top 10 on this list. He went on to play college football at California and <a href="https://www.sports-reference.com/cfb/players/joe-igber-1.html">rushed for over 3000 yards</a> in college.</p>
+<pre class="r"><code>iolani %&gt;% select(rush_leader, rush_yds, date, opponent, result, Iolani_score, opp_score) %&gt;%
+  arrange(-rush_yds)</code></pre>
+<pre><code>## # A tibble: 859 x 7
+##    rush_leader   rush_yds date       opponent result Iolani_score opp_score
+##    &lt;fct&gt;            &lt;int&gt; &lt;date&gt;     &lt;fct&gt;    &lt;fct&gt;         &lt;int&gt;     &lt;int&gt;
+##  1 Joe Igber          352 1998-10-23 Pac-Five W                45        35
+##  2 Joe Igber          312 1998-09-19 Pac-Five W                40        29
+##  3 Joe Igber          278 1998-11-13 Damien   W                31         7
+##  4 Joe Igber          262 1997-10-04 Pac-Five W                45         7
+##  5 Raynold Stow…      261 2002-09-20 Pac-Five W                35        27
+##  6 Joe Igber          251 1998-10-09 Damien   W                49        32
+##  7 Joe Igber          240 1997-11-15 Damien   W                17        12
+##  8 Raynold Stow…      237 2002-11-01 Damien   W                23        12
+##  9 Kyle Chang         228 1992-10-23 Damien   W                14         0
+## 10 Willie Keola       228 1972-11-24 Punahou  W                34        25
+## # … with 849 more rows</code></pre>
+</div>
+<div id="top-receiving-yard-games" class="section level2">
+<h2>Top Receiving Yard Games</h2>
+<p>Unlike the passing and rushing yard leaders, there are a lot of different names on this list. Carter Kamana finished his high school senior season this year. Keoni-Kordell Makekau plays Division 1 football at Navy. <a href="https://missoulian.com/sports/college/montana/raul-pacheco-s-biggest-play-wasn-t-a-pass-reception/article_6d520010-a875-11de-ae6a-001cc4c03286.html">Raul Pacheco</a> won the national championship at Montana and had the most receptions in Montana history until 2019.</p>
+<pre class="r"><code>iolani %&gt;% select(receive_leader, receive_yds, date, opponent, result, Iolani_score, opp_score) %&gt;%
+  arrange(-receive_yds)</code></pre>
+<pre><code>## # A tibble: 859 x 7
+##    receive_leader receive_yds date       opponent result Iolani_score
+##    &lt;fct&gt;                &lt;int&gt; &lt;date&gt;     &lt;fct&gt;    &lt;fct&gt;         &lt;int&gt;
+##  1 Carter Kamana          222 2017-09-16 Pac-Five W                55
+##  2 Keoni-Kordell…         220 2013-10-04 Pac-Five W                31
+##  3 Raul Pacheco           219 1992-11-14 Saint L… L                14
+##  4 Jonah Miyazawa         193 2017-11-03 Lahaina… L                27
+##  5 Micah Kalama           189 2004-10-01 Pac-Five W                38
+##  6 Raul Pacheco           179 1993-09-11 Saint L… L                 7
+##  7 Tanner Nishio…         175 2012-09-20 at Kame… L                34
+##  8 Keoni-Kordell…         169 2015-10-16 Kameham… L                24
+##  9 Nicholas Kenn…         169 2015-10-02 at Puna… L                23
+## 10 Lionel Fujioka         166 2006-08-25 at Mili… L                23
+## # … with 849 more rows, and 1 more variable: opp_score &lt;int&gt;</code></pre>
+</div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>It was an interesting look back at Iolani football over the years. As a casual fan, I found some interesting stories and tidbits that I never knew, like that Tacoma game, or the fact that Raul Pacheco was the career leader in receptions at Montana for 20 years. I never knew about how successful Joe Igber was in college and I found out (again?) about the 1968 ILH champion team. It was also a pretty good way to brush off my <code>dplyr</code> skills. Iolani no ka oi!</p>
+</div>
