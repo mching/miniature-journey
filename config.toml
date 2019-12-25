@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "https://mching.github.io"
 publishDir = "../mching.github.io"
 relativeurls = true
 languageCode = "en-us"

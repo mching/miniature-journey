@@ -1,0 +1,61 @@
+---
+title: Prime Rib Temperature
+author: ~
+date: '2019-12-24'
+slug: prime-rib-temperature
+categories: 
+  - R
+tags: 
+  - cooking
+  - primerib
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>We started a new family Christmas Eve tradition with roast prime rib. This year was a 6.61 lb bone on prime rib.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)
+dat &lt;- tbl_df(read.csv(&quot;../datasets/Prime_rib_temp.csv&quot;))</code></pre>
+<p>I followed the <a href="https://www.seriouseats.com/2014/12/food-lab-guide-to-prime-rib.html">Serious Eats recipe</a>.</p>
+<p>I cut off the bone then salted and let the bones and meat dry brine overnight. I tied them back together around noon and put them in a 200 degree Fahrenheit oven. The temperature didn’t budge for most of the first hour and then it was a reasonably linear rise in temperature until I took it out when the meat was 125 degrees. It went up to 135 while resting for an hour.</p>
+<pre class="r"><code>ggplot(dat, aes(x = minutes, y = temperature)) + geom_point()</code></pre>
+<p><img src="/post/2019-12-24-prime-rib-temperature_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>What a beautiful line! Taking off the first few observations, we can put on a regression line.</p>
+<pre class="r"><code>dat %&gt;% filter(temperature &gt;45) %&gt;% 
+  ggplot(aes(x = minutes, y = temperature)) + 
+  geom_point() + geom_smooth(method = &quot;lm&quot;)</code></pre>
+<p><img src="/post/2019-12-24-prime-rib-temperature_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>I decided to fit a regression model to that line to see how linear it was.</p>
+<pre class="r"><code>dat2 &lt;- dat %&gt;% filter(temperature &gt; 45)
+model1 &lt;- lm(temperature ~ minutes, dat2)
+summary(model1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = temperature ~ minutes, data = dat2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1.5854 -0.5930 -0.2445  0.7671  1.1959 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 22.522427   0.643147   35.02   &lt;2e-16 ***
+## minutes      0.459377   0.004181  109.88   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.9197 on 16 degrees of freedom
+## Multiple R-squared:  0.9987, Adjusted R-squared:  0.9986 
+## F-statistic: 1.207e+04 on 1 and 16 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>The coefficient was 0.46 degrees per minute with an R squared of 0.999!</p>

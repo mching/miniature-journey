@@ -13,9 +13,7 @@ subtitle: ''
 image: ''
 ---
 
-This week the local paper released a [season recap](https://www.hawaiiprepworld.com/football/closing-the-book-2019-iolani-raiders/) of my alma mater's football team. Included in the article was a link to [game results dating back to 1945](https://www.hawaiiprepworld.com/iolani-football/statistics/). It looked like there was an opportunity for a little data analysis on things like home and away records, records versus specific schools, etc. 
-
-I downloaded the data and cleaned it for analysis in Google Sheets. 
+This week the local paper released a [season recap](https://www.hawaiiprepworld.com/football/closing-the-book-2019-iolani-raiders/) of my alma mater's football team. Included in the article was a link to [game results dating back to 1945](https://www.hawaiiprepworld.com/iolani-football/statistics/). It looked like there was an opportunity for a little data analysis on things like home and away records, records versus specific schools, etc. I downloaded the data and cleaned it for analysis in Google Sheets. 
 
 ```{r}
 library(dplyr)

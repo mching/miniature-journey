@@ -1,0 +1,49 @@
+---
+title: Prime Rib Temperature
+author: ~
+date: '2019-12-24'
+slug: prime-rib-temperature
+categories: 
+  - R
+tags: 
+  - cooking
+  - primerib
+type: ''
+subtitle: ''
+image: ''
+---
+
+We started a new family Christmas Eve tradition with roast prime rib. This year was a 6.61 lb bone on prime rib. 
+
+```{r}
+library(dplyr)
+library(ggplot2)
+dat <- tbl_df(read.csv("../datasets/Prime_rib_temp.csv"))
+```
+
+I followed the [Serious Eats recipe](https://www.seriouseats.com/2014/12/food-lab-guide-to-prime-rib.html).
+
+I cut off the bone then salted and let the bones and meat dry brine overnight. I tied them back together around noon and put them in a 200 degree Fahrenheit oven. The temperature didn't budge for most of the first hour and then it was a reasonably linear rise in temperature until I took it out when the meat was 125 degrees. It went up to 135 while resting for an hour.
+
+```{r}
+ggplot(dat, aes(x = minutes, y = temperature)) + geom_point()
+```
+
+What a beautiful line! Taking off the first few observations, we can put on a regression line.
+
+```{r}
+dat %>% filter(temperature >45) %>% 
+  ggplot(aes(x = minutes, y = temperature)) + 
+  geom_point() + geom_smooth(method = "lm")
+  
+```
+
+I decided to fit a regression model to that line to see how linear it was.
+
+```{r}
+dat2 <- dat %>% filter(temperature > 45)
+model1 <- lm(temperature ~ minutes, dat2)
+summary(model1)
+```
+
+The coefficient was 0.46 degrees per minute with an R squared of 0.999! 
