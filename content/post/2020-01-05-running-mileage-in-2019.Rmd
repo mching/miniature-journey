@@ -1,0 +1,202 @@
+---
+title: Running Mileage in 2019
+author: ~
+date: '2020-01-05'
+slug: running-mileage-in-2019
+categories: 
+  - R
+tags: 
+  - exercise
+type: ''
+subtitle: ''
+image: ''
+---
+
+After a great 2019 of running, I wanted to look back to see how far I had run. I regularly use a [Garmin GPS watch](https://www.amazon.com/Garmin-Fenix-Fitness-Certified-Refurbished/dp/B01LXO91XE/ref=sr_1_2?keywords=fenix+3+hr+renewed&qid=1578257175&sr=8-2) to track my runs. The Garmin app and website let me look back at 12 months but after January 1, the 12 months was updated to February 2019 to January 2020 so I couldn't see my 2019 totals anymore. I also sync to Strava but the Strava 2019 Year in Review mileage total (1216 miles) was off of the Garmin calculation that I saw at the end of December (~1300 miles). Fortunately I was able to download my data from the Garmin website and analyze it in R.
+
+## Data Cleaning
+
+The data was read in as a lot of factors so I had to convert them to numeric data. I'm not sure why but I had to convert to character before doing the numeric conversion. I think this has to do something with the factor levels.
+
+
+```{r}
+suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+suppressPackageStartupMessages(library(lubridate))
+runs <- tbl_df(read.csv("../datasets/garmin_data_20180611_20200103.csv"))
+```
+
+
+
+```{r}
+glimpse(runs)
+
+runs$Date <- ymd_hms(runs$Date)
+
+
+runs$Distance <- as.character(runs$Distance) 
+runs$Distance <- as.numeric(runs$Distance)
+
+runs$Calories <- as.character(runs$Calories) # the commas in this variable mess up the later calculations
+runs$Calories <- gsub(",", "", runs$Calories, fixed = TRUE)
+runs$Calories <- as.numeric(runs$Calories)
+
+runs$Avg.HR <- as.character(runs$Avg.HR) 
+runs$Avg.HR <- as.numeric(runs$Avg.HR)
+
+runs$Max.HR <- as.character(runs$Max.HR) 
+runs$Max.HR <- as.numeric(runs$Max.HR)
+
+runs$Elev.Gain <- as.character(runs$Elev.Gain) 
+runs$Elev.Gain <- as.numeric(runs$Elev.Gain)
+
+glimpse(runs)
+```
+
+
+There were 439 activities in the dataset, spanning a range from June 2018 to January 2020.
+
+```{r}
+min(runs$Date)
+max(runs$Date)
+```
+
+
+I reviewed the types of activities and there were quite a few other activities like indoor rowing and cycling. I was just interested in the running and treadmill running activities.
+
+```{r}
+runs %>% group_by(Activity.Type) %>%
+  summarize(n())
+```
+
+
+
+```{r}
+start_date <- ymd_hms("20190101 00:00:01")
+end_date <- ymd_hms("20191231 23:59:59")
+
+runs_2019 <- runs %>% filter(Activity.Type == "treadmill_running" | Activity.Type == "running") %>% 
+  filter(Date > start_date) %>%
+  filter(Date < end_date)
+```
+
+# Running Distance in 2019 
+
+## 2019 Total
+
+After filtering the data, I found that in 2019 I ran `r sum(runs_2019$Distance)` miles. There were 1224.8 miles run outside and 101.55 on the treadmill. I think this is probably how Strava got a smaller number (1216) than Garmin. It's not exactly what Strava said, but I think there are differences in how the Strava algorithm smooths out the GPS tracks compared to the Garmin algorithm that could account for the 8 mile difference (0.6% of 1224 miles).
+
+```{r}
+sum(runs_2019$Distance)
+runs_2019 %>% group_by(Activity.Type) %>%
+  summarize(sum(Distance))
+```
+
+Here's the distribution of running in 2019.
+
+```{r}
+runs_2019 %>%
+  ggplot(aes(x = Distance)) + geom_histogram()
+```
+
+## Distance by Month and Week
+
+I looked at the distances by month and week. In October, I switched from the Run Less, Run Faster method to the Hanson's marathon method. From the graphs it's pretty obvious when I switched my training regimen.
+
+```{r}
+runs_2019 %>% mutate(Month = factor(month(Date), labels = month.abb)) %>% 
+  group_by(Month) %>%
+  summarize(monthly_Distance = sum(Distance)) %>%
+  ggplot(aes(x = Month, y = monthly_Distance)) +
+  geom_point() +
+  ylab("Monthly Distance (miles)") +
+  ggtitle("Monthly Distance in 2019")
+```
+
+
+
+```{r}
+runs_2019 %>% mutate(Week_obs = week(Date)) %>% 
+  group_by(Week_obs) %>%
+  summarize(weekly_Distance = sum(Distance)) %>%
+  ggplot(aes(x = Week_obs, y = weekly_Distance)) +
+  geom_point() +
+  ylab("Weekly Distance (miles)") + 
+  xlab("Week") +
+  ggtitle("Weekly Distance in 2019")
+```
+
+# Hill Running
+
+I started running some hilly routes in 2019 to see if it would help me with the hills on the marathon course. Elevation change in feet is calculated from the barometric pressure sensor in the watch. I calibrated it once but it doesn't seem to be that accurate compared to the GPS data, and when I correct it on the website, it is often off by quite a bit (an idea for another analysis?). In any case, I gained 27,789 feet in altitude this year. Strava says this is like a Mt. Everest, but it's more accurately closer to the [5th highest](https://en.wikipedia.org/wiki/Makalu) in the [list of highest mountains](https://en.wikipedia.org/wiki/List_of_highest_mountains_on_Earth), [Makalu.](https://en.wikipedia.org/wiki/Makalu)
+
+```{r}
+runs_2019 %>% summarize(sum(Elev.Gain, na.rm = T))
+```
+
+The average elevation gain by month 
+
+```{r}
+runs_2019 %>% filter(!is.na(Elev.Gain)) %>%
+  mutate(Month = factor(month(Date), labels = month.abb)) %>% 
+  ggplot(aes(x = Month, y = Elev.Gain)) +
+  geom_boxplot() +
+  ylab("Elevation Gain per Run (feet)") +
+  ggtitle("Median Run Elevation Gain in 2019")
+```
+
+I had been running hills in January then strained my calf and had to take a couple of weeks off. I tried to avoid hills for a while after that but when I started training for the marathon in August, I started adding some light hills.
+
+# Calories in 2019
+
+I looked at the calories in my [previous post](https://mching.github.io/2018/06/03/runkeeper-data/) using my Runkeeper app data. Here are my monthly calories. These are obviously highly correlated with the mileage.
+
+```{r}
+runs_2019 %>% mutate(Month = factor(month(Date), labels = month.abb)) %>% 
+  group_by(Month) %>%
+  summarize(monthly_cals = sum(Calories, na.rm = T)) %>%
+  ggplot(aes(x = Month, y = monthly_cals)) +
+  geom_point() +
+  ylab("Monthly Calories") +
+  ggtitle("Monthly Calories in 2019")
+```
+
+## Calories and Miles Run
+
+Comparing the calories and the miles run, I got the following graph. I used all the data from 2018-2020 for this analysis.
+
+```{r}
+runs %>% filter(Activity.Type == "treadmill_running" | Activity.Type == "running") %>% 
+  ggplot(aes(x = Distance, y = Calories)) + geom_point() + geom_smooth(method = "lm") +
+  labs(title = "Correlation between Calories and Miles Run, Garmin",
+       x = "Miles",
+       y = "Calories")
+```
+
+As the distance increased there was a significant increase in the spread for calories. The slope of the line from the Garmin data was 97 calories per mile.
+```{r}
+x <- runs %>% filter(Activity.Type == "treadmill_running" | Activity.Type == "running")
+model1 <- lm(x$Calories ~ x$Distance)
+summary(model1)
+```
+
+
+Compare this to the graph that the [Runkeeper data](https://mching.github.io/2018/06/03/runkeeper-data/) produced in 2018. Even though this graph only has runs up to about 9 miles, you can see there is virtually no spread from this line versus the substantial spread in the Garmin data under 10 miles.
+
+```{r}
+dat <- tbl_df(read.csv("../datasets/cardioActivities.csv"))
+dat %>% filter(Type == "Running") %>%
+  ggplot(aes(x = Distance..mi., y = Calories.Burned)) + geom_point() + geom_smooth(method = "lm") +
+  labs(title = "Correlation between Calories and Miles Run, Runkeeper",
+       x = "Miles",
+       y = "Calories")
+```
+
+The slope of the line from the Runkeeper data (calories/mile) was 136 calories per mile. The model for the Runkeeper calorie estimate seems to be based only on the distance. The Garmin model seems to take other factors into account perhaps temperature or pace.
+
+```{r}
+x <- filter(dat, Type == "Running")
+model1 <- lm(x$Calories.Burned ~ x$Distance..mi.)
+summary(model1)
+```
+

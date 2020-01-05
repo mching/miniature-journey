@@ -1,0 +1,273 @@
+---
+title: Running Mileage in 2019
+author: ~
+date: '2020-01-05'
+slug: running-mileage-in-2019
+categories: 
+  - R
+tags: 
+  - exercise
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>After a great 2019 of running, I wanted to look back to see how far I had run. I regularly use a <a href="https://www.amazon.com/Garmin-Fenix-Fitness-Certified-Refurbished/dp/B01LXO91XE/ref=sr_1_2?keywords=fenix+3+hr+renewed&amp;qid=1578257175&amp;sr=8-2">Garmin GPS watch</a> to track my runs. The Garmin app and website let me look back at 12 months but after January 1, the 12 months was updated to February 2019 to January 2020 so I couldn’t see my 2019 totals anymore. I also sync to Strava but the Strava 2019 Year in Review mileage total (1216 miles) was off of the Garmin calculation that I saw at the end of December (~1300 miles). Fortunately I was able to download my data from the Garmin website and analyze it in R.</p>
+<div id="data-cleaning" class="section level2">
+<h2>Data Cleaning</h2>
+<p>The data was read in as a lot of factors so I had to convert them to numeric data. I’m not sure why but I had to convert to character before doing the numeric conversion. I think this has to do something with the factor levels.</p>
+<pre class="r"><code>suppressPackageStartupMessages(library(dplyr))
+library(ggplot2)
+suppressPackageStartupMessages(library(lubridate))
+runs &lt;- tbl_df(read.csv(&quot;../datasets/garmin_data_20180611_20200103.csv&quot;))</code></pre>
+<pre class="r"><code>glimpse(runs)</code></pre>
+<pre><code>## Observations: 439
+## Variables: 32
+## $ Activity.Type            &lt;fct&gt; running, running, running, running, run…
+## $ Date                     &lt;fct&gt; 2020-01-03 06:18:21, 2020-01-02 06:10:5…
+## $ Favorite                 &lt;fct&gt; false, false, false, false, false, fals…
+## $ Title                    &lt;fct&gt; Honolulu Running, Honolulu Running, Hon…
+## $ Distance                 &lt;fct&gt; 5.05, 5.02, 5.91, 1.77, 6.31, 6.64, 5.0…
+## $ Calories                 &lt;fct&gt; &quot;437&quot;, &quot;542&quot;, &quot;508&quot;, &quot;204&quot;, &quot;485&quot;, &quot;668…
+## $ Time                     &lt;fct&gt; 00:49:49, 00:50:20, 00:54:33, 00:19:52,…
+## $ Avg.HR                   &lt;fct&gt; 136, 147, 142, 143, 136, 148, 129, 146,…
+## $ Max.HR                   &lt;fct&gt; 159, 164, 164, 168, 162, 179, 170, 166,…
+## $ Aerobic.TE               &lt;fct&gt; 2.1, 2.9, 2.5, 2.1, 2.1, 3.7, 2.0, 2.7,…
+## $ Avg.Run.Cadence          &lt;fct&gt; 169, 167, 171, 160, 170, 169, 167, 159,…
+## $ Max.Run.Cadence          &lt;fct&gt; 177, 175, 183, 173, 187, 184, 175, 171,…
+## $ Avg.Pace                 &lt;fct&gt; 9:52, 10:01, 9:14, 11:13, 9:13, 9:36, 9…
+## $ Best.Pace                &lt;fct&gt; 7:58, 8:33, 6:55, 8:57, 7:11, 7:45, 8:0…
+## $ Elev.Gain                &lt;fct&gt; 305, 62, 308, 148, 79, 351, 59, 33, 26,…
+## $ Elev.Loss                &lt;fct&gt; 315, 92, 322, 131, 89, 367, 79, 43, 43,…
+## $ Avg.Stride.Length        &lt;dbl&gt; 0.96, 0.96, 1.02, 0.90, 1.03, 0.99, 0.9…
+## $ Avg.Vertical.Ratio       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Avg.Vertical.Oscillation &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Training.Stress.Score.   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Grit                     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Flow                     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Total.Strokes            &lt;fct&gt; --, --, --, --, --, --, --, --, --, --,…
+## $ Avg..Swolf               &lt;fct&gt; --, --, --, --, --, --, --, --, --, --,…
+## $ Avg.Stroke.Rate          &lt;fct&gt; --, --, --, --, --, --, --, --, --, --,…
+## $ Bottom.Time              &lt;fct&gt; 0:00, 0:00, 0:00, 0:00, 0:00, 0:00, 0:0…
+## $ Min.Temp                 &lt;dbl&gt; 75.2, 73.4, 69.8, 77.0, 75.2, 77.0, 77.…
+## $ Surface.Interval         &lt;fct&gt; 0:00, 0:00, 0:00, 0:00, 0:00, 0:00, 0:0…
+## $ Decompression            &lt;fct&gt; No, No, No, No, No, No, No, No, No, No,…
+## $ Best.Lap.Time            &lt;fct&gt; 00:24.89, 00:13.82, 07:50.10, 07:49.11,…
+## $ Number.of.Runs           &lt;int&gt; 6, 6, 6, 2, 7, 7, 6, 3, 5, 7, 6, 6, 5, …
+## $ Max.Temp                 &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</code></pre>
+<pre class="r"><code>runs$Date &lt;- ymd_hms(runs$Date)
+
+
+runs$Distance &lt;- as.character(runs$Distance) 
+runs$Distance &lt;- as.numeric(runs$Distance)</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>runs$Calories &lt;- as.character(runs$Calories) # the commas in this variable mess up the later calculations
+runs$Calories &lt;- gsub(&quot;,&quot;, &quot;&quot;, runs$Calories, fixed = TRUE)
+runs$Calories &lt;- as.numeric(runs$Calories)
+
+runs$Avg.HR &lt;- as.character(runs$Avg.HR) 
+runs$Avg.HR &lt;- as.numeric(runs$Avg.HR)</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>runs$Max.HR &lt;- as.character(runs$Max.HR) 
+runs$Max.HR &lt;- as.numeric(runs$Max.HR)</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>runs$Elev.Gain &lt;- as.character(runs$Elev.Gain) 
+runs$Elev.Gain &lt;- as.numeric(runs$Elev.Gain)</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>glimpse(runs)</code></pre>
+<pre><code>## Observations: 439
+## Variables: 32
+## $ Activity.Type            &lt;fct&gt; running, running, running, running, run…
+## $ Date                     &lt;dttm&gt; 2020-01-03 06:18:21, 2020-01-02 06:10:…
+## $ Favorite                 &lt;fct&gt; false, false, false, false, false, fals…
+## $ Title                    &lt;fct&gt; Honolulu Running, Honolulu Running, Hon…
+## $ Distance                 &lt;dbl&gt; 5.05, 5.02, 5.91, 1.77, 6.31, 6.64, 5.0…
+## $ Calories                 &lt;dbl&gt; 437, 542, 508, 204, 485, 668, 377, 273,…
+## $ Time                     &lt;fct&gt; 00:49:49, 00:50:20, 00:54:33, 00:19:52,…
+## $ Avg.HR                   &lt;dbl&gt; 136, 147, 142, 143, 136, 148, 129, 146,…
+## $ Max.HR                   &lt;dbl&gt; 159, 164, 164, 168, 162, 179, 170, 166,…
+## $ Aerobic.TE               &lt;fct&gt; 2.1, 2.9, 2.5, 2.1, 2.1, 3.7, 2.0, 2.7,…
+## $ Avg.Run.Cadence          &lt;fct&gt; 169, 167, 171, 160, 170, 169, 167, 159,…
+## $ Max.Run.Cadence          &lt;fct&gt; 177, 175, 183, 173, 187, 184, 175, 171,…
+## $ Avg.Pace                 &lt;fct&gt; 9:52, 10:01, 9:14, 11:13, 9:13, 9:36, 9…
+## $ Best.Pace                &lt;fct&gt; 7:58, 8:33, 6:55, 8:57, 7:11, 7:45, 8:0…
+## $ Elev.Gain                &lt;dbl&gt; 305, 62, 308, 148, 79, 351, 59, 33, 26,…
+## $ Elev.Loss                &lt;fct&gt; 315, 92, 322, 131, 89, 367, 79, 43, 43,…
+## $ Avg.Stride.Length        &lt;dbl&gt; 0.96, 0.96, 1.02, 0.90, 1.03, 0.99, 0.9…
+## $ Avg.Vertical.Ratio       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Avg.Vertical.Oscillation &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Training.Stress.Score.   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Grit                     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Flow                     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Total.Strokes            &lt;fct&gt; --, --, --, --, --, --, --, --, --, --,…
+## $ Avg..Swolf               &lt;fct&gt; --, --, --, --, --, --, --, --, --, --,…
+## $ Avg.Stroke.Rate          &lt;fct&gt; --, --, --, --, --, --, --, --, --, --,…
+## $ Bottom.Time              &lt;fct&gt; 0:00, 0:00, 0:00, 0:00, 0:00, 0:00, 0:0…
+## $ Min.Temp                 &lt;dbl&gt; 75.2, 73.4, 69.8, 77.0, 75.2, 77.0, 77.…
+## $ Surface.Interval         &lt;fct&gt; 0:00, 0:00, 0:00, 0:00, 0:00, 0:00, 0:0…
+## $ Decompression            &lt;fct&gt; No, No, No, No, No, No, No, No, No, No,…
+## $ Best.Lap.Time            &lt;fct&gt; 00:24.89, 00:13.82, 07:50.10, 07:49.11,…
+## $ Number.of.Runs           &lt;int&gt; 6, 6, 6, 2, 7, 7, 6, 3, 5, 7, 6, 6, 5, …
+## $ Max.Temp                 &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …</code></pre>
+<p>There were 439 activities in the dataset, spanning a range from June 2018 to January 2020.</p>
+<pre class="r"><code>min(runs$Date)</code></pre>
+<pre><code>## [1] &quot;2018-06-11 05:41:15 UTC&quot;</code></pre>
+<pre class="r"><code>max(runs$Date)</code></pre>
+<pre><code>## [1] &quot;2020-01-03 06:18:21 UTC&quot;</code></pre>
+<p>I reviewed the types of activities and there were quite a few other activities like indoor rowing and cycling. I was just interested in the running and treadmill running activities.</p>
+<pre class="r"><code>runs %&gt;% group_by(Activity.Type) %&gt;%
+  summarize(n())</code></pre>
+<pre><code>## # A tibble: 8 x 2
+##   Activity.Type       `n()`
+##   &lt;fct&gt;               &lt;int&gt;
+## 1 cycling                 6
+## 2 elliptical              2
+## 3 hiking                 12
+## 4 indoor_cycling         96
+## 5 indoor_rowing          22
+## 6 open_water_swimming     1
+## 7 running               277
+## 8 treadmill_running      23</code></pre>
+<pre class="r"><code>start_date &lt;- ymd_hms(&quot;20190101 00:00:01&quot;)
+end_date &lt;- ymd_hms(&quot;20191231 23:59:59&quot;)
+
+runs_2019 &lt;- runs %&gt;% filter(Activity.Type == &quot;treadmill_running&quot; | Activity.Type == &quot;running&quot;) %&gt;% 
+  filter(Date &gt; start_date) %&gt;%
+  filter(Date &lt; end_date)</code></pre>
+</div>
+<div id="running-distance-in-2019" class="section level1">
+<h1>Running Distance in 2019</h1>
+<div id="total" class="section level2">
+<h2>2019 Total</h2>
+<p>After filtering the data, I found that in 2019 I ran 1326.35 miles. There were 1224.8 miles run outside and 101.55 on the treadmill. I think this is probably how Strava got a smaller number (1216) than Garmin. It’s not exactly what Strava said, but I think there are differences in how the Strava algorithm smooths out the GPS tracks compared to the Garmin algorithm that could account for the 8 mile difference (0.6% of 1224 miles).</p>
+<pre class="r"><code>sum(runs_2019$Distance)</code></pre>
+<pre><code>## [1] 1326.35</code></pre>
+<pre class="r"><code>runs_2019 %&gt;% group_by(Activity.Type) %&gt;%
+  summarize(sum(Distance))</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   Activity.Type     `sum(Distance)`
+##   &lt;fct&gt;                       &lt;dbl&gt;
+## 1 running                     1225.
+## 2 treadmill_running            102.</code></pre>
+<p>Here’s the distribution of running in 2019.</p>
+<pre class="r"><code>runs_2019 %&gt;%
+  ggplot(aes(x = Distance)) + geom_histogram()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="/post/2020-01-05-running-mileage-in-2019_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="distance-by-month-and-week" class="section level2">
+<h2>Distance by Month and Week</h2>
+<p>I looked at the distances by month and week. In October, I switched from the Run Less, Run Faster method to the Hanson’s marathon method. From the graphs it’s pretty obvious when I switched my training regimen.</p>
+<pre class="r"><code>runs_2019 %&gt;% mutate(Month = factor(month(Date), labels = month.abb)) %&gt;% 
+  group_by(Month) %&gt;%
+  summarize(monthly_Distance = sum(Distance)) %&gt;%
+  ggplot(aes(x = Month, y = monthly_Distance)) +
+  geom_point() +
+  ylab(&quot;Monthly Distance (miles)&quot;) +
+  ggtitle(&quot;Monthly Distance in 2019&quot;)</code></pre>
+<p><img src="/post/2020-01-05-running-mileage-in-2019_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>runs_2019 %&gt;% mutate(Week_obs = week(Date)) %&gt;% 
+  group_by(Week_obs) %&gt;%
+  summarize(weekly_Distance = sum(Distance)) %&gt;%
+  ggplot(aes(x = Week_obs, y = weekly_Distance)) +
+  geom_point() +
+  ylab(&quot;Weekly Distance (miles)&quot;) + 
+  xlab(&quot;Week&quot;) +
+  ggtitle(&quot;Weekly Distance in 2019&quot;)</code></pre>
+<p><img src="/post/2020-01-05-running-mileage-in-2019_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+</div>
+<div id="hill-running" class="section level1">
+<h1>Hill Running</h1>
+<p>I started running some hilly routes in 2019 to see if it would help me with the hills on the marathon course. Elevation change in feet is calculated from the barometric pressure sensor in the watch. I calibrated it once but it doesn’t seem to be that accurate compared to the GPS data, and when I correct it on the website, it is often off by quite a bit (an idea for another analysis?). In any case, I gained 27,789 feet in altitude this year. Strava says this is like a Mt. Everest, but it’s more accurately closer to the <a href="https://en.wikipedia.org/wiki/Makalu">5th highest</a> in the <a href="https://en.wikipedia.org/wiki/List_of_highest_mountains_on_Earth">list of highest mountains</a>, <a href="https://en.wikipedia.org/wiki/Makalu">Makalu.</a></p>
+<pre class="r"><code>runs_2019 %&gt;% summarize(sum(Elev.Gain, na.rm = T))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `sum(Elev.Gain, na.rm = T)`
+##                         &lt;dbl&gt;
+## 1                       27789</code></pre>
+<p>The average elevation gain by month</p>
+<pre class="r"><code>runs_2019 %&gt;% filter(!is.na(Elev.Gain)) %&gt;%
+  mutate(Month = factor(month(Date), labels = month.abb)) %&gt;% 
+  ggplot(aes(x = Month, y = Elev.Gain)) +
+  geom_boxplot() +
+  ylab(&quot;Elevation Gain per Run (feet)&quot;) +
+  ggtitle(&quot;Median Run Elevation Gain in 2019&quot;)</code></pre>
+<p><img src="/post/2020-01-05-running-mileage-in-2019_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>I had been running hills in January then strained my calf and had to take a couple of weeks off. I tried to avoid hills for a while after that but when I started training for the marathon in August, I started adding some light hills.</p>
+</div>
+<div id="calories-in-2019" class="section level1">
+<h1>Calories in 2019</h1>
+<p>I looked at the calories in my <a href="https://mching.github.io/2018/06/03/runkeeper-data/">previous post</a> using my Runkeeper app data. Here are my monthly calories. These are obviously highly correlated with the mileage.</p>
+<pre class="r"><code>runs_2019 %&gt;% mutate(Month = factor(month(Date), labels = month.abb)) %&gt;% 
+  group_by(Month) %&gt;%
+  summarize(monthly_cals = sum(Calories, na.rm = T)) %&gt;%
+  ggplot(aes(x = Month, y = monthly_cals)) +
+  geom_point() +
+  ylab(&quot;Monthly Calories&quot;) +
+  ggtitle(&quot;Monthly Calories in 2019&quot;)</code></pre>
+<p><img src="/post/2020-01-05-running-mileage-in-2019_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<div id="calories-and-miles-run" class="section level2">
+<h2>Calories and Miles Run</h2>
+<p>Comparing the calories and the miles run, I got the following graph. I used all the data from 2018-2020 for this analysis.</p>
+<pre class="r"><code>runs %&gt;% filter(Activity.Type == &quot;treadmill_running&quot; | Activity.Type == &quot;running&quot;) %&gt;% 
+  ggplot(aes(x = Distance, y = Calories)) + geom_point() + geom_smooth(method = &quot;lm&quot;) +
+  labs(title = &quot;Correlation between Calories and Miles Run, Garmin&quot;,
+       x = &quot;Miles&quot;,
+       y = &quot;Calories&quot;)</code></pre>
+<p><img src="/post/2020-01-05-running-mileage-in-2019_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>As the distance increased there was a significant increase in the spread for calories. The slope of the line from the Garmin data was 97 calories per mile.</p>
+<pre class="r"><code>x &lt;- runs %&gt;% filter(Activity.Type == &quot;treadmill_running&quot; | Activity.Type == &quot;running&quot;)
+model1 &lt;- lm(x$Calories ~ x$Distance)
+summary(model1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = x$Calories ~ x$Distance)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -806.93  -75.35   -0.20   68.42  712.07 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   32.704     17.054   1.918   0.0561 .  
+## x$Distance    97.345      2.041  47.690   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 154.9 on 298 degrees of freedom
+## Multiple R-squared:  0.8842, Adjusted R-squared:  0.8838 
+## F-statistic:  2274 on 1 and 298 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Compare this to the graph that the <a href="https://mching.github.io/2018/06/03/runkeeper-data/">Runkeeper data</a> produced in 2018. Even though this graph only has runs up to about 9 miles, you can see there is virtually no spread from this line versus the substantial spread in the Garmin data under 10 miles.</p>
+<pre class="r"><code>dat &lt;- tbl_df(read.csv(&quot;../datasets/cardioActivities.csv&quot;))
+dat %&gt;% filter(Type == &quot;Running&quot;) %&gt;%
+  ggplot(aes(x = Distance..mi., y = Calories.Burned)) + geom_point() + geom_smooth(method = &quot;lm&quot;) +
+  labs(title = &quot;Correlation between Calories and Miles Run, Runkeeper&quot;,
+       x = &quot;Miles&quot;,
+       y = &quot;Calories&quot;)</code></pre>
+<p><img src="/post/2020-01-05-running-mileage-in-2019_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>The slope of the line from the Runkeeper data (calories/mile) was 136 calories per mile. The model for the Runkeeper calorie estimate seems to be based only on the distance. The Garmin model seems to take other factors into account perhaps temperature or pace.</p>
+<pre class="r"><code>x &lt;- filter(dat, Type == &quot;Running&quot;)
+model1 &lt;- lm(x$Calories.Burned ~ x$Distance..mi.)
+summary(model1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = x$Calories.Burned ~ x$Distance..mi.)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -66.844  -5.463  -1.716   4.585  44.856 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      -3.6690     4.3352  -0.846      0.4    
+## x$Distance..mi. 136.1300     0.7617 178.715   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 15.91 on 78 degrees of freedom
+## Multiple R-squared:  0.9976, Adjusted R-squared:  0.9975 
+## F-statistic: 3.194e+04 on 1 and 78 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
