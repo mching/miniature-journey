@@ -14,7 +14,7 @@ image: ''
 
 
 
-<p>Lately this blog has had a lot of descriptive posts about my life but not much that stretches my R abilities. Later this year my organization is holding its research day, so I decided to start working on a dataset that I last used about 7 years ago. The California Health Interview Survey is a survey of households that is weighted to be representative of the non-institutionalized population of California. This dataset has a few wrinkles in it that require a higher level of R programming so I thought I would try to stretch my rusty skills a little.</p>
+<p>Lately this blog has had a lot of descriptive posts about my life but not much that stretches my R abilities. Later this year my organization is holding its research day, so I decided to start practicing on a dataset that I last used about 7 years ago. The <a href="https://healthpolicy.ucla.edu/Pages/home.aspx">California Health Interview Survey</a> is a survey of households that is weighted to be representative of the non-institutionalized population of California. This dataset has a few wrinkles in it that require a higher level of R programming so I thought I would try to stretch my rusty skills a little.</p>
 <pre class="r"><code>library(dplyr)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
@@ -34,25 +34,110 @@ image: ''
 ## 
 ##     dotchart</code></pre>
 <pre class="r"><code>library(foreign)</code></pre>
-<p>Fortunately when I last used this dataset in 2013, I had commented my code pretty well so I was able to recreate the trickiest part, the specification of the survey object.</p>
+<p>Fortunately when I last used this dataset in 2013, I had commented my code pretty well so I was able to remember how to load in the Stata file.</p>
 <pre class="r"><code>chis &lt;- read.dta(&quot;/Users/mching/Dropbox/Mike/CHIS18/CHILD.dta&quot;, 
                  convert.dates = TRUE, convert.factors = TRUE, 
                  missing.type = TRUE, convert.underscore = TRUE, 
-                 warn.missing.labels = FALSE)
-chis &lt;- tbl_df(chis)</code></pre>
-<p>The replicate weights were in variables 159 to 239. Code was nodified from the <a href="http://r-survey.r-forge.r-project.org/survey/">survey package home page</a>.</p>
-<pre class="r"><code>rchis &lt;- svrepdesign(chis[ , -( 159 + ( 1 : 80 ))], 
-                     repweights = chis[ , ( 159 + ( 1 : 80 ))],
-                     weights = chis$rakedw0, 
-                     combined.weights = TRUE, 
-                     scale = 1, 
-                     rscales = rep(1,80), type=&quot;other&quot;)
+                 warn.missing.labels = FALSE)</code></pre>
+<div id="unweighted-data" class="section level1">
+<h1>Unweighted Data</h1>
+<p>Here’s what the data dictionary said about a variable documenting children who needed dental care in the last year.</p>
+<table style="width:100%">
+<tr>
+<th>
+</th>
+<th>
+</th>
+<th>
+Frequency
+</th>
+<th>
+%
+</th>
+</tr>
+<tr>
+<td>
+-1
+</td>
+<td>
+Inapplicable
+</td>
+<td>
+58
+</td>
+<td>
+3.66
+</td>
+</tr>
+<tr>
+<td>
+1
+</td>
+<td>
+Yes
+</td>
+<td>
+67
+</td>
+<td>
+4.22
+</td>
+</tr>
+<tr>
+<td>
+2
+</td>
+<td>
+No
+</td>
+<td>
+1461
+</td>
+<td>
+92.12
+</td>
+</tr>
+</table>
+<pre class="r"><code>table(chis$cb27)</code></pre>
+<pre><code>## 
+##                    NOT ASCERTAINED                         DON&#39;T KNOW 
+##                                  0                                  0 
+##                            REFUSED ADULT/HOUSEHOLD INFO NOT COLLECTED 
+##                                  0                                  0 
+##                      PROXY SKIPPED                       INAPPLICABLE 
+##                                  0                                 58 
+##                                YES                                 NO 
+##                                 67                               1461</code></pre>
+<pre class="r"><code>round(prop.table(table(chis$cb27))*100, 2)</code></pre>
+<pre><code>## 
+##                    NOT ASCERTAINED                         DON&#39;T KNOW 
+##                               0.00                               0.00 
+##                            REFUSED ADULT/HOUSEHOLD INFO NOT COLLECTED 
+##                               0.00                               0.00 
+##                      PROXY SKIPPED                       INAPPLICABLE 
+##                               0.00                               3.66 
+##                                YES                                 NO 
+##                               4.22                              92.12</code></pre>
+<p>As you can see from above, the unweighted data were the same as in the data dictionary.</p>
+</div>
+<div id="weighted-data" class="section level1">
+<h1>Weighted Data</h1>
+<p>Code for creating the survey object was nodified from AJ Damico’s <a href="http://asdfree.com/california-health-interview-survey-chis.html">Analyze Survey Data for Free</a> website.</p>
+<pre class="r"><code>chis_design &lt;- 
+    svrepdesign( 
+        data = chis , 
+        weights = ~ rakedw0 , 
+        repweights = &quot;rakedw[1-9]&quot; , 
+        type = &quot;other&quot; , 
+        scale = 1 , 
+        rscales = 1 , 
+        mse = TRUE 
+    )
 
-summary(rchis)</code></pre>
-<pre><code>## Call: svrepdesign.default(chis[, -(159 + (1:80))], repweights = chis[, 
-##     (159 + (1:80))], weights = chis$rakedw0, combined.weights = TRUE, 
-##     scale = 1, rscales = rep(1, 80), type = &quot;other&quot;)
-## with 80 replicates.
+summary(chis_design)</code></pre>
+<pre><code>## Call: svrepdesign.default(data = chis, weights = ~rakedw0, repweights = &quot;rakedw[1-9]&quot;, 
+##     type = &quot;other&quot;, scale = 1, rscales = 1, mse = TRUE)
+## with 80 replicates and MSE variances.
 ## Variables: 
 ##   [1] &quot;cf10a&quot;        &quot;ma3&quot;          &quot;cf14&quot;         &quot;cf21&quot;         &quot;ca12&quot;        
 ##   [6] &quot;ca14&quot;         &quot;ca16&quot;         &quot;ca17&quot;         &quot;ca18&quot;         &quot;ca19&quot;        
@@ -85,4 +170,146 @@ summary(rchis)</code></pre>
 ## [141] &quot;famsz2.p1&quot;    &quot;hghti.p&quot;      &quot;hghtm.p&quot;      &quot;hhsize.p1v2&quot;  &quot;intvlngc2.p1&quot;
 ## [146] &quot;lnghmc.p1&quot;    &quot;ombsrcn.p1&quot;   &quot;povgwd.p1&quot;    &quot;povll2.p1v2&quot;  &quot;racecnc.p1&quot;  
 ## [151] &quot;racedfc.p1&quot;   &quot;raceh2c.p1&quot;   &quot;srage.p&quot;      &quot;wghtk.p&quot;      &quot;wghtp.p&quot;     
-## [156] &quot;puf1y.id&quot;     &quot;hmo&quot;          &quot;ma2.p&quot;        &quot;rakedw0&quot;</code></pre>
+## [156] &quot;puf1y.id&quot;     &quot;hmo&quot;          &quot;ma2.p&quot;        &quot;rakedw0&quot;      &quot;rakedw1&quot;     
+## [161] &quot;rakedw2&quot;      &quot;rakedw3&quot;      &quot;rakedw4&quot;      &quot;rakedw5&quot;      &quot;rakedw6&quot;     
+## [166] &quot;rakedw7&quot;      &quot;rakedw8&quot;      &quot;rakedw9&quot;      &quot;rakedw10&quot;     &quot;rakedw11&quot;    
+## [171] &quot;rakedw12&quot;     &quot;rakedw13&quot;     &quot;rakedw14&quot;     &quot;rakedw15&quot;     &quot;rakedw16&quot;    
+## [176] &quot;rakedw17&quot;     &quot;rakedw18&quot;     &quot;rakedw19&quot;     &quot;rakedw20&quot;     &quot;rakedw21&quot;    
+## [181] &quot;rakedw22&quot;     &quot;rakedw23&quot;     &quot;rakedw24&quot;     &quot;rakedw25&quot;     &quot;rakedw26&quot;    
+## [186] &quot;rakedw27&quot;     &quot;rakedw28&quot;     &quot;rakedw29&quot;     &quot;rakedw30&quot;     &quot;rakedw31&quot;    
+## [191] &quot;rakedw32&quot;     &quot;rakedw33&quot;     &quot;rakedw34&quot;     &quot;rakedw35&quot;     &quot;rakedw36&quot;    
+## [196] &quot;rakedw37&quot;     &quot;rakedw38&quot;     &quot;rakedw39&quot;     &quot;rakedw40&quot;     &quot;rakedw41&quot;    
+## [201] &quot;rakedw42&quot;     &quot;rakedw43&quot;     &quot;rakedw44&quot;     &quot;rakedw45&quot;     &quot;rakedw46&quot;    
+## [206] &quot;rakedw47&quot;     &quot;rakedw48&quot;     &quot;rakedw49&quot;     &quot;rakedw50&quot;     &quot;rakedw51&quot;    
+## [211] &quot;rakedw52&quot;     &quot;rakedw53&quot;     &quot;rakedw54&quot;     &quot;rakedw55&quot;     &quot;rakedw56&quot;    
+## [216] &quot;rakedw57&quot;     &quot;rakedw58&quot;     &quot;rakedw59&quot;     &quot;rakedw60&quot;     &quot;rakedw61&quot;    
+## [221] &quot;rakedw62&quot;     &quot;rakedw63&quot;     &quot;rakedw64&quot;     &quot;rakedw65&quot;     &quot;rakedw66&quot;    
+## [226] &quot;rakedw67&quot;     &quot;rakedw68&quot;     &quot;rakedw69&quot;     &quot;rakedw70&quot;     &quot;rakedw71&quot;    
+## [231] &quot;rakedw72&quot;     &quot;rakedw73&quot;     &quot;rakedw74&quot;     &quot;rakedw75&quot;     &quot;rakedw76&quot;    
+## [236] &quot;rakedw77&quot;     &quot;rakedw78&quot;     &quot;rakedw79&quot;     &quot;rakedw80&quot;</code></pre>
+<p>I generated a quick table to see if the survey method worked.</p>
+<pre class="r"><code>round(svytable(~cb27, chis_design), -3)</code></pre>
+<pre><code>## cb27
+##                    NOT ASCERTAINED                         DON&#39;T KNOW 
+##                                  0                                  0 
+##                            REFUSED ADULT/HOUSEHOLD INFO NOT COLLECTED 
+##                                  0                                  0 
+##                      PROXY SKIPPED                       INAPPLICABLE 
+##                                  0                             321000 
+##                                YES                                 NO 
+##                             247000                            5477000</code></pre>
+<p>I checked it against <a href="http://ask.chis.ucla.edu/">AskCHIS</a>, the web interface to the CHIS dataset. Here’s what <a href="http://ask.chis.ucla.edu/">AskCHIS</a> returned for this variable:</p>
+<table style="width:100%">
+<tr>
+<th>
+Needed Dental Care
+</th>
+<th>
+Percentage
+</th>
+<th>
+Confidence Interval (95%)
+</th>
+<th>
+Population
+</th>
+</tr>
+<tr>
+<td>
+Needed dental care
+</td>
+<td>
+4.3%
+</td>
+<td>
+2.5 - 6.2
+</td>
+<td>
+247,000
+</td>
+</tr>
+<tr>
+<td>
+Did not need dental care
+</td>
+<td>
+95.7%
+</td>
+<td>
+93.8 - 97.5
+</td>
+<td>
+5,477,000
+</td>
+</tr>
+<tr>
+<td>
+Total
+</td>
+<td>
+100.0%
+</td>
+<td>
+-
+</td>
+<td>
+5,724,000
+</td>
+</tr>
+</table>
+<p>The estimated population number of children who needed/didn’t neet care was exactly the same as what I calculated. The ratios were not the same because of all the inapplicable results.</p>
+<pre class="r"><code>svymean(~cb27, chis_design)</code></pre>
+<pre><code>##                                            mean     SE
+## cb27NOT ASCERTAINED                    0.000000 0.0000
+## cb27DON&#39;T KNOW                         0.000000 0.0000
+## cb27REFUSED                            0.000000 0.0000
+## cb27ADULT/HOUSEHOLD INFO NOT COLLECTED 0.000000 0.0000
+## cb27PROXY SKIPPED                      0.000000 0.0000
+## cb27INAPPLICABLE                       0.053042 0.0101
+## cb27YES                                0.040885 0.0088
+## cb27NO                                 0.906073 0.0141</code></pre>
+<p>Getting the weighted frequencies on just the yes or no responses was tricky. It required creating a variable for the Inapplicable patients and then creating a mean based on that.</p>
+<pre class="r"><code>chis$cb27_inapplicable &lt;- ifelse(chis$cb27 == &quot;INAPPLICABLE&quot;, T, F)
+
+chis_design &lt;- 
+    svrepdesign( 
+        data = chis , 
+        weights = ~ rakedw0 , 
+        repweights = &quot;rakedw[1-9]&quot; , 
+        type = &quot;other&quot; , 
+        scale = 1 , 
+        rscales = 1 , 
+        mse = TRUE 
+    )
+
+svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design)</code></pre>
+<pre><code>##       cb27_inapplicable cb27NOT ASCERTAINED cb27DON&#39;T KNOW cb27REFUSED
+## FALSE             FALSE                   0              0           0
+## TRUE               TRUE                   0              0           0
+##       cb27ADULT/HOUSEHOLD INFO NOT COLLECTED cb27PROXY SKIPPED cb27INAPPLICABLE
+## FALSE                                      0                 0                0
+## TRUE                                       0                 0                1
+##          cb27YES    cb27NO se1 se2 se3 se4 se5 se6         se7         se8
+## FALSE 0.04317531 0.9568247   0   0   0   0   0   0 0.009349207 0.009349207
+## TRUE  0.00000000 0.0000000   0   0   0   0   0   0 0.000000000 0.000000000</code></pre>
+<p>The weighted means were the same. The confidence intervals were very slightly off but I figured they were close enough to not matter too much.</p>
+<pre class="r"><code>confint(svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design))</code></pre>
+<pre><code>##                                                  2.5 %     97.5 %
+## FALSE:cb27NOT ASCERTAINED                    0.0000000 0.00000000
+## TRUE:cb27NOT ASCERTAINED                     0.0000000 0.00000000
+## FALSE:cb27DON&#39;T KNOW                         0.0000000 0.00000000
+## TRUE:cb27DON&#39;T KNOW                          0.0000000 0.00000000
+## FALSE:cb27REFUSED                            0.0000000 0.00000000
+## TRUE:cb27REFUSED                             0.0000000 0.00000000
+## FALSE:cb27ADULT/HOUSEHOLD INFO NOT COLLECTED 0.0000000 0.00000000
+## TRUE:cb27ADULT/HOUSEHOLD INFO NOT COLLECTED  0.0000000 0.00000000
+## FALSE:cb27PROXY SKIPPED                      0.0000000 0.00000000
+## TRUE:cb27PROXY SKIPPED                       0.0000000 0.00000000
+## FALSE:cb27INAPPLICABLE                       0.0000000 0.00000000
+## TRUE:cb27INAPPLICABLE                        1.0000000 1.00000000
+## FALSE:cb27YES                                0.0248512 0.06149942
+## TRUE:cb27YES                                 0.0000000 0.00000000
+## FALSE:cb27NO                                 0.9385006 0.97514880
+## TRUE:cb27NO                                  0.0000000 0.00000000</code></pre>
+<p>So I didn’t do too much with the data, but next time I will pick up with doing some plots and regressions.</p>
+</div>

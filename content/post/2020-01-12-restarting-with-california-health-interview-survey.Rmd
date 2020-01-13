@@ -12,7 +12,7 @@ subtitle: ''
 image: ''
 ---
 
-Lately this blog has had a lot of descriptive posts about my life but not much that stretches my R abilities. Later this year my organization is holding its research day, so I decided to start working on a dataset that I last used about 7 years ago. The California Health Interview Survey is a survey of households that is weighted to be representative of the non-institutionalized population of California. This dataset has a few wrinkles in it that require a higher level of R programming so I thought I would try to stretch my rusty skills a little.
+Lately this blog has had a lot of descriptive posts about my life but not much that stretches my R abilities. Later this year my organization is holding its research day, so I decided to start practicing on a dataset that I last used about 7 years ago. The [California Health Interview Survey](https://healthpolicy.ucla.edu/Pages/home.aspx) is a survey of households that is weighted to be representative of the non-institutionalized population of California. This dataset has a few wrinkles in it that require a higher level of R programming so I thought I would try to stretch my rusty skills a little.
 
 ```{r}
 library(dplyr)
@@ -20,25 +20,139 @@ library(survey)
 library(foreign)
 ```
 
-Fortunately when I last used this dataset in 2013, I had commented my code pretty well so I was able to recreate the trickiest part, the specification of the survey object.
+Fortunately when I last used this dataset in 2013, I had commented my code pretty well so I was able to remember how to load in the Stata file.
+
 ```{r}
 chis <- read.dta("/Users/mching/Dropbox/Mike/CHIS18/CHILD.dta", 
                  convert.dates = TRUE, convert.factors = TRUE, 
                  missing.type = TRUE, convert.underscore = TRUE, 
                  warn.missing.labels = FALSE)
-chis <- tbl_df(chis)
 ```
 
-The replicate weights were in variables 159 to 239. Code was nodified from the [survey package home page](http://r-survey.r-forge.r-project.org/survey/).
+# Unweighted Data
+
+Here's what the data dictionary said about a variable documenting children who needed dental care in the last year. 
+
+<table style="width:100%">
+  <tr>
+    <th> </th>
+    <th> </th> 
+    <th>Frequency</th>
+    <th>%</th>
+  </tr>
+  <tr>
+    <td>-1</td>
+    <td>Inapplicable</td>
+    <td>58</td>
+    <td>3.66</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Yes</td>
+    <td>67</td>
+    <td>4.22</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>No</td>
+    <td>1461</td>
+    <td>92.12</td>
+  </tr>
+  
+</table>
+  
+  
+```{r}
+table(chis$cb27)
+round(prop.table(table(chis$cb27))*100, 2)
+```
+
+As you can see from above, the unweighted data were the same as in the data dictionary.
+
+# Weighted Data
+
+Code for creating the survey object was nodified from AJ Damico's [Analyze Survey Data for Free](http://asdfree.com/california-health-interview-survey-chis.html) website.
 
 ```{r}
-rchis <- svrepdesign(chis[ , -( 159 + ( 1 : 80 ))], 
-                     repweights = chis[ , ( 159 + ( 1 : 80 ))],
-                     weights = chis$rakedw0, 
-                     combined.weights = TRUE, 
-                     scale = 1, 
-                     rscales = rep(1,80), type="other")
+chis_design <- 
+    svrepdesign( 
+        data = chis , 
+        weights = ~ rakedw0 , 
+        repweights = "rakedw[1-9]" , 
+        type = "other" , 
+        scale = 1 , 
+        rscales = 1 , 
+        mse = TRUE 
+    )
 
-summary(rchis)
+summary(chis_design)
 ```
 
+I generated a quick table to see if the survey method worked. 
+
+```{r}
+round(svytable(~cb27, chis_design), -3)
+```
+
+I checked it against [AskCHIS](http://ask.chis.ucla.edu/), the web interface to the CHIS dataset. Here's what [AskCHIS](http://ask.chis.ucla.edu/) returned for this variable: 
+
+<table style="width:100%">
+  <tr>
+    <th>Needed Dental Care</th>
+    <th>Percentage</th> 
+    <th>Confidence Interval (95%)</th>
+    <th>Population</th>
+  </tr>
+  <tr>
+    <td>Needed dental care</td>
+    <td>4.3%</td>
+    <td>2.5 - 6.2</td>
+    <td>247,000</td>
+  </tr>
+  <tr>
+    <td>Did not need dental care</td>
+    <td>95.7%</td>
+    <td>93.8 - 97.5</td>
+    <td>5,477,000</td>
+  </tr>
+  <tr>
+    <td>Total</td>
+    <td>100.0%</td>
+    <td>-</td>
+    <td>5,724,000</td>
+  </tr>
+  
+</table>
+
+The estimated population  number of children who needed/didn't neet care was exactly the same as what I calculated. The ratios were not the same because of all the inapplicable results.
+
+```{r}
+svymean(~cb27, chis_design)
+```
+
+Getting the weighted frequencies on just the yes or no responses was tricky. It required creating a variable for the Inapplicable patients and then creating a mean based on that.
+
+```{r}
+chis$cb27_inapplicable <- ifelse(chis$cb27 == "INAPPLICABLE", T, F)
+
+chis_design <- 
+    svrepdesign( 
+        data = chis , 
+        weights = ~ rakedw0 , 
+        repweights = "rakedw[1-9]" , 
+        type = "other" , 
+        scale = 1 , 
+        rscales = 1 , 
+        mse = TRUE 
+    )
+
+svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design)
+```
+
+The weighted means were the same. The confidence intervals were very slightly off but I figured they were close enough to not matter too much.
+
+```{r}
+confint(svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design))
+```
+
+So I didn't do too much with the data, but next time I will pick up with doing some plots and regressions.
