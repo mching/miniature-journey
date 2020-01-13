@@ -154,5 +154,89 @@ The weighted means were the same as what AskCHIS said (yes = 4.3%, no = 95.7%). 
 confint(svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design))
 ```
 
+I decided to look at one other variable, reading to the child (variable cg14).
+```{r}
+chis$cg14 <- droplevels(chis$cg14)
+
+table(chis$cg14)
+```
+
+I used a different method to subset this time, dropping all rows where cg14 was inapplicable.
+```{r}
+
+chis_design <- 
+    svrepdesign( 
+        data = chis , 
+        weights = ~ rakedw0 , 
+        repweights = "rakedw[1-9]" , 
+        type = "other" , 
+        scale = 1 , 
+        rscales = 1 , 
+        mse = TRUE 
+    )
+
+chis_reading <- subset(chis_design, chis$cg14 != "INAPPLICABLE")
+```
+
+This resulted in nicer to read output.
+
+```{r}
+round(svytotal(~cg14, chis_reading), -3)
+round(svymean(~cg14, chis_reading) * 100, 1)
+
+round(confint(svymean(~cg14, chis_reading)) * 100, 1)
+```
+
+I confirmed that the point estimates matched the data from AskCHIS, but again the confidence intervals were off, this time by a bit more. With the rounding, it was more apparent that the confidence intervals calculated by this method were slightly tighter than in AskCHIS.
+
+
+<table>
+  <tr>
+    <td>Days per week reading books with child (0-5 years)	</td>
+    <td>Percent </td>
+    <td>95% c.i.</td>
+    <td>Population</td>
+  </tr>
+  <tr>
+    <td>Every day</td>
+    <td>63.2%</td>
+    <td>( 56.1 - 70.3 )</td>
+    <td>1,852,000</td>
+  </tr>
+  <tr>
+    <td>3 to 6 days of the week	</td>
+    <td>19.1%</td>
+    <td>( 12.9 - 25.2 )</td>
+    <td>559,000</td>
+  </tr>
+  <tr>
+    <td>1 to 2 days of the week	</td>
+    <td>12.8%</td>
+    <td>( 7.5 - 18.1 )</td>
+    <td>376,000</td>
+  </tr>
+  <tr>
+    <td>Never	</td>
+    <td>4.9% *</td>
+    <td>( 1.8 - 8.0 )</td>
+    <td>144,000</td>
+  </tr>
+</table>
+\* unstable
+
+I read a little more and it looks like the author of the survey package created another function to calculate confidence intervals for survey objects. These were a lot closer even though the documentation says this "mean" method is the same as calling `confint(svymean())`.
+
+```{r}
+cimethod = "mean"
+svyciprop(~I(cg14 == "EVERY DAY"), design = chis_reading, method = cimethod, level = 0.95)
+svyciprop(~I(cg14 == "3-6 DAYS"), design = chis_reading, method = cimethod, level = 0.95)
+svyciprop(~I(cg14 == "1-2 DAYS"), design = chis_reading, method = cimethod, level = 0.95)
+svyciprop(~I(cg14 == "NEVER"), design = chis_reading, method = cimethod, level = 0.95)
+```
+
+
+
 # Discussion
-I was able to load the CHIS 2018 child dataset and confirm that I could use the survey methods to replicate the results from the official CHIS web interface. I didn't do too much with the data, but next time I will pick up with doing some plots and regressions.
+I was able to load the CHIS 2018 child dataset and confirm that I could use the survey methods to replicate the results from the official CHIS web interface. I learned that calculating proportion confidence intervals may be more accurate using the survey confidence interval function `svyciprop`than the usual `confint` method. 
+
+I didn't do too much with the data, but next time I will pick up with doing some plots and regressions.

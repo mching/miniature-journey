@@ -258,8 +258,139 @@ svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design)</code></pre>
 ## TRUE:cb27YES                                 0.0000000 0.00000000
 ## FALSE:cb27NO                                 0.9385006 0.97514880
 ## TRUE:cb27NO                                  0.0000000 0.00000000</code></pre>
+<p>I decided to look at one other variable, reading to the child (variable cg14).</p>
+<pre class="r"><code>chis$cg14 &lt;- droplevels(chis$cg14)
+
+table(chis$cg14)</code></pre>
+<pre><code>## 
+## INAPPLICABLE    EVERY DAY     3-6 DAYS     1-2 DAYS        NEVER 
+##          934          460          126           50           16</code></pre>
+<p>I used a different method to subset this time, dropping all rows where cg14 was inapplicable.</p>
+<pre class="r"><code>chis_design &lt;- 
+    svrepdesign( 
+        data = chis , 
+        weights = ~ rakedw0 , 
+        repweights = &quot;rakedw[1-9]&quot; , 
+        type = &quot;other&quot; , 
+        scale = 1 , 
+        rscales = 1 , 
+        mse = TRUE 
+    )
+
+chis_reading &lt;- subset(chis_design, chis$cg14 != &quot;INAPPLICABLE&quot;)</code></pre>
+<p>This resulted in nicer to read output.</p>
+<pre class="r"><code>round(svytotal(~cg14, chis_reading), -3)</code></pre>
+<pre><code>##                    total     SE
+## cg14INAPPLICABLE       0      0
+## cg14EVERY DAY    1852000 110046
+## cg143-6 DAYS      559000  91874
+## cg141-2 DAYS      376000  77698
+## cg14NEVER         144000  45296</code></pre>
+<pre class="r"><code>round(svymean(~cg14, chis_reading) * 100, 1)</code></pre>
+<pre><code>##                  mean     SE
+## cg14INAPPLICABLE  0.0 0.0000
+## cg14EVERY DAY    63.2 0.0356
+## cg143-6 DAYS     19.1 0.0310
+## cg141-2 DAYS     12.8 0.0267
+## cg14NEVER         4.9 0.0155</code></pre>
+<pre class="r"><code>round(confint(svymean(~cg14, chis_reading)) * 100, 1)</code></pre>
+<pre><code>##                  2.5 % 97.5 %
+## cg14INAPPLICABLE   0.0    0.0
+## cg14EVERY DAY     56.2   70.2
+## cg143-6 DAYS      13.0   25.1
+## cg141-2 DAYS       7.6   18.1
+## cg14NEVER          1.9    7.9</code></pre>
+<p>I confirmed that the point estimates matched the data from AskCHIS, but again the confidence intervals were off, this time by a bit more. With the rounding, it was more apparent that the confidence intervals calculated by this method were slightly tighter than in AskCHIS.</p>
+<table>
+<tr>
+<td>
+Days per week reading books with child (0-5 years)
+</td>
+<td>
+Percent
+</td>
+<td>
+95% c.i.
+</td>
+<td>
+Population
+</td>
+</tr>
+<tr>
+<td>
+Every day
+</td>
+<td>
+63.2%
+</td>
+<td>
+( 56.1 - 70.3 )
+</td>
+<td>
+1,852,000
+</td>
+</tr>
+<tr>
+<td>
+3 to 6 days of the week
+</td>
+<td>
+19.1%
+</td>
+<td>
+( 12.9 - 25.2 )
+</td>
+<td>
+559,000
+</td>
+</tr>
+<tr>
+<td>
+1 to 2 days of the week
+</td>
+<td>
+12.8%
+</td>
+<td>
+( 7.5 - 18.1 )
+</td>
+<td>
+376,000
+</td>
+</tr>
+<tr>
+<td>
+Never
+</td>
+<td>
+4.9% *
+</td>
+<td>
+( 1.8 - 8.0 )
+</td>
+<td>
+144,000
+</td>
+</tr>
+</table>
+<p>* unstable</p>
+<p>I read a little more and it looks like the author of the survey package created another function to calculate confidence intervals for survey objects. These were a lot closer even though the documentation says this “mean” method is the same as calling <code>confint(svymean())</code>.</p>
+<pre class="r"><code>cimethod = &quot;mean&quot;
+svyciprop(~I(cg14 == &quot;EVERY DAY&quot;), design = chis_reading, method = cimethod, level = 0.95)</code></pre>
+<pre><code>##                               2.5% 97.5%
+## I(cg14 == &quot;EVERY DAY&quot;) 0.632 0.561   0.7</code></pre>
+<pre class="r"><code>svyciprop(~I(cg14 == &quot;3-6 DAYS&quot;), design = chis_reading, method = cimethod, level = 0.95)</code></pre>
+<pre><code>##                              2.5% 97.5%
+## I(cg14 == &quot;3-6 DAYS&quot;) 0.191 0.129  0.25</code></pre>
+<pre class="r"><code>svyciprop(~I(cg14 == &quot;1-2 DAYS&quot;), design = chis_reading, method = cimethod, level = 0.95)</code></pre>
+<pre><code>##                              2.5% 97.5%
+## I(cg14 == &quot;1-2 DAYS&quot;) 0.128 0.075  0.18</code></pre>
+<pre class="r"><code>svyciprop(~I(cg14 == &quot;NEVER&quot;), design = chis_reading, method = cimethod, level = 0.95)</code></pre>
+<pre><code>##                             2.5% 97.5%
+## I(cg14 == &quot;NEVER&quot;) 0.0490 0.0181  0.08</code></pre>
 </div>
 <div id="discussion" class="section level1">
 <h1>Discussion</h1>
-<p>I was able to load the CHIS 2018 child dataset and confirm that I could use the survey methods to replicate the results from the official CHIS web interface. I didn’t do too much with the data, but next time I will pick up with doing some plots and regressions.</p>
+<p>I was able to load the CHIS 2018 child dataset and confirm that I could use the survey methods to replicate the results from the official CHIS web interface. I learned that calculating proportion confidence intervals may be more accurate using the survey confidence interval function <code>svyciprop</code>than the usual <code>confint</code> method.</p>
+<p>I didn’t do too much with the data, but next time I will pick up with doing some plots and regressions.</p>
 </div>
