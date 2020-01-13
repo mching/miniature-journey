@@ -61,6 +61,7 @@ Here's what the data dictionary said about a variable documenting children who n
   
 </table>
   
+And here's what the dataset I loaded had to say about this variable.
   
 ```{r}
 table(chis$cb27)
@@ -71,7 +72,7 @@ As you can see from above, the unweighted data were the same as in the data dict
 
 # Weighted Data
 
-Code for creating the survey object was nodified from AJ Damico's [Analyze Survey Data for Free](http://asdfree.com/california-health-interview-survey-chis.html) website.
+In the survey package you have to create a survey object that can be used to run the survey methods. Code for creating the survey object was nodified from AJ Damico's [Analyze Survey Data for Free](http://asdfree.com/california-health-interview-survey-chis.html) website.
 
 ```{r}
 chis_design <- 
@@ -84,17 +85,15 @@ chis_design <-
         rscales = 1 , 
         mse = TRUE 
     )
-
-summary(chis_design)
 ```
 
-I generated a quick table to see if the survey method worked. 
+I generated a quick table to see if the survey method for calculating the population estimates worked. 
 
 ```{r}
 round(svytable(~cb27, chis_design), -3)
 ```
 
-I checked it against [AskCHIS](http://ask.chis.ucla.edu/), the web interface to the CHIS dataset. Here's what [AskCHIS](http://ask.chis.ucla.edu/) returned for this variable: 
+I checked it against [AskCHIS](http://ask.chis.ucla.edu/), the web interface to the CHIS dataset. Here's what it returned for this variable: 
 
 <table style="width:100%">
   <tr>
@@ -149,10 +148,11 @@ chis_design <-
 svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design)
 ```
 
-The weighted means were the same. The confidence intervals were very slightly off but I figured they were close enough to not matter too much.
+The weighted means were the same as what AskCHIS said (yes = 4.3%, no = 95.7%). The confidence intervals were very slightly off from AskCHIS (yes = 2.5-6.2, no = 93.8-97.5) but I figured they were close enough to not matter too much.
 
 ```{r}
 confint(svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design))
 ```
 
-So I didn't do too much with the data, but next time I will pick up with doing some plots and regressions.
+# Discussion
+I was able to load the CHIS 2018 child dataset and confirm that I could use the survey methods to replicate the results from the official CHIS web interface. I didn't do too much with the data, but next time I will pick up with doing some plots and regressions.

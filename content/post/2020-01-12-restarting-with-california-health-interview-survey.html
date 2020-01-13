@@ -98,6 +98,7 @@ No
 </td>
 </tr>
 </table>
+<p>And here’s what the dataset I loaded had to say about this variable.</p>
 <pre class="r"><code>table(chis$cb27)</code></pre>
 <pre><code>## 
 ##                    NOT ASCERTAINED                         DON&#39;T KNOW 
@@ -122,7 +123,7 @@ No
 </div>
 <div id="weighted-data" class="section level1">
 <h1>Weighted Data</h1>
-<p>Code for creating the survey object was nodified from AJ Damico’s <a href="http://asdfree.com/california-health-interview-survey-chis.html">Analyze Survey Data for Free</a> website.</p>
+<p>In the survey package you have to create a survey object that can be used to run the survey methods. Code for creating the survey object was nodified from AJ Damico’s <a href="http://asdfree.com/california-health-interview-survey-chis.html">Analyze Survey Data for Free</a> website.</p>
 <pre class="r"><code>chis_design &lt;- 
     svrepdesign( 
         data = chis , 
@@ -132,62 +133,8 @@ No
         scale = 1 , 
         rscales = 1 , 
         mse = TRUE 
-    )
-
-summary(chis_design)</code></pre>
-<pre><code>## Call: svrepdesign.default(data = chis, weights = ~rakedw0, repweights = &quot;rakedw[1-9]&quot;, 
-##     type = &quot;other&quot;, scale = 1, rscales = 1, mse = TRUE)
-## with 80 replicates and MSE variances.
-## Variables: 
-##   [1] &quot;cf10a&quot;        &quot;ma3&quot;          &quot;cf14&quot;         &quot;cf21&quot;         &quot;ca12&quot;        
-##   [6] &quot;ca14&quot;         &quot;ca16&quot;         &quot;ca17&quot;         &quot;ca18&quot;         &quot;ca19&quot;        
-##  [11] &quot;ca23&quot;         &quot;ca24&quot;         &quot;ca31&quot;         &quot;ca35&quot;         &quot;ca50&quot;        
-##  [16] &quot;ca6&quot;          &quot;ca7&quot;          &quot;cb27&quot;         &quot;cb34b&quot;        &quot;cc13&quot;        
-##  [21] &quot;cc16b&quot;        &quot;cc17&quot;         &quot;cc18b&quot;        &quot;cc1b&quot;         &quot;cc31&quot;        
-##  [26] &quot;cc35&quot;         &quot;cc36&quot;         &quot;cc37&quot;         &quot;cc39&quot;         &quot;cc50&quot;        
-##  [31] &quot;cc51&quot;         &quot;cc7a&quot;         &quot;cc7bnew&quot;      &quot;cd1&quot;          &quot;cd12&quot;        
-##  [36] &quot;cd3&quot;          &quot;cd33&quot;         &quot;cd36&quot;         &quot;cd57&quot;         &quot;cd69&quot;        
-##  [41] &quot;cd7&quot;          &quot;cd70&quot;         &quot;cd71&quot;         &quot;ce1&quot;          &quot;ce11a&quot;       
-##  [46] &quot;ce11c&quot;        &quot;ce12&quot;         &quot;ce13&quot;         &quot;ce7&quot;          &quot;cf30&quot;        
-##  [51] &quot;cf32&quot;         &quot;cf35&quot;         &quot;cf36&quot;         &quot;cf39&quot;         &quot;cf40&quot;        
-##  [56] &quot;cf41&quot;         &quot;cf42&quot;         &quot;cf43&quot;         &quot;cf44&quot;         &quot;cf45&quot;        
-##  [61] &quot;cf46&quot;         &quot;cf47&quot;         &quot;cf64&quot;         &quot;cf65&quot;         &quot;cf66&quot;        
-##  [66] &quot;cf67&quot;         &quot;cg1&quot;          &quot;cg14&quot;         &quot;cg15&quot;         &quot;cg16&quot;        
-##  [71] &quot;cg3a&quot;         &quot;cg3b&quot;         &quot;cg3c&quot;         &quot;cg3d&quot;         &quot;cg3e&quot;        
-##  [76] &quot;cg3f&quot;         &quot;cg3g&quot;         &quot;cg5&quot;          &quot;cg6&quot;          &quot;ch18&quot;        
-##  [81] &quot;ac42&quot;         &quot;am36&quot;         &quot;srsex&quot;        &quot;srtenr&quot;       &quot;ur.clrt6&quot;    
-##  [86] &quot;ur.tract6&quot;    &quot;ur.bg6&quot;       &quot;ur.rhp&quot;       &quot;ur.clrt2&quot;     &quot;ur.ihs&quot;      
-##  [91] &quot;ur.omb&quot;       &quot;cc52&quot;         &quot;cc53&quot;         &quot;povll&quot;        &quot;cg34&quot;        
-##  [96] &quot;cg39&quot;         &quot;cg40&quot;         &quot;cg41&quot;         &quot;cg42&quot;         &quot;insmd&quot;       
-## [101] &quot;insem&quot;        &quot;inspr&quot;        &quot;insog&quot;        &quot;ins&quot;          &quot;ins64&quot;       
-## [106] &quot;ins12m&quot;       &quot;uninsany&quot;     &quot;insany&quot;       &quot;instype&quot;      &quot;ins9tp&quot;      
-## [111] &quot;ac44&quot;         &quot;agegrp.a&quot;     &quot;srsex.a&quot;      &quot;astcur&quot;       &quot;cg3rc&quot;       
-## [116] &quot;dnvst&quot;        &quot;doct.yr&quot;      &quot;er&quot;           &quot;fv5day2&quot;      &quot;povll.aca&quot;   
-## [121] &quot;usual5tp&quot;     &quot;fslev&quot;        &quot;usoc&quot;         &quot;famt4&quot;        &quot;fslevcb&quot;     
-## [126] &quot;usual&quot;        &quot;acmdm.p1&quot;     &quot;ahedtc.p1&quot;    &quot;ca34.p1&quot;      &quot;ca42.p1&quot;     
-## [131] &quot;ca43.p&quot;       &quot;ca6.p1&quot;       &quot;cb23.p1&quot;      &quot;cc40.p1&quot;      &quot;cc43.p1&quot;     
-## [136] &quot;cc5b.p1v2&quot;    &quot;cd31.p1&quot;      &quot;cf31.p1&quot;      &quot;cg2.p1&quot;       &quot;chedu.p1&quot;    
-## [141] &quot;famsz2.p1&quot;    &quot;hghti.p&quot;      &quot;hghtm.p&quot;      &quot;hhsize.p1v2&quot;  &quot;intvlngc2.p1&quot;
-## [146] &quot;lnghmc.p1&quot;    &quot;ombsrcn.p1&quot;   &quot;povgwd.p1&quot;    &quot;povll2.p1v2&quot;  &quot;racecnc.p1&quot;  
-## [151] &quot;racedfc.p1&quot;   &quot;raceh2c.p1&quot;   &quot;srage.p&quot;      &quot;wghtk.p&quot;      &quot;wghtp.p&quot;     
-## [156] &quot;puf1y.id&quot;     &quot;hmo&quot;          &quot;ma2.p&quot;        &quot;rakedw0&quot;      &quot;rakedw1&quot;     
-## [161] &quot;rakedw2&quot;      &quot;rakedw3&quot;      &quot;rakedw4&quot;      &quot;rakedw5&quot;      &quot;rakedw6&quot;     
-## [166] &quot;rakedw7&quot;      &quot;rakedw8&quot;      &quot;rakedw9&quot;      &quot;rakedw10&quot;     &quot;rakedw11&quot;    
-## [171] &quot;rakedw12&quot;     &quot;rakedw13&quot;     &quot;rakedw14&quot;     &quot;rakedw15&quot;     &quot;rakedw16&quot;    
-## [176] &quot;rakedw17&quot;     &quot;rakedw18&quot;     &quot;rakedw19&quot;     &quot;rakedw20&quot;     &quot;rakedw21&quot;    
-## [181] &quot;rakedw22&quot;     &quot;rakedw23&quot;     &quot;rakedw24&quot;     &quot;rakedw25&quot;     &quot;rakedw26&quot;    
-## [186] &quot;rakedw27&quot;     &quot;rakedw28&quot;     &quot;rakedw29&quot;     &quot;rakedw30&quot;     &quot;rakedw31&quot;    
-## [191] &quot;rakedw32&quot;     &quot;rakedw33&quot;     &quot;rakedw34&quot;     &quot;rakedw35&quot;     &quot;rakedw36&quot;    
-## [196] &quot;rakedw37&quot;     &quot;rakedw38&quot;     &quot;rakedw39&quot;     &quot;rakedw40&quot;     &quot;rakedw41&quot;    
-## [201] &quot;rakedw42&quot;     &quot;rakedw43&quot;     &quot;rakedw44&quot;     &quot;rakedw45&quot;     &quot;rakedw46&quot;    
-## [206] &quot;rakedw47&quot;     &quot;rakedw48&quot;     &quot;rakedw49&quot;     &quot;rakedw50&quot;     &quot;rakedw51&quot;    
-## [211] &quot;rakedw52&quot;     &quot;rakedw53&quot;     &quot;rakedw54&quot;     &quot;rakedw55&quot;     &quot;rakedw56&quot;    
-## [216] &quot;rakedw57&quot;     &quot;rakedw58&quot;     &quot;rakedw59&quot;     &quot;rakedw60&quot;     &quot;rakedw61&quot;    
-## [221] &quot;rakedw62&quot;     &quot;rakedw63&quot;     &quot;rakedw64&quot;     &quot;rakedw65&quot;     &quot;rakedw66&quot;    
-## [226] &quot;rakedw67&quot;     &quot;rakedw68&quot;     &quot;rakedw69&quot;     &quot;rakedw70&quot;     &quot;rakedw71&quot;    
-## [231] &quot;rakedw72&quot;     &quot;rakedw73&quot;     &quot;rakedw74&quot;     &quot;rakedw75&quot;     &quot;rakedw76&quot;    
-## [236] &quot;rakedw77&quot;     &quot;rakedw78&quot;     &quot;rakedw79&quot;     &quot;rakedw80&quot;</code></pre>
-<p>I generated a quick table to see if the survey method worked.</p>
+    )</code></pre>
+<p>I generated a quick table to see if the survey method for calculating the population estimates worked.</p>
 <pre class="r"><code>round(svytable(~cb27, chis_design), -3)</code></pre>
 <pre><code>## cb27
 ##                    NOT ASCERTAINED                         DON&#39;T KNOW 
@@ -198,7 +145,7 @@ summary(chis_design)</code></pre>
 ##                                  0                             321000 
 ##                                YES                                 NO 
 ##                             247000                            5477000</code></pre>
-<p>I checked it against <a href="http://ask.chis.ucla.edu/">AskCHIS</a>, the web interface to the CHIS dataset. Here’s what <a href="http://ask.chis.ucla.edu/">AskCHIS</a> returned for this variable:</p>
+<p>I checked it against <a href="http://ask.chis.ucla.edu/">AskCHIS</a>, the web interface to the CHIS dataset. Here’s what it returned for this variable:</p>
 <table style="width:100%">
 <tr>
 <th>
@@ -292,7 +239,7 @@ svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design)</code></pre>
 ##          cb27YES    cb27NO se1 se2 se3 se4 se5 se6         se7         se8
 ## FALSE 0.04317531 0.9568247   0   0   0   0   0   0 0.009349207 0.009349207
 ## TRUE  0.00000000 0.0000000   0   0   0   0   0   0 0.000000000 0.000000000</code></pre>
-<p>The weighted means were the same. The confidence intervals were very slightly off but I figured they were close enough to not matter too much.</p>
+<p>The weighted means were the same as what AskCHIS said (yes = 4.3%, no = 95.7%). The confidence intervals were very slightly off from AskCHIS (yes = 2.5-6.2, no = 93.8-97.5) but I figured they were close enough to not matter too much.</p>
 <pre class="r"><code>confint(svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design))</code></pre>
 <pre><code>##                                                  2.5 %     97.5 %
 ## FALSE:cb27NOT ASCERTAINED                    0.0000000 0.00000000
@@ -311,5 +258,8 @@ svyby(~cb27, ~cb27_inapplicable, svymean, design = chis_design)</code></pre>
 ## TRUE:cb27YES                                 0.0000000 0.00000000
 ## FALSE:cb27NO                                 0.9385006 0.97514880
 ## TRUE:cb27NO                                  0.0000000 0.00000000</code></pre>
-<p>So I didn’t do too much with the data, but next time I will pick up with doing some plots and regressions.</p>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>I was able to load the CHIS 2018 child dataset and confirm that I could use the survey methods to replicate the results from the official CHIS web interface. I didn’t do too much with the data, but next time I will pick up with doing some plots and regressions.</p>
 </div>
