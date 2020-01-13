@@ -1,0 +1,88 @@
+---
+title: Restarting with California Health Interview Survey
+author: ~
+date: '2020-01-13'
+slug: restarting-with-california-health-interview-survey
+categories: 
+  - R
+tags: 
+  - health
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>Lately this blog has had a lot of descriptive posts about my life but not much that stretches my R abilities. Later this year my organization is holding its research day, so I decided to start working on a dataset that I last used about 7 years ago. The California Health Interview Survey is a survey of households that is weighted to be representative of the non-institutionalized population of California. This dataset has a few wrinkles in it that require a higher level of R programming so I thought I would try to stretch my rusty skills a little.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(survey)</code></pre>
+<pre><code>## Loading required package: grid</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## 
+## Attaching package: &#39;survey&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     dotchart</code></pre>
+<pre class="r"><code>library(foreign)</code></pre>
+<p>Fortunately when I last used this dataset in 2013, I had commented my code pretty well so I was able to recreate the trickiest part, the specification of the survey object.</p>
+<pre class="r"><code>chis &lt;- read.dta(&quot;/Users/mching/Dropbox/Mike/CHIS18/CHILD.dta&quot;, 
+                 convert.dates = TRUE, convert.factors = TRUE, 
+                 missing.type = TRUE, convert.underscore = TRUE, 
+                 warn.missing.labels = FALSE)
+chis &lt;- tbl_df(chis)</code></pre>
+<p>The replicate weights were in variables 159 to 239. Code was nodified from the <a href="http://r-survey.r-forge.r-project.org/survey/">survey package home page</a>.</p>
+<pre class="r"><code>rchis &lt;- svrepdesign(chis[ , -( 159 + ( 1 : 80 ))], 
+                     repweights = chis[ , ( 159 + ( 1 : 80 ))],
+                     weights = chis$rakedw0, 
+                     combined.weights = TRUE, 
+                     scale = 1, 
+                     rscales = rep(1,80), type=&quot;other&quot;)
+
+summary(rchis)</code></pre>
+<pre><code>## Call: svrepdesign.default(chis[, -(159 + (1:80))], repweights = chis[, 
+##     (159 + (1:80))], weights = chis$rakedw0, combined.weights = TRUE, 
+##     scale = 1, rscales = rep(1, 80), type = &quot;other&quot;)
+## with 80 replicates.
+## Variables: 
+##   [1] &quot;cf10a&quot;        &quot;ma3&quot;          &quot;cf14&quot;         &quot;cf21&quot;         &quot;ca12&quot;        
+##   [6] &quot;ca14&quot;         &quot;ca16&quot;         &quot;ca17&quot;         &quot;ca18&quot;         &quot;ca19&quot;        
+##  [11] &quot;ca23&quot;         &quot;ca24&quot;         &quot;ca31&quot;         &quot;ca35&quot;         &quot;ca50&quot;        
+##  [16] &quot;ca6&quot;          &quot;ca7&quot;          &quot;cb27&quot;         &quot;cb34b&quot;        &quot;cc13&quot;        
+##  [21] &quot;cc16b&quot;        &quot;cc17&quot;         &quot;cc18b&quot;        &quot;cc1b&quot;         &quot;cc31&quot;        
+##  [26] &quot;cc35&quot;         &quot;cc36&quot;         &quot;cc37&quot;         &quot;cc39&quot;         &quot;cc50&quot;        
+##  [31] &quot;cc51&quot;         &quot;cc7a&quot;         &quot;cc7bnew&quot;      &quot;cd1&quot;          &quot;cd12&quot;        
+##  [36] &quot;cd3&quot;          &quot;cd33&quot;         &quot;cd36&quot;         &quot;cd57&quot;         &quot;cd69&quot;        
+##  [41] &quot;cd7&quot;          &quot;cd70&quot;         &quot;cd71&quot;         &quot;ce1&quot;          &quot;ce11a&quot;       
+##  [46] &quot;ce11c&quot;        &quot;ce12&quot;         &quot;ce13&quot;         &quot;ce7&quot;          &quot;cf30&quot;        
+##  [51] &quot;cf32&quot;         &quot;cf35&quot;         &quot;cf36&quot;         &quot;cf39&quot;         &quot;cf40&quot;        
+##  [56] &quot;cf41&quot;         &quot;cf42&quot;         &quot;cf43&quot;         &quot;cf44&quot;         &quot;cf45&quot;        
+##  [61] &quot;cf46&quot;         &quot;cf47&quot;         &quot;cf64&quot;         &quot;cf65&quot;         &quot;cf66&quot;        
+##  [66] &quot;cf67&quot;         &quot;cg1&quot;          &quot;cg14&quot;         &quot;cg15&quot;         &quot;cg16&quot;        
+##  [71] &quot;cg3a&quot;         &quot;cg3b&quot;         &quot;cg3c&quot;         &quot;cg3d&quot;         &quot;cg3e&quot;        
+##  [76] &quot;cg3f&quot;         &quot;cg3g&quot;         &quot;cg5&quot;          &quot;cg6&quot;          &quot;ch18&quot;        
+##  [81] &quot;ac42&quot;         &quot;am36&quot;         &quot;srsex&quot;        &quot;srtenr&quot;       &quot;ur.clrt6&quot;    
+##  [86] &quot;ur.tract6&quot;    &quot;ur.bg6&quot;       &quot;ur.rhp&quot;       &quot;ur.clrt2&quot;     &quot;ur.ihs&quot;      
+##  [91] &quot;ur.omb&quot;       &quot;cc52&quot;         &quot;cc53&quot;         &quot;povll&quot;        &quot;cg34&quot;        
+##  [96] &quot;cg39&quot;         &quot;cg40&quot;         &quot;cg41&quot;         &quot;cg42&quot;         &quot;insmd&quot;       
+## [101] &quot;insem&quot;        &quot;inspr&quot;        &quot;insog&quot;        &quot;ins&quot;          &quot;ins64&quot;       
+## [106] &quot;ins12m&quot;       &quot;uninsany&quot;     &quot;insany&quot;       &quot;instype&quot;      &quot;ins9tp&quot;      
+## [111] &quot;ac44&quot;         &quot;agegrp.a&quot;     &quot;srsex.a&quot;      &quot;astcur&quot;       &quot;cg3rc&quot;       
+## [116] &quot;dnvst&quot;        &quot;doct.yr&quot;      &quot;er&quot;           &quot;fv5day2&quot;      &quot;povll.aca&quot;   
+## [121] &quot;usual5tp&quot;     &quot;fslev&quot;        &quot;usoc&quot;         &quot;famt4&quot;        &quot;fslevcb&quot;     
+## [126] &quot;usual&quot;        &quot;acmdm.p1&quot;     &quot;ahedtc.p1&quot;    &quot;ca34.p1&quot;      &quot;ca42.p1&quot;     
+## [131] &quot;ca43.p&quot;       &quot;ca6.p1&quot;       &quot;cb23.p1&quot;      &quot;cc40.p1&quot;      &quot;cc43.p1&quot;     
+## [136] &quot;cc5b.p1v2&quot;    &quot;cd31.p1&quot;      &quot;cf31.p1&quot;      &quot;cg2.p1&quot;       &quot;chedu.p1&quot;    
+## [141] &quot;famsz2.p1&quot;    &quot;hghti.p&quot;      &quot;hghtm.p&quot;      &quot;hhsize.p1v2&quot;  &quot;intvlngc2.p1&quot;
+## [146] &quot;lnghmc.p1&quot;    &quot;ombsrcn.p1&quot;   &quot;povgwd.p1&quot;    &quot;povll2.p1v2&quot;  &quot;racecnc.p1&quot;  
+## [151] &quot;racedfc.p1&quot;   &quot;raceh2c.p1&quot;   &quot;srage.p&quot;      &quot;wghtk.p&quot;      &quot;wghtp.p&quot;     
+## [156] &quot;puf1y.id&quot;     &quot;hmo&quot;          &quot;ma2.p&quot;        &quot;rakedw0&quot;</code></pre>

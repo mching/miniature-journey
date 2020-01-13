@@ -1,0 +1,44 @@
+---
+title: Restarting with California Health Interview Survey
+author: ~
+date: '2020-01-13'
+slug: restarting-with-california-health-interview-survey
+categories: 
+  - R
+tags: 
+  - health
+type: ''
+subtitle: ''
+image: ''
+---
+
+Lately this blog has had a lot of descriptive posts about my life but not much that stretches my R abilities. Later this year my organization is holding its research day, so I decided to start working on a dataset that I last used about 7 years ago. The California Health Interview Survey is a survey of households that is weighted to be representative of the non-institutionalized population of California. This dataset has a few wrinkles in it that require a higher level of R programming so I thought I would try to stretch my rusty skills a little.
+
+```{r}
+library(dplyr)
+library(survey)
+library(foreign)
+```
+
+Fortunately when I last used this dataset in 2013, I had commented my code pretty well so I was able to recreate the trickiest part, the specification of the survey object.
+```{r}
+chis <- read.dta("/Users/mching/Dropbox/Mike/CHIS18/CHILD.dta", 
+                 convert.dates = TRUE, convert.factors = TRUE, 
+                 missing.type = TRUE, convert.underscore = TRUE, 
+                 warn.missing.labels = FALSE)
+chis <- tbl_df(chis)
+```
+
+The replicate weights were in variables 159 to 239. Code was nodified from the [survey package home page](http://r-survey.r-forge.r-project.org/survey/).
+
+```{r}
+rchis <- svrepdesign(chis[ , -( 159 + ( 1 : 80 ))], 
+                     repweights = chis[ , ( 159 + ( 1 : 80 ))],
+                     weights = chis$rakedw0, 
+                     combined.weights = TRUE, 
+                     scale = 1, 
+                     rscales = rep(1,80), type="other")
+
+summary(rchis)
+```
+
