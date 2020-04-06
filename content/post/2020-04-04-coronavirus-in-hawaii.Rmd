@@ -1,0 +1,127 @@
+---
+title: Coronavirus in Hawaii
+author: ~
+date: '2020-04-04'
+slug: coronavirus-in-hawaii
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+Coronavirus is all anyone can think about these days, and the New York Times has become a repository for USA case data for some reason. They have been publishing the data on Github for now. 
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+covid <- readr::read_csv('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv')
+```
+
+Data pull time
+```{r}
+timestamp()
+```
+
+```{r}
+glimpse(covid)
+
+covid$county <- factor(covid$county)
+covid$state <- factor(covid$state)
+covid$fips <- as.integer(covid$fips)
+
+covid %>% filter(state == "Hawaii") %>% glimpse
+```
+
+# Total Cases in USA as of `r max(covid$date)`
+
+Here is the total nationwide cases as of `r max(covid$date)`.
+
+```{r}
+x <- covid %>% filter(date == max(date)) %>% select(cases)
+sum(x$cases)
+```
+
+
+## Total Cases by State
+```{r}
+
+covid %>% filter(date == max(date)) %>%
+  group_by(state) %>%
+  summarize(total = sum(cases)) %>%
+  arrange(-total)
+```
+
+```{r}
+covid %>% filter(date == max(date)) %>%
+  group_by(state) %>%
+  summarize(total = sum(cases)) %>% 
+  filter(total > median(total)) %>% 
+  arrange(-total) %>%
+  ggplot(aes(x = reorder(state, total), y = total)) + 
+  geom_bar(stat = 'identity') +
+  scale_y_continuous(trans=log10_trans()) +
+  coord_flip()
+
+covid %>% filter(date == max(date)) %>%
+  group_by(state) %>%
+  summarize(total = sum(cases)) %>% 
+  filter(total < median(total)) %>% 
+  arrange(-total) %>%
+  ggplot(aes(x = reorder(state, total), y = total)) + 
+  geom_bar(stat = 'identity') +
+  scale_y_continuous(trans=log10_trans()) +
+  coord_flip()
+```
+
+# Total Cases in Hawaii
+In Hawaii, the number of cases has been growing steadily.
+
+```{r}
+covid %>% filter(state == "Hawaii") %>%
+  group_by(date) %>%
+  summarize(total = sum(cases)) %>%
+  arrange(-total)
+
+covid %>% filter(state == "Hawaii") %>%
+  group_by(date) %>%
+  summarize(total = sum(cases)) %>% 
+  ggplot(aes(x = date, y = total)) +
+  geom_point() +  
+  geom_line()
+```
+
+# Cases by County in Hawaii
+
+Honolulu county has the most cases by far (as it has by far the largest population).
+
+```{r}
+covid %>% filter(state == "Hawaii") %>%
+  ggplot(aes(x = date, y = cases, color = county)) +
+  geom_point() +  
+  geom_line()
+```
+
+# Cases by County other than Honolulu
+
+To see the trend for the other counties, it is best to remove Honolulu County.
+
+```{r}
+covid %>% filter(state == "Hawaii" & county != "Honolulu") %>%
+  ggplot(aes(x = date, y = cases, color = county)) +
+  geom_point() +  
+  geom_line()
+```
+
+# Change per Day
+Here's the change in our state per day. The growth rate in positive tests may still be accelerating. 
+
+```{r}
+covid %>% filter(state == "Hawaii") %>% group_by(date) %>%
+  summarize(total = sum(cases)) %>% mutate(day_before_total = lag(total)) %>%
+  mutate(change = total - day_before_total) %>%
+  filter(!is.na(change)) %>%
+  ggplot(aes(x = date, y = change)) +
+  geom_point() + geom_line() + geom_smooth()
+```
