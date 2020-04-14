@@ -1,0 +1,80 @@
+---
+title: Hawaii Coronavirus Update 2020-04-13
+author: ~
+date: '2020-04-13'
+slug: hawaii-coronavirus-update-2020-04-13
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+In my last post I used data from the [New York Times Github repository](https://github.com/nytimes/covid-19-data). The authors update it within a day or two but I found a new crowdsourced data source from local tech community that is typically updated within minutes. 
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(scales)
+library(tidyr)
+library(zoo)
+covid <- readr::read_csv('https://covid19-hawaii.herokuapp.com/hawaii_daily.sqlite/hawaii_daily?_format=csv&_size=max')
+```
+
+Data pull time
+```{r}
+timestamp()
+```
+
+Here's what the data look like.
+```{r}
+glimpse(covid)
+```
+
+Data processing steps.
+```{r}
+covid$Date <- mdy(covid$Date)
+```
+
+The data has the last date as 4/15/2020 for some reason, so I went in and fixed it manually.
+
+```{r}
+# This step will need to be deleted once the source data is corrected
+date415 <- which(covid$Date == "2020-04-15")
+covid$Date[date415] <- as.Date("2020-04-13")
+```
+
+
+# Change per Day
+Here's the change in our state per day, smoothed with the loess method (regression line fitting).
+
+```{r}
+covid %>% filter(!is.na(`New Cases`)) %>%
+  ggplot(aes(x = Date, y = `New Cases`)) + 
+  geom_point() +
+  geom_line() + 
+  geom_smooth() +
+  labs(title ="New Coronavirus Positive Tests, Hawaii",
+       subtitle = "With loess smoothing line") +
+  ylab("Positive Tests")
+```
+
+I also tried last 7 smoothing. 
+
+```{r}
+covid %>% select(Date, `New Cases`) %>%
+  mutate(rolling_mean_7d = rollmean(`New Cases`, 7, align = 'right', fill = NA)) %>% 
+  mutate(newcases = `New Cases`) %>%
+  select(Date, newcases, rolling_mean_7d) %>%
+  gather(`rolling_mean_7d`, `newcases`, key = seriesname, value = cases) %>%
+  ggplot(aes(x = Date, y = cases, color = seriesname)) + 
+  geom_point() +
+  geom_line() +
+  labs(title ="New Coronavirus Positive Tests, Hawaii",
+       subtitle = "With 7 Day Rolling Mean") +
+  ylab("Positive Tests")
+  
+```
+
+Both curves are pretty nice, showing a reduction in the new positive tests per day in the last week. I hope the trend continues!

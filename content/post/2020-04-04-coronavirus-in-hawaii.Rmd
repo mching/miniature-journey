@@ -10,7 +10,7 @@ subtitle: ''
 image: ''
 ---
 
-Coronavirus is all anyone can think about these days, and the New York Times has become a repository for USA case data for some reason. They have been publishing the data on Github for now. 
+Coronavirus is all anyone can think about these days, and the New York Times has become a repository for USA case data for some reason. They have been publishing [the data on Github](https://github.com/nytimes/covid-19-data) for now. 
 
 ```{r}
 library(dplyr)
@@ -34,12 +34,12 @@ covid$fips <- as.integer(covid$fips)
 covid %>% filter(state == "Hawaii") %>% glimpse
 ```
 
-# Total Cases in USA as of `r max(covid$date)`
+# Total Cases in USA as of 2020-04-04
 
-Here is the total nationwide cases as of `r max(covid$date)`.
+Here is the total nationwide cases as of 2020-04-04.
 
 ```{r}
-x <- covid %>% filter(date == max(date)) %>% select(cases)
+x <- covid %>% filter(date == "2020-04-04") %>% select(cases)
 sum(x$cases)
 ```
 
@@ -47,14 +47,14 @@ sum(x$cases)
 ## Total Cases by State
 ```{r}
 
-covid %>% filter(date == max(date)) %>%
+covid %>% filter(date == "2020-04-04") %>%
   group_by(state) %>%
   summarize(total = sum(cases)) %>%
   arrange(-total)
 ```
 
 ```{r}
-covid %>% filter(date == max(date)) %>%
+covid %>% filter(date == "2020-04-04") %>%
   group_by(state) %>%
   summarize(total = sum(cases)) %>% 
   filter(total > median(total)) %>% 
@@ -64,7 +64,7 @@ covid %>% filter(date == max(date)) %>%
   scale_y_continuous(trans=log10_trans()) +
   coord_flip()
 
-covid %>% filter(date == max(date)) %>%
+covid %>% filter(date == "2020-04-04") %>%
   group_by(state) %>%
   summarize(total = sum(cases)) %>% 
   filter(total < median(total)) %>% 
@@ -79,12 +79,12 @@ covid %>% filter(date == max(date)) %>%
 In Hawaii, the number of cases has been growing steadily.
 
 ```{r}
-covid %>% filter(state == "Hawaii") %>%
+covid %>% filter(state == "Hawaii", date <= "2020-04-04") %>%
   group_by(date) %>%
   summarize(total = sum(cases)) %>%
   arrange(-total)
 
-covid %>% filter(state == "Hawaii") %>%
+covid %>% filter(state == "Hawaii", date <= "2020-04-04") %>%
   group_by(date) %>%
   summarize(total = sum(cases)) %>% 
   ggplot(aes(x = date, y = total)) +
@@ -97,7 +97,7 @@ covid %>% filter(state == "Hawaii") %>%
 Honolulu county has the most cases by far (as it has by far the largest population).
 
 ```{r}
-covid %>% filter(state == "Hawaii") %>%
+covid %>% filter(state == "Hawaii", date <= "2020-04-04") %>%
   ggplot(aes(x = date, y = cases, color = county)) +
   geom_point() +  
   geom_line()
@@ -108,7 +108,7 @@ covid %>% filter(state == "Hawaii") %>%
 To see the trend for the other counties, it is best to remove Honolulu County.
 
 ```{r}
-covid %>% filter(state == "Hawaii" & county != "Honolulu") %>%
+covid %>% filter(state == "Hawaii" & county != "Honolulu", date <= "2020-04-04") %>%
   ggplot(aes(x = date, y = cases, color = county)) +
   geom_point() +  
   geom_line()
@@ -118,7 +118,8 @@ covid %>% filter(state == "Hawaii" & county != "Honolulu") %>%
 Here's the change in our state per day. The growth rate in positive tests may still be accelerating. 
 
 ```{r}
-covid %>% filter(state == "Hawaii") %>% group_by(date) %>%
+covid %>% filter(state == "Hawaii", date <= "2020-04-04") %>% 
+  group_by(date) %>%
   summarize(total = sum(cases)) %>% mutate(day_before_total = lag(total)) %>%
   mutate(change = total - day_before_total) %>%
   filter(!is.na(change)) %>%
