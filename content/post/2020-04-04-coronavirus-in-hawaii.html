@@ -4,7 +4,8 @@ author: ~
 date: '2020-04-04'
 slug: coronavirus-in-hawaii
 categories: []
-tags: []
+tags:
+  - coronavirus
 type: ''
 subtitle: ''
 image: ''
@@ -13,6 +14,9 @@ image: ''
 
 
 <p>Coronavirus is all anyone can think about these days, and the New York Times has become a repository for USA case data for some reason. They have been publishing <a href="https://github.com/nytimes/covid-19-data">the data on Github</a> for now.</p>
+<div id="data-loading" class="section level1">
+<h1>Data Loading</h1>
+<p>I loaded the data directly from the NY Times repository. The repository has county and state lists but because I was interested in the different counties in Hawaii, I used the county file.</p>
 <pre class="r"><code>library(dplyr)</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;dplyr&#39;</code></pre>
@@ -23,8 +27,8 @@ image: ''
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
 <pre class="r"><code>library(ggplot2)
-library(scales)
-covid &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv&#39;)</code></pre>
+library(scales)</code></pre>
+<pre class="r"><code>covid &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv&#39;)</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
 ##   date = col_date(format = &quot;&quot;),
@@ -34,11 +38,13 @@ covid &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/nytimes/covid
 ##   cases = col_double(),
 ##   deaths = col_double()
 ## )</code></pre>
-<p>Data pull time</p>
 <pre class="r"><code>timestamp()</code></pre>
-<pre><code>## ##------ Mon Apr 13 21:35:31 2020 ------##</code></pre>
+<pre><code>## ##------ Tue Apr 14 19:25:55 2020 ------##</code></pre>
+<div id="data-pull-time" class="section level2">
+<h2>Data pull time</h2>
+<p>Because the repository keeps getting updated but this post reflects the situation on 4/4/2020, I filtered all the data after this for 4/4/2020 and earlier.</p>
 <pre class="r"><code>glimpse(covid)</code></pre>
-<pre><code>## Observations: 53,848
+<pre><code>## Observations: 56,541
 ## Variables: 6
 ## $ date   &lt;date&gt; 2020-01-21, 2020-01-22, 2020-01-23, 2020-01-24, 2020-01-24, 2…
 ## $ county &lt;chr&gt; &quot;Snohomish&quot;, &quot;Snohomish&quot;, &quot;Snohomish&quot;, &quot;Cook&quot;, &quot;Snohomish&quot;, &quot;O…
@@ -48,17 +54,9 @@ covid &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/nytimes/covid
 ## $ deaths &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</code></pre>
 <pre class="r"><code>covid$county &lt;- factor(covid$county)
 covid$state &lt;- factor(covid$state)
-covid$fips &lt;- as.integer(covid$fips)
-
-covid %&gt;% filter(state == &quot;Hawaii&quot;) %&gt;% glimpse</code></pre>
-<pre><code>## Observations: 145
-## Variables: 6
-## $ date   &lt;date&gt; 2020-03-06, 2020-03-07, 2020-03-08, 2020-03-09, 2020-03-10, 2…
-## $ county &lt;fct&gt; Honolulu, Honolulu, Honolulu, Honolulu, Honolulu, Honolulu, Ho…
-## $ state  &lt;fct&gt; Hawaii, Hawaii, Hawaii, Hawaii, Hawaii, Hawaii, Hawaii, Hawaii…
-## $ fips   &lt;int&gt; 15003, 15003, 15003, 15003, 15003, 15003, 15003, 15003, 15003,…
-## $ cases  &lt;dbl&gt; 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 4, 2, 1, 6, 2, 2, 1, 8, 2, 3, 1,…
-## $ deaths &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</code></pre>
+covid$fips &lt;- as.integer(covid$fips)</code></pre>
+</div>
+</div>
 <div id="total-cases-in-usa-as-of-2020-04-04" class="section level1">
 <h1>Total Cases in USA as of 2020-04-04</h1>
 <p>Here is the total nationwide cases as of 2020-04-04.</p>

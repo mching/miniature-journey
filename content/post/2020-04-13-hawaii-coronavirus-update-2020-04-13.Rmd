@@ -1,17 +1,22 @@
 ---
-title: Hawaii Coronavirus Update 2020-04-13
+title: Hawaii Coronavirus Update 2020-04-14
 author: ~
-date: '2020-04-13'
-slug: hawaii-coronavirus-update-2020-04-13
+date: '2020-04-14'
+slug: hawaii-coronavirus-update-2020-04-14
 categories: []
-tags: []
+tags: 
+  - coronavirus
 type: ''
 subtitle: ''
 image: ''
 ---
 
-In my last post I used data from the [New York Times Github repository](https://github.com/nytimes/covid-19-data). The authors update it within a day or two but I found a new crowdsourced data source from local tech community that is typically updated within minutes. 
+In my last post I used data from the [New York Times Github repository](https://github.com/nytimes/covid-19-data). The authors update it within a day or two but I found a new [crowdsourced data source](https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0) from the local tech community that is typically updated within minutes of the Department of Health data posting. 
 
+# Data Loading 
+The [Google Sheet](https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0) is very nice to look at but I've had issues recently with loading data directly from Google sheets.  Fortunately the community also made available the data via a [heroku app](https://covid19-hawaii.herokuapp.com/) that allows [CSV file download](https://covid19-hawaii.herokuapp.com/hawaii_daily.sqlite/hawaii_daily?_format=csv&_size=max).
+
+## Packages
 ```{r}
 library(dplyr)
 library(ggplot2)
@@ -19,30 +24,18 @@ library(lubridate)
 library(scales)
 library(tidyr)
 library(zoo)
+```
+
+## Data Download
+```{r, cache = TRUE}
 covid <- readr::read_csv('https://covid19-hawaii.herokuapp.com/hawaii_daily.sqlite/hawaii_daily?_format=csv&_size=max')
+timestamp() # Data pull time
 ```
 
-Data pull time
-```{r}
-timestamp()
-```
 
-Here's what the data look like.
-```{r}
-glimpse(covid)
-```
-
-Data processing steps.
+## Data processing steps.
 ```{r}
 covid$Date <- mdy(covid$Date)
-```
-
-The data has the last date as 4/15/2020 for some reason, so I went in and fixed it manually.
-
-```{r}
-# This step will need to be deleted once the source data is corrected
-date415 <- which(covid$Date == "2020-04-15")
-covid$Date[date415] <- as.Date("2020-04-13")
 ```
 
 
@@ -60,7 +53,7 @@ covid %>% filter(!is.na(`New Cases`)) %>%
   ylab("Positive Tests")
 ```
 
-I also tried last 7 smoothing. 
+I also tried smoothing by drawing a 7 day running average. I used a (new to me) function from the zoo time series analysis package. 
 
 ```{r}
 covid %>% select(Date, `New Cases`) %>%
@@ -77,4 +70,5 @@ covid %>% select(Date, `New Cases`) %>%
   
 ```
 
-Both curves are pretty nice, showing a reduction in the new positive tests per day in the last week. I hope the trend continues!
+# Discussion
+Both the loess smoothed and rolling 7 day mean curves are pretty nice, showing a reduction in the new positive tests per day in the last 2 weeks. There is speculation that the 5 positive tests on April 13 was due to slow test reporting from the Easter weekend. Today (4/14) had more than twice the previous day. In any case, I would guess the overall trend is downards now and I hope it continues!

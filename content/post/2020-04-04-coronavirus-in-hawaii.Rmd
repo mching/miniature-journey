@@ -4,7 +4,8 @@ author: ~
 date: '2020-04-04'
 slug: coronavirus-in-hawaii
 categories: []
-tags: []
+tags:
+  - coronavirus
 type: ''
 subtitle: ''
 image: ''
@@ -12,17 +13,25 @@ image: ''
 
 Coronavirus is all anyone can think about these days, and the New York Times has become a repository for USA case data for some reason. They have been publishing [the data on Github](https://github.com/nytimes/covid-19-data) for now. 
 
+# Data Loading
+
+I loaded the data directly from the NY Times repository. The repository has county and state lists but because I was interested in the different counties in Hawaii, I used the county file. 
+
 ```{r}
 library(dplyr)
 library(ggplot2)
 library(scales)
-covid <- readr::read_csv('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv')
 ```
 
-Data pull time
-```{r}
+```{r, cache = T}
+covid <- readr::read_csv('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv')
+
 timestamp()
 ```
+
+## Data pull time
+
+Because the repository keeps getting updated but this post reflects the situation on 4/4/2020, I filtered all the data after this for 4/4/2020 and earlier. 
 
 ```{r}
 glimpse(covid)
@@ -31,7 +40,6 @@ covid$county <- factor(covid$county)
 covid$state <- factor(covid$state)
 covid$fips <- as.integer(covid$fips)
 
-covid %>% filter(state == "Hawaii") %>% glimpse
 ```
 
 # Total Cases in USA as of 2020-04-04
