@@ -1,0 +1,134 @@
+---
+title: Hawaii Coronavirus Update 2020-04-19
+author: ~
+date: '2020-04-19'
+slug: hawaii-coronavirus-update-2020-04-19
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+Here's some more of my efforts to look at the local coronavirus data. I also thought it would be helpful to update the numbers this weekend since they look to have plateaued a bit this past week. In this post I look at the released cases versus the total to see how many active cases are still being tracked. I also look at the new cases by island since there were a couple of clusters on the Big Island and Maui.
+
+## Packages
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(scales)
+library(tidyr)
+library(zoo)
+```
+
+## Data Download
+```{r, cache = TRUE}
+covid <- readr::read_csv('https://covid19-hawaii.herokuapp.com/hawaii_daily.sqlite/hawaii_daily?_format=csv&_size=max')
+timestamp() # Data pull time
+```
+
+
+## Data processing steps.
+```{r}
+covid$Date <- mdy(covid$Date)
+```
+
+
+# Change per Day
+I updated the curves from the last post with both smoothing methods. Here's the change in our state per day, smoothed with the loess method (regression line fitting).
+
+```{r}
+covid %>% filter(!is.na(`New Cases`)) %>%
+  ggplot(aes(x = Date, y = `New Cases`)) + 
+  geom_point() +
+  geom_line() + 
+  geom_smooth() +
+  labs(title ="New Coronavirus Positive Tests, Hawaii",
+       subtitle = "With loess smoothing line") +
+  ylab("Positive Tests")
+```
+
+Here's the 7 day running average.
+
+```{r}
+covid %>% select(Date, `New Cases`) %>%
+  mutate(rolling_mean_7d = rollmean(`New Cases`, 7, align = 'right', fill = NA)) %>% 
+  mutate(newcases = `New Cases`) %>%
+  select(Date, newcases, rolling_mean_7d) %>%
+  gather(`rolling_mean_7d`, `newcases`, key = seriesname, value = cases) %>%
+  ggplot(aes(x = Date, y = cases, color = seriesname)) + 
+  geom_point() +
+  geom_line() +
+  labs(title ="New Coronavirus Positive Tests, Hawaii",
+       subtitle = "With 7 Day Rolling Mean") +
+  ylab("Positive Tests")
+  
+```
+
+# Recovered Cases
+
+Quite a few cases have recovered over the course of the pandemic. I thought it might be nice to see how many cases are recovered versus not recovered. To do this I needed to reshape the data into a tidy format.
+
+```{r}
+covid %>% 
+  select(Date, total_cases = `Total Cases`, total_released = `Total Released`) %>%
+#  mutate(active_cases = total_cases - total_released) %>%
+  gather(total_cases, total_released, key = "case_type", value = "cases") %>%
+  ggplot(aes(x = Date, y = cases, color = case_type)) + 
+  geom_point() +
+  geom_line()
+```
+
+It's not totally clear why the data in the released cases jumps so much on 4/9/2020.
+
+Here's another way of looking at the number of cases that are still active (total cases - total released).
+
+```{r}
+covid %>% 
+  select(Date, total_cases = `Total Cases`, total_released = `Total Released`) %>%
+  mutate(active_cases = total_cases - total_released) %>%
+#  gather(total_cases, total_released, key = "case_type", value = "cases") %>%
+  ggplot(aes(x = Date, y = active_cases)) + 
+  geom_point() +
+  geom_line() +
+  ylim(0, 400) + xlim(ymd('2020-03-24'), ymd('2020-04-20'))
+```
+This makes it easier to see that as DOH started releasing cases on day 14 of this data collection, there have been between 163 and 189 active cases. Of course this is an underestimate of the true number of contagious people out there.
+
+```{r}
+covid %>% filter(Date > mdy('4-9-2020')) %>%
+  select(Date, total_cases = `Total Cases`, total_released = `Total Released`) %>%
+  mutate(active_cases = total_cases - total_released) %>% arrange(active_cases)
+```
+
+# Maui and Big Island Clusters
+
+There have been two new clusters of cases on Maui and the Big Island. On Maui the cluster was associated with the hospital and on the Big Island it was associated with McDonalds workers. These two clusters throws off the data a bit because the overall total hides these outbreaks. To look at these we can look at new cases by county.
+
+```{r}
+# str(covid)
+covid %>% select(Date, 
+                 oahu=`New Oahu Res`,
+                 maui=`New Maui Res`,
+                 big_island=`New HIsland Res`,
+                 kauai=`New Kauai Res`,
+                 non_res=`New Non Res`,
+                 `Unclassified`
+                 ) %>%
+  gather(oahu, maui, big_island, kauai, # non_res, Unclassified,
+         key = "location",
+         value = "new_cases") %>%
+  ggplot(aes(x = Date, y = new_cases)) + facet_grid(. ~location) +
+  geom_point() +
+  geom_smooth() +
+  theme(axis.text.x  = element_text(angle=90, vjust=0.5))
+```
+
+Overall you can see the days when those clusters were under serious investigation since the number of positive tests spikes.
+
+# License
+I didn't mention it last time, but these data are subject to the following restrictions:
+
+Data license: [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) · Data source: [Community Maintained Daily Hawaii COVID-19 Metrics](https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0) · About: This is a community maintained, unofficial table of COVID-19 stats compiled from DOH and media reports. Accuracy is not guaranteed. Please see the [Data source link]((https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0)) to report any errors.
