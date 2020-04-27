@@ -1,7 +1,7 @@
 ---
 title: Coronavirus Positive Tests in Hawaii
 author: ~
-date: '2020-04-23'
+date: '2020-04-26'
 slug: coronavirus-positive-tests-in-hawaii
 categories: []
 tags: []
@@ -51,8 +51,23 @@ covid_edit <- covid %>% select(Date, test_total = `Total Tests`,
 covid_edit$test_total_neg[which(covid_edit$Date == "2020-04-23")] <- 26017
 ```
 
+Here's the curve that we often see on cumulative positive and negative tests.
+
 ```{r}
 # This block uses two new functions to me, starts_with() and pivot_longer(), which is like gather but with different syntax
+
+covid_edit %>% select(Date, test_total_neg, test_total_pos, test_total_inconcl) %>%
+  pivot_longer(starts_with("test"), names_to = "test_type",
+               values_to = "tests") %>%
+  mutate(test_type = factor(test_type, levels = c("test_total_pos",
+                                                  "test_total_inconcl",
+                                                  "test_total_neg"))) %>%
+  ggplot(aes(x = Date, y = tests, fill = test_type)) + geom_bar(stat = "identity")
+```
+
+It might be nice to see the positive tests per day compared to the negative tests, inconclusive, etc.
+
+```{r}
 
 covid_edit %>%   
   mutate(daily_positive = test_total_pos - lag(test_total_pos),
@@ -80,6 +95,9 @@ covid_edit %>%
   ylab("Percent Positive")
 ```
 
+That's a lot better. We can see that the percentage of positive tests is going down as the total number of cases also declines.
+
+# Running Previous Curves
 Here I updated all the other coronavirus curves for 4/26/2020.
 
 ```{r}
@@ -87,21 +105,24 @@ covid %>% filter(!is.na(`New Cases`)) %>%
   ggplot(aes(x = Date, y = `New Cases`)) + 
   geom_point() +
   geom_line() + 
-  geom_smooth() +
+  geom_smooth(se = F) +
   labs(title ="New Coronavirus Positive Tests, Hawaii",
        subtitle = "With loess smoothing line") +
   ylab("Positive Tests")
 ```
+
+This loess smoothed curve is a little silly now that the cases are so low since the smoothing makes the curve dip below 0.
+
+I updated the rolling mean curve to look a little nicer and show the difference between the day's count and the rolling mean with different shapes.
 
 ```{r}
 covid %>% select(Date, `New Cases`) %>%
   mutate(rolling_mean_7d = rollmean(`New Cases`, 7, align = 'right', fill = NA)) %>% 
   mutate(newcases = `New Cases`) %>%
   select(Date, newcases, rolling_mean_7d) %>%
-  gather(`rolling_mean_7d`, `newcases`, key = seriesname, value = cases) %>%
-  ggplot(aes(x = Date, y = cases, color = seriesname)) + 
-  geom_point() +
-  geom_line() +
+  ggplot(aes(x = Date)) + 
+  geom_bar(aes(y = newcases), stat = 'identity', fill = 'darkolivegreen3') +
+  geom_line(aes(y = rolling_mean_7d), color = 'red') +
   labs(title ="New Coronavirus Positive Tests, Hawaii",
        subtitle = "With 7 Day Rolling Mean") +
   ylab("Positive Tests")
@@ -121,6 +142,6 @@ covid %>%
 
 
 # License
-I didn't mention it last time, but these data are subject to the following restrictions:
+These data are subject to the following license:
 
 Data license: [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) · Data source: [Community Maintained Daily Hawaii COVID-19 Metrics](https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0) · About: This is a community maintained, unofficial table of COVID-19 stats compiled from DOH and media reports. Accuracy is not guaranteed. Please see the [Data source link]((https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0)) to report any errors.
