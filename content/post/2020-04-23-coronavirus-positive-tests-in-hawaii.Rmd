@@ -1,0 +1,126 @@
+---
+title: Coronavirus Positive Tests in Hawaii
+author: ~
+date: '2020-04-23'
+slug: coronavirus-positive-tests-in-hawaii
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+Today I decided to look at the tests for coronavirus that are being done in Hawaii. It looks like the number of positive tests are slowing down. I had a sense that the population is also probably healthier from social distancing, so I wanted to look at the trend in tests and positive tests.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(scales)
+library(tidyr)
+library(zoo)
+```
+
+```{r}
+covid <- readr::read_csv('https://covid19-hawaii.herokuapp.com/hawaii_daily.sqlite/hawaii_daily?_format=csv&_size=max')
+timestamp() # Data pull time
+```
+
+
+```{r}
+covid$Date <- mdy(covid$Date)
+
+covid %>% select(Date, test_total = `Total Tests`, test_daily = `Daily Tests`,
+                 test_total_neg = `Negative Tests`, test_total_pos = `Positive Tests`,
+                 test_total_inconcl = `Inconcl Tests`) %>%
+  mutate(daily_positive = test_total_pos - lag(test_total_pos),
+         daily_negative = test_total_neg - lag(test_total_neg),
+         daily_inconcl = test_total_inconcl - lag(test_total_inconcl)) %>%
+  select(Date, test_daily, daily_positive, daily_negative, daily_inconcl)
+```
+
+Looking at the data there seems to be a typo for the total negative tests on 4/23. It went down compared to the prior day and the positive, negative, and inconclusive tests columns add up to 1000 less than the total test column for that day. I'll just clean it for the purposes of this illustration.
+
+```{r}
+covid_edit <- covid %>% select(Date, test_total = `Total Tests`, 
+                               test_daily = `Daily Tests`,
+                               test_total_neg = `Negative Tests`, 
+                               test_total_pos = `Positive Tests`,
+                               test_total_inconcl = `Inconcl Tests`)
+
+covid_edit$test_total_neg[which(covid_edit$Date == "2020-04-23")] <- 26017
+```
+
+```{r}
+# This block uses two new functions to me, starts_with() and pivot_longer(), which is like gather but with different syntax
+
+covid_edit %>%   
+  mutate(daily_positive = test_total_pos - lag(test_total_pos),
+         daily_negative = test_total_neg - lag(test_total_neg),
+         daily_inconcl = test_total_inconcl - lag(test_total_inconcl)) %>%
+  select(Date, starts_with("daily")) %>% 
+  pivot_longer(cols = starts_with("daily"), names_to = "test_type",
+               values_to = "tests") %>%
+  ggplot(aes(x = Date, y = tests, fill = test_type)) + geom_bar(stat = "identity")
+```
+
+Oh man, what a mess! It's impossible to see the positives because they are so small as a percentage of the total tests! A better idea might be just to plot the percentage positive anyway.
+
+```{r}
+covid_edit %>%   
+  mutate(daily_positive = test_total_pos - lag(test_total_pos),
+         daily_negative = test_total_neg - lag(test_total_neg),
+         daily_inconcl = test_total_inconcl - lag(test_total_inconcl)) %>%
+  select(Date, test_daily, daily_positive) %>%
+  mutate(daily_positive_percentage = daily_positive/test_daily * 100) %>%
+  ggplot(aes(x = Date, y = daily_positive_percentage)) + 
+  geom_point() +
+  geom_smooth(se = F) +
+  ggtitle("Percent Positive Daily Coronavirus Tests, Hawaii") +
+  ylab("Percent Positive")
+```
+
+Here I updated all the other coronavirus curves for 4/26/2020.
+
+```{r}
+covid %>% filter(!is.na(`New Cases`)) %>%
+  ggplot(aes(x = Date, y = `New Cases`)) + 
+  geom_point() +
+  geom_line() + 
+  geom_smooth() +
+  labs(title ="New Coronavirus Positive Tests, Hawaii",
+       subtitle = "With loess smoothing line") +
+  ylab("Positive Tests")
+```
+
+```{r}
+covid %>% select(Date, `New Cases`) %>%
+  mutate(rolling_mean_7d = rollmean(`New Cases`, 7, align = 'right', fill = NA)) %>% 
+  mutate(newcases = `New Cases`) %>%
+  select(Date, newcases, rolling_mean_7d) %>%
+  gather(`rolling_mean_7d`, `newcases`, key = seriesname, value = cases) %>%
+  ggplot(aes(x = Date, y = cases, color = seriesname)) + 
+  geom_point() +
+  geom_line() +
+  labs(title ="New Coronavirus Positive Tests, Hawaii",
+       subtitle = "With 7 Day Rolling Mean") +
+  ylab("Positive Tests")
+```
+
+```{r}
+covid %>% 
+  select(Date, total_cases = `Total Cases`, total_released = `Total Released`) %>%
+  mutate(active_cases = total_cases - total_released) %>%
+#  gather(total_cases, total_released, key = "case_type", value = "cases") %>%
+  ggplot(aes(x = Date, y = active_cases)) + 
+  geom_point() +
+  geom_line() +
+  ylim(0, 400) + xlim(ymd('2020-03-24'), ymd('2020-04-30')) +
+  ggtitle("Active Cases of Coronavirus, Hawaii")
+```
+
+
+# License
+I didn't mention it last time, but these data are subject to the following restrictions:
+
+Data license: [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) · Data source: [Community Maintained Daily Hawaii COVID-19 Metrics](https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0) · About: This is a community maintained, unofficial table of COVID-19 stats compiled from DOH and media reports. Accuracy is not guaranteed. Please see the [Data source link]((https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0)) to report any errors.
