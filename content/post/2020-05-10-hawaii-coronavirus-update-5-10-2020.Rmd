@@ -1,0 +1,89 @@
+---
+title: Hawaii Coronavirus Update 5/10/2020
+author: ~
+date: '2020-05-10'
+slug: hawaii-coronavirus-update-5-10-2020
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+It's been a couple of weeks since I reran the graphs with new data. Since then there have been thankfully few cases of coronavirus in our state. It's clearly still circulating at some small level but once we get to this type of number, it becomes possible to track down and isolate the contacts. 
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(scales)
+library(tidyr)
+library(zoo)
+```
+
+```{r}
+covid <- readr::read_csv('https://covid19-hawaii.herokuapp.com/hawaii_daily.sqlite/hawaii_daily?_format=csv&_size=max')
+timestamp() # Data pull time
+```
+
+
+```{r}
+covid$Date <- mdy(covid$Date)
+
+covid %>% select(Date, test_total = `Total Tests`, test_daily = `Daily Tests`,
+                 test_total_neg = `Negative Tests`, test_total_pos = `Positive Tests`,
+                 test_total_inconcl = `Inconcl Tests`) %>%
+  mutate(daily_positive = test_total_pos - lag(test_total_pos),
+         daily_negative = test_total_neg - lag(test_total_neg),
+         daily_inconcl = test_total_inconcl - lag(test_total_inconcl)) %>%
+  select(Date, test_daily, daily_positive, daily_negative, daily_inconcl)
+```
+
+Here I updated all the other coronavirus curves for 5/10/2020.
+
+```{r}
+covid %>% filter(!is.na(`New Cases`)) %>%
+  ggplot(aes(x = Date, y = `New Cases`)) + 
+  geom_point() +
+  geom_line() + 
+  geom_smooth(se = F) +
+  labs(title ="New Coronavirus Positive Tests, Hawaii",
+       subtitle = "With loess smoothing line") +
+  ylab("Positive Tests")
+```
+
+This loess smoothed curve is a little silly now that the cases are so low since the smoothing makes the curve dip below 0.
+
+I updated the rolling mean curve to look a little nicer and show the difference between the day's count and the rolling mean with different shapes.
+
+```{r}
+covid %>% select(Date, `New Cases`) %>%
+  mutate(rolling_mean_7d = rollmean(`New Cases`, 7, align = 'right', fill = NA)) %>% 
+  mutate(newcases = `New Cases`) %>%
+  select(Date, newcases, rolling_mean_7d) %>%
+  ggplot(aes(x = Date)) + 
+  geom_bar(aes(y = newcases), stat = 'identity', fill = 'darkolivegreen3') +
+  geom_line(aes(y = rolling_mean_7d), color = 'red') +
+  labs(title ="New Coronavirus Positive Tests, Hawaii",
+       subtitle = "With 7 Day Rolling Mean") +
+  ylab("Positive Tests")
+```
+
+```{r}
+covid %>% 
+  select(Date, total_cases = `Total Cases`, total_released = `Total Released`) %>%
+  mutate(active_cases = total_cases - total_released) %>%
+#  gather(total_cases, total_released, key = "case_type", value = "cases") %>%
+  ggplot(aes(x = Date, y = active_cases)) + 
+  geom_point() +
+  geom_line() +
+  ylim(0, 400) + xlim(ymd('2020-03-24'), ymd('2020-04-30')) +
+  ggtitle("Active Cases of Coronavirus, Hawaii")
+```
+
+
+# License
+These data are subject to the following license:
+
+Data license: [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) · Data source: [Community Maintained Daily Hawaii COVID-19 Metrics](https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0) · About: This is a community maintained, unofficial table of COVID-19 stats compiled from DOH and media reports. Accuracy is not guaranteed. Please see the [Data source link]((https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0)) to report any errors.

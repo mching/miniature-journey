@@ -1,0 +1,137 @@
+---
+title: Hawaii Coronavirus Update 5/10/2020
+author: ~
+date: '2020-05-10'
+slug: hawaii-coronavirus-update-5-10-2020
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>It’s been a couple of weeks since I reran the graphs with new data. Since then there have been thankfully few cases of coronavirus in our state. It’s clearly still circulating at some small level but once we get to this type of number, it becomes possible to track down and isolate the contacts.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     intersect, setdiff, union</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
+<pre class="r"><code>library(scales)
+library(tidyr)
+library(zoo)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<pre class="r"><code>covid &lt;- readr::read_csv(&#39;https://covid19-hawaii.herokuapp.com/hawaii_daily.sqlite/hawaii_daily?_format=csv&amp;_size=max&#39;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Date = col_character(),
+##   `Total Tests` = col_number(),
+##   `Daily Tests` = col_number(),
+##   `Total Private Tests` = col_number(),
+##   `Negative Tests` = col_number(),
+##   `OHCA Licensed Beds` = col_number(),
+##   `Non-ICU Beds` = col_number(),
+##   `Occupied Beds` = col_number(),
+##   Source = col_character(),
+##   `Unnamed: 40` = col_character(),
+##   `Unnamed: 41` = col_logical(),
+##   `Unnamed: 42` = col_logical(),
+##   `Unnamed: 43` = col_logical(),
+##   `Unnamed: 44` = col_logical(),
+##   `Unnamed: 45` = col_logical(),
+##   `Unnamed: 46` = col_logical(),
+##   `Unnamed: 47` = col_logical(),
+##   `Unnamed: 48` = col_logical(),
+##   `Unnamed: 49` = col_logical(),
+##   `Unnamed: 50` = col_logical()
+##   # ... with 5 more columns
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre class="r"><code>timestamp() # Data pull time</code></pre>
+<pre><code>## ##------ Sun May 10 15:01:01 2020 ------##</code></pre>
+<pre class="r"><code>covid$Date &lt;- mdy(covid$Date)
+
+covid %&gt;% select(Date, test_total = `Total Tests`, test_daily = `Daily Tests`,
+                 test_total_neg = `Negative Tests`, test_total_pos = `Positive Tests`,
+                 test_total_inconcl = `Inconcl Tests`) %&gt;%
+  mutate(daily_positive = test_total_pos - lag(test_total_pos),
+         daily_negative = test_total_neg - lag(test_total_neg),
+         daily_inconcl = test_total_inconcl - lag(test_total_inconcl)) %&gt;%
+  select(Date, test_daily, daily_positive, daily_negative, daily_inconcl)</code></pre>
+<pre><code>## # A tibble: 70 x 5
+##    Date       test_daily daily_positive daily_negative daily_inconcl
+##    &lt;date&gt;          &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt;         &lt;dbl&gt;
+##  1 2020-03-01         NA             NA             NA            NA
+##  2 2020-03-02         NA             NA             NA            NA
+##  3 2020-03-03         NA             NA             NA            NA
+##  4 2020-03-04         NA             NA             NA            NA
+##  5 2020-03-05         NA             NA             NA            NA
+##  6 2020-03-06         NA             NA             NA            NA
+##  7 2020-03-07         NA             NA             NA            NA
+##  8 2020-03-08         NA             NA             NA            NA
+##  9 2020-03-09         NA             NA             NA            NA
+## 10 2020-03-10         NA             NA             NA            NA
+## # … with 60 more rows</code></pre>
+<p>Here I updated all the other coronavirus curves for 5/10/2020.</p>
+<pre class="r"><code>covid %&gt;% filter(!is.na(`New Cases`)) %&gt;%
+  ggplot(aes(x = Date, y = `New Cases`)) + 
+  geom_point() +
+  geom_line() + 
+  geom_smooth(se = F) +
+  labs(title =&quot;New Coronavirus Positive Tests, Hawaii&quot;,
+       subtitle = &quot;With loess smoothing line&quot;) +
+  ylab(&quot;Positive Tests&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="/post/2020-05-10-hawaii-coronavirus-update-5-10-2020_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>This loess smoothed curve is a little silly now that the cases are so low since the smoothing makes the curve dip below 0.</p>
+<p>I updated the rolling mean curve to look a little nicer and show the difference between the day’s count and the rolling mean with different shapes.</p>
+<pre class="r"><code>covid %&gt;% select(Date, `New Cases`) %&gt;%
+  mutate(rolling_mean_7d = rollmean(`New Cases`, 7, align = &#39;right&#39;, fill = NA)) %&gt;% 
+  mutate(newcases = `New Cases`) %&gt;%
+  select(Date, newcases, rolling_mean_7d) %&gt;%
+  ggplot(aes(x = Date)) + 
+  geom_bar(aes(y = newcases), stat = &#39;identity&#39;, fill = &#39;darkolivegreen3&#39;) +
+  geom_line(aes(y = rolling_mean_7d), color = &#39;red&#39;) +
+  labs(title =&quot;New Coronavirus Positive Tests, Hawaii&quot;,
+       subtitle = &quot;With 7 Day Rolling Mean&quot;) +
+  ylab(&quot;Positive Tests&quot;)</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (position_stack).</code></pre>
+<pre><code>## Warning: Removed 7 row(s) containing missing values (geom_path).</code></pre>
+<p><img src="/post/2020-05-10-hawaii-coronavirus-update-5-10-2020_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>covid %&gt;% 
+  select(Date, total_cases = `Total Cases`, total_released = `Total Released`) %&gt;%
+  mutate(active_cases = total_cases - total_released) %&gt;%
+#  gather(total_cases, total_released, key = &quot;case_type&quot;, value = &quot;cases&quot;) %&gt;%
+  ggplot(aes(x = Date, y = active_cases)) + 
+  geom_point() +
+  geom_line() +
+  ylim(0, 400) + xlim(ymd(&#39;2020-03-24&#39;), ymd(&#39;2020-04-30&#39;)) +
+  ggtitle(&quot;Active Cases of Coronavirus, Hawaii&quot;)</code></pre>
+<pre><code>## Warning: Removed 35 rows containing missing values (geom_point).</code></pre>
+<pre><code>## Warning: Removed 35 row(s) containing missing values (geom_path).</code></pre>
+<p><img src="/post/2020-05-10-hawaii-coronavirus-update-5-10-2020_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<div id="license" class="section level1">
+<h1>License</h1>
+<p>These data are subject to the following license:</p>
+<p>Data license: <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International</a> · Data source: <a href="https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0">Community Maintained Daily Hawaii COVID-19 Metrics</a> · About: This is a community maintained, unofficial table of COVID-19 stats compiled from DOH and media reports. Accuracy is not guaranteed. Please see the <a href="(https://docs.google.com/spreadsheets/d/1WTUg75_mm35Z2C6PQd5AOKtVeSNfci5Mp0G_pgYTqQI/edit#gid=0)">Data source link</a> to report any errors.</p>
+</div>
