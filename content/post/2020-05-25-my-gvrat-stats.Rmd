@@ -1,0 +1,192 @@
+---
+title: My GVRAT Stats
+author: ~
+date: '2020-05-25'
+slug: my-gvrat-stats
+categories: []
+tags: 
+  - exercise
+  - running
+type: ''
+subtitle: ''
+image: ''
+---
+
+Some more data fun with the Great Virtual Race across Tennessee. I decided I would like to look at how I've been doing in comparison to the other racers. I also added in the finishers (who are running back across Tennessee to Arkansas virtually).
+
+One note about the data source for the finishers is that it is only complete from 5/1-5/17 for some reason. I suspect that this is because it's about when the first finishers crossed the finish line. This might be problematic because it makes it hard to track their place among the other racers day by day between 5/17 and now. Because they are still ahead of me in cumulative mileage though, it doesn't really matter for the ranks described below.
+
+# Data Loading and Cleaning
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(lubridate))
+```
+
+```{r}
+gv <- read_csv("../datasets/gvrat_20200525.csv")
+bv <- read_csv("../datasets/gvbat_20200525.csv")
+```
+
+```{r}
+gv <- gv %>% filter(Event == "GVRAT")
+# I got rid of the doggies running in the doggy virtual race
+
+# Combine the finisher table and the active participant tables
+gv <- bind_rows(gv, bv)
+rm(bv)
+```
+
+As last time I split the data into two tables: a roster and a miles run per day. This was because to use dplyr, you have to have it in long form, and the miles table didn't need to have all that excess data from the roster on every long row.
+
+```{r}
+gv_roster <- gv %>% 
+  select(Bib, name = `Participant's Name`, Event, G, A, Home, Miles) %>%
+  mutate(Event = as.factor(Event)) %>%
+  mutate(Home = as.factor(Home)) %>%
+  mutate(G = as.factor(G))
+
+gv_miles <- gv %>% 
+  select(-c(Position, `Participant's Name`, `Your Approximate   Location`,
+            `Comp%`, `Proj Fin`, KM, Home, G, A, Miles)) %>% 
+  pivot_longer(contains("/"), names_to = "run_date", values_to = "miles_d") %>%
+  mutate(run_date = mdy(paste0(run_date, "/2020"))) %>%
+  mutate(Event = as.factor(Event))
+```
+
+# My Average Distance Run
+
+Here's how far I have run or walked each day since signing up for the race on 5/13. Today (5/25) is not yet charted on the official table, so it is a 0 miles day so far.
+
+```{r}
+gv_miles %>% filter(Bib == 18986) %>%
+  ggplot(aes(x = run_date, y = miles_d)) + 
+  geom_bar(stat = "identity")
+```
+
+```{r}
+gv_miles %>% filter(Bib == 18986) %>%
+  summarize(mean_miles = mean(miles_d), median_miles = median(miles_d))
+```
+
+Well I guess in May there were more days that I didn't count versus days that did count. Let's take out the days before May 13 and today May 25.
+
+```{r}
+gv_miles %>% filter(Bib == 18986) %>% 
+  filter(run_date >= mdy("05-13-2020")) %>%
+  filter(run_date < mdy("05-25-2020")) %>%
+  summarize(mean_miles = mean(miles_d), median_miles = median(miles_d))
+```
+
+# My Total Distance Run by Day
+
+```{r}
+gv_miles %>% filter(Bib == 18986) %>% 
+  arrange(run_date) %>%
+  mutate(miles_cumsum = cumsum(miles_d)) %>%
+  filter(miles_d > 0)
+```
+
+
+
+# My Position by Day
+
+Calculating the position by day means figuring out the total miles per day then ranking everyone. That seems like it may become fairly calculation intensive, especially as the race moves along but it's not too much for my humble laptop to handle right now.
+
+```{r}
+gv_miles %>% group_by(Bib) %>%
+  arrange(run_date) %>%
+  mutate(miles_cumsum = cumsum(miles_d)) %>%
+  ungroup() %>% group_by(run_date) %>%
+  mutate(day_rank_absolute = min_rank(-miles_cumsum), 
+         percentile = percent_rank(miles_cumsum)) %>%
+  filter(Bib == 18986, run_date >= mdy('05/12/2020')) %>%
+  filter(run_date < today()) %>%
+  select(run_date, miles_cumsum, day_rank_absolute, percentile)
+```
+
+Just by starting running, I passed 5 percent of the entrants. Wow. One in twenty people paid $60 for this experience and haven't run at all. So far, I've passed about 2500 runners!
+
+Here's the graphical representation
+
+```{r}
+gv_miles %>% group_by(Bib) %>%
+  arrange(run_date) %>%
+  mutate(miles_cumsum = cumsum(miles_d)) %>%
+  ungroup() %>% group_by(run_date) %>%
+    mutate(percentile = percent_rank(miles_cumsum)) %>%
+  filter(Bib == 18986) %>% 
+  ggplot(aes(x = run_date, y = percentile)) + 
+  geom_line()
+```
+
+# My Progress toward the Finish
+
+There's a couple of different ways of looking at my progress.
+
+## Progress vs. Buzzard
+
+One way is looking at how I progress compared to the "Buzzard". The Buzzard is the average distance required to be completed each day so that you can reach the finish line by the end of August. The rate is 634.84/122 or 5.204 miles per day. In the below figure I put the Buzzard as a red line.
+
+```{r}
+gv_miles %>% filter(Bib == 18986) %>% 
+  arrange(run_date) %>%
+  mutate(miles_cumsum = cumsum(miles_d)) %>%
+  ggplot(aes(x = run_date, y = miles_cumsum)) +
+  geom_line() +
+  geom_abline(slope = 634.84/122, 
+              intercept = -634.84/122*(as.numeric(mdy("5/1/2020"))),
+              color = "red") +
+  scale_y_continuous(limits=c(0, 140)) +
+  ylab("Total Miles Run") +
+  xlab("Date")
+
+```
+
+## Projected Finish Date
+
+To calculate the projected finish date I need my average miles per day. The race calculator starts the average from May 1.
+
+```{r}
+gv_miles %>% filter(Bib == 18986) %>%
+  arrange(run_date) %>%
+  mutate(miles_cumsum = cumsum(miles_d), days = 1, 
+         days_cum = cumsum(days),
+         days_remain = 122-days_cum) %>%
+  mutate(ave_mileage = miles_cumsum/days_cum) %>%
+  filter(ave_mileage > 0) %>%
+  mutate(days_to_completion = 634.84/ave_mileage) %>%
+  select(run_date, miles_cumsum, ave_mileage, days_to_completion, days_remain)
+```
+
+The race director helpfully gives the projected finish date based on average miles.
+
+```{r}
+gv_miles %>% filter(Bib == 18986) %>%
+  arrange(run_date) %>%
+  mutate(miles_cumsum = cumsum(miles_d), days = 1, 
+         days_cum = cumsum(days)) %>%
+  mutate(ave_mileage = miles_cumsum/days_cum) %>%
+  filter(miles_d > 0) %>%
+  mutate(days_to_completion = 634.84/ave_mileage,
+         projected_finish = days_to_completion + mdy("5/1/2020")) %>%
+  select(run_date, miles_cumsum, days_to_completion, projected_finish)
+```
+
+I think I can do better if I use my actual average and add it to when I started on 5/13/2020.
+
+```{r}
+gv_miles %>% filter(Bib == 18986) %>%
+  arrange(run_date) %>%
+  filter(run_date > mdy("5/12/2020")) %>%
+  mutate(miles_cumsum = cumsum(miles_d), days = 1, 
+         days_cum = cumsum(days)) %>%
+  mutate(ave_mileage = miles_cumsum/days_cum) %>%
+  filter(miles_d > 0) %>%
+  mutate(days_to_completion = 634.84/ave_mileage,
+         projected_finish = days_to_completion + mdy("5/1/2020")) %>%
+  select(run_date, miles_cumsum, days_to_completion, projected_finish)
+```
+
+Looks like I'm on track! Last week was a tapering week for the half marathon virtual race on Saturday so I only got in 39 miles including the race. That's probably why the finish date got a little further out than when I first started.
+
+I'm definitely planning on finishing on time but I want to pace myself this summer and let my body heal a bit. If I think about it my goal will be probably settle about 45 miles per week or 7 miles x 5 days and 10 miles on one longer day.
