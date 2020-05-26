@@ -1,0 +1,213 @@
+---
+title: Great Virtual Race across Tennessee First Look
+author: ~
+date: '2020-05-20'
+slug: great-virtual-race-across-tennessee
+categories: []
+tags: 
+  - running
+  - exercise
+type: ''
+subtitle: ''
+image: ''
+---
+
+I joined the Great Virtual Race across Tennessee this summer. It's by the guys who produce the Barkley Marathons, the crazy nearly impossible ultramarathon series. The goal for this event is to run across Tennessee virtually, a little more than 1000 km. Each day the data table is published as a csv and so I thought I would take a look at what I could do with it. 
+
+Some basics:
+
+* The run goes from May 1 to August 31, which is 122 days. 
+* The distance is 634.84 miles / 1021.68 km
+* Daily distance needed to complete the race then is 634.84/122 or 5.204 miles.
+* Because I started a little late (5/13), I actually have only 110 days to complete the race or just over 5.77 miles per day.
+
+# Data Loading
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(lubridate))
+```
+
+```{r}
+gv <- read_csv("../datasets/gvrat_20200520.csv")
+```
+
+# Exploration
+
+I decided I would try to separate out the tables as name, gender, age, etc. and a separate one for the daily miles since this will quickly get huge.
+
+```{r}
+gv_roster <- gv %>% 
+  select(Bib, name = `Participant's Name`, Event, G, A, Home, Miles) %>%
+  mutate(Event = as.factor(Event)) %>%
+  mutate(Home = as.factor(Home)) %>%
+  mutate(G = as.factor(G))
+
+gv_miles <- gv %>% 
+  select(-c(Position, `Participant's Name`, `Your Approximate   Location`,
+            `Comp%`, `Proj Fin`, KM, Home, G, A, Miles)) %>% 
+  pivot_longer(contains("/"), names_to = "run_date", values_to = "miles_d") %>%
+  mutate(run_date = mdy(paste0(run_date, "/2020"))) %>%
+  mutate(Event = as.factor(Event))
+```
+
+
+## Event
+
+There are two events within this race, the dog version and the human version.
+
+DRAT4AS = "Doggie Run Across Tennessee For Animal Shelters" and GVRAT = human version.
+
+```{r}
+table(gv_roster$Event)
+```
+
+## Gender
+
+In lots of races there are more women than men, and this one is no different.
+
+```{r}
+table(gv_roster$G, gv_roster$Event)
+prop.table(table(gv_roster$G, gv_roster$Event), 2)
+ggplot(gv_roster, aes(x=G, fill = G)) + geom_bar()
+```
+Definitely more ladies than men, even doggy ladies, but interestingly enough the same percentage of doggy ladies as human ladies. 
+
+```{r}
+chisq.test(table(gv_roster$G, gv_roster$Event))
+```
+
+
+
+## Age
+
+Taking out the doggies, we can look at the age distribution.
+
+```{r}
+gv_roster %>% filter(Event == "GVRAT") %>%
+  ggplot(aes(x=A)) + 
+    geom_histogram(binwidth = 1)
+```
+
+The mean participant age is `r mean(gv_roster$A, na.rm = T)`. The median age of human participants is `r median(gv_roster$A, na.rm = T)`.
+
+I am exactly the median age for this race.
+
+## Age vs. Gender
+
+The distributions of ages by gender look remarkably similar.
+
+```{r}
+gv_roster %>% filter(Event == "GVRAT") %>%
+  ggplot(aes(x=A, fill = G)) + geom_histogram(binwidth = 1) +
+  facet_grid(G ~ .)
+```
+
+Looks normally distributed enough to just use normal distribution tests but I went with a t-test anyway. Men were about 7 months older than women in this race.
+
+```{r}
+t.test(gv_roster$A ~ gv_roster$G) # includes doggos
+```
+
+I guess this shows that with a large enough sample, even small differences in age become significant.
+
+# Mileage
+
+Here's the total miles distribution. There are lots of 0 mile runners. The "Buzzard" is a pretend character that is flying along at the goal pace of 5.204 miles per day. Runners can use the Buzzard to gauge where they are relative to the goal. By 5/20, it was at `r 20*634.84/122` miles.
+
+```{r}
+gv_miles %>% filter(Event == "GVRAT") %>%
+  group_by(Bib) %>% 
+  summarize(total_miles = sum(miles_d, na.rm = T)) %>%
+  ggplot(aes(x = total_miles)) +
+  geom_histogram(binwidth = 5) +
+  geom_vline(xintercept = 634.84/122*20, color = "red")
+
+```
+
+Uh oh, looks like about just about half of the participants aren't on track to make it. 
+```{r}
+gv_totals <- gv_miles %>% filter(Event == "GVRAT") %>%
+  group_by(Bib) %>% 
+  summarize(total_miles = sum(miles_d, na.rm = T))
+quantile(gv_totals$total_miles, seq(0, 1, 0.1))
+```
+
+## Total Miles vs. Gender
+
+```{r}
+gv_roster %>% filter(Event == "GVRAT") %>%
+  ggplot(aes(x=Miles, fill = G)) + 
+  geom_histogram(binwidth = 5) + 
+  facet_grid(G~.)
+```
+
+```{r}
+t.test(Miles ~ G, dat = gv_roster)
+```
+
+Interestingly men had run a little farther than women on average (including the 0 mile people).
+
+## Age vs. Mileage
+
+```{r}
+gv_roster %>% filter(Event == "GVRAT") %>% 
+  ggplot(aes(x = A, y = Miles)) + 
+  geom_point(alpha = 0.01, color = "blue")
+```
+
+There didn't seem to be a significant correlation between age and miles run, although on the regression, the older runners were running more in a statistically significant way. The regression parameter estimate is 0.84 total miles/year of age. 
+
+```{r}
+summary(lm(Miles ~ A, data = gv_roster))
+```
+
+
+# Runners by State and Country
+
+I decided to look at where runners come from. Here's the list sorted by most runners.
+
+```{r}
+gv_roster %>% filter(Event == "GVRAT") %>%
+  group_by(Home) %>%
+  summarize(nrunners = n()) %>% 
+  arrange(-nrunners)
+```
+
+Interesting but not surprising that the state of Tennessee had the most runners signed up. Certainly this is way higher per capita than California!
+
+### Runners from Hawaii
+
+Here's the runners from my home state of Hawaii:
+
+```{r}
+gv_roster %>% filter(grepl("Hawaii", Home))
+```
+
+### Miles by State
+
+```{r}
+gv_roster %>% filter(Event == "GVRAT") %>%
+  filter(grepl("USA", Home)) %>%
+  ggplot(aes(x = reorder(Home, Miles, FUN = median),y = Miles)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + 
+  xlab("State")
+```
+
+Hawaii is the 49th place USA location by median miles. It's hard to tell from the boxplots but the difference in miles between Hawaii and Nebraska is over 20 miles, so it's a pretty significant percent difference.
+
+```{r}
+gv_roster %>% filter(Event == "GVRAT") %>%
+  filter(grepl("USA", Home)) %>%
+  group_by(Home) %>%
+  summarize(medianMiles = median(Miles)) %>%
+  arrange(-medianMiles)
+```
+
+# Discussion
+
+I didn't include the finishers in the race who are now going back across Tennessee to Arkansas. There were 11 as of this data pull. Ideas for next time: 
+
+* looking closer at my progress towards the goal (how my distance run affects my daily mileage required etc.)
+* how many people were cheating at logging early miles (not supposed to log miles made before you signed up) 
+* re-creating the tidal wave chart that shows the histogram of total miles by date

@@ -1,0 +1,275 @@
+---
+title: Great Virtual Race across Tennessee First Look
+author: ~
+date: '2020-05-20'
+slug: great-virtual-race-across-tennessee
+categories: []
+tags: 
+  - running
+  - exercise
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>I joined the Great Virtual Race across Tennessee this summer. It’s by the guys who produce the Barkley Marathons, the crazy nearly impossible ultramarathon series. The goal for this event is to run across Tennessee virtually, a little more than 1000 km. Each day the data table is published as a csv and so I thought I would take a look at what I could do with it.</p>
+<p>Some basics:</p>
+<ul>
+<li>The run goes from May 1 to August 31, which is 122 days.</li>
+<li>The distance is 634.84 miles / 1021.68 km</li>
+<li>Daily distance needed to complete the race then is 634.84/122 or 5.204 miles.</li>
+<li>Because I started a little late (5/13), I actually have only 110 days to complete the race or just over 5.77 miles per day.</li>
+</ul>
+<div id="data-loading" class="section level1">
+<h1>Data Loading</h1>
+<pre class="r"><code>suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(lubridate))</code></pre>
+<pre class="r"><code>gv &lt;- read_csv(&quot;../datasets/gvrat_20200520.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Position = col_character(),
+##   `Participant&#39;s Name` = col_character(),
+##   Event = col_character(),
+##   Home = col_character(),
+##   G = col_character(),
+##   KM = col_number(),
+##   `Your Approximate   Location` = col_character(),
+##   `Comp%` = col_character(),
+##   `Proj Fin` = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+</div>
+<div id="exploration" class="section level1">
+<h1>Exploration</h1>
+<p>I decided I would try to separate out the tables as name, gender, age, etc. and a separate one for the daily miles since this will quickly get huge.</p>
+<pre class="r"><code>gv_roster &lt;- gv %&gt;% 
+  select(Bib, name = `Participant&#39;s Name`, Event, G, A, Home, Miles) %&gt;%
+  mutate(Event = as.factor(Event)) %&gt;%
+  mutate(Home = as.factor(Home)) %&gt;%
+  mutate(G = as.factor(G))
+
+gv_miles &lt;- gv %&gt;% 
+  select(-c(Position, `Participant&#39;s Name`, `Your Approximate   Location`,
+            `Comp%`, `Proj Fin`, KM, Home, G, A, Miles)) %&gt;% 
+  pivot_longer(contains(&quot;/&quot;), names_to = &quot;run_date&quot;, values_to = &quot;miles_d&quot;) %&gt;%
+  mutate(run_date = mdy(paste0(run_date, &quot;/2020&quot;))) %&gt;%
+  mutate(Event = as.factor(Event))</code></pre>
+<div id="event" class="section level2">
+<h2>Event</h2>
+<p>There are two events within this race, the dog version and the human version.</p>
+<p>DRAT4AS = “Doggie Run Across Tennessee For Animal Shelters” and GVRAT = human version.</p>
+<pre class="r"><code>table(gv_roster$Event)</code></pre>
+<pre><code>## 
+## DRAT4AS   GVRAT 
+##     295   19016</code></pre>
+</div>
+<div id="gender" class="section level2">
+<h2>Gender</h2>
+<p>In lots of races there are more women than men, and this one is no different.</p>
+<pre class="r"><code>table(gv_roster$G, gv_roster$Event)</code></pre>
+<pre><code>##    
+##     DRAT4AS GVRAT
+##   F     165 10738
+##   M     130  8278</code></pre>
+<pre class="r"><code>prop.table(table(gv_roster$G, gv_roster$Event), 2)</code></pre>
+<pre><code>##    
+##       DRAT4AS     GVRAT
+##   F 0.5593220 0.5646824
+##   M 0.4406780 0.4353176</code></pre>
+<pre class="r"><code>ggplot(gv_roster, aes(x=G, fill = G)) + geom_bar()</code></pre>
+<p><img src="/post/2020-05-20-great-virtual-race-across-tennessee_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+Definitely more ladies than men, even doggy ladies, but interestingly enough the same percentage of doggy ladies as human ladies.</p>
+<pre class="r"><code>chisq.test(table(gv_roster$G, gv_roster$Event))</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
+## 
+## data:  table(gv_roster$G, gv_roster$Event)
+## X-squared = 0.01565, df = 1, p-value = 0.9004</code></pre>
+</div>
+<div id="age" class="section level2">
+<h2>Age</h2>
+<p>Taking out the doggies, we can look at the age distribution.</p>
+<pre class="r"><code>gv_roster %&gt;% filter(Event == &quot;GVRAT&quot;) %&gt;%
+  ggplot(aes(x=A)) + 
+    geom_histogram(binwidth = 1)</code></pre>
+<pre><code>## Warning: Removed 2 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="/post/2020-05-20-great-virtual-race-across-tennessee_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>The mean participant age is 43.3639942. The median age of human participants is 43.</p>
+<p>I am exactly the median age for this race.</p>
+</div>
+<div id="age-vs.gender" class="section level2">
+<h2>Age vs. Gender</h2>
+<p>The distributions of ages by gender look remarkably similar.</p>
+<pre class="r"><code>gv_roster %&gt;% filter(Event == &quot;GVRAT&quot;) %&gt;%
+  ggplot(aes(x=A, fill = G)) + geom_histogram(binwidth = 1) +
+  facet_grid(G ~ .)</code></pre>
+<pre><code>## Warning: Removed 2 rows containing non-finite values (stat_bin).</code></pre>
+<p><img src="/post/2020-05-20-great-virtual-race-across-tennessee_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Looks normally distributed enough to just use normal distribution tests but I went with a t-test anyway. Men were about 7 months older than women in this race.</p>
+<pre class="r"><code>t.test(gv_roster$A ~ gv_roster$G) # includes doggos</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  gv_roster$A by gv_roster$G
+## t = -3.6332, df = 17470, p-value = 0.0002808
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -0.9128226 -0.2730463
+## sample estimates:
+## mean in group F mean in group M 
+##        43.10585        43.69879</code></pre>
+<p>I guess this shows that with a large enough sample, even small differences in age become significant.</p>
+</div>
+</div>
+<div id="mileage" class="section level1">
+<h1>Mileage</h1>
+<p>Here’s the total miles distribution. There are lots of 0 mile runners. The “Buzzard” is a pretend character that is flying along at the goal pace of 5.204 miles per day. Runners can use the Buzzard to gauge where they are relative to the goal. By 5/20, it was at 104.0721311 miles.</p>
+<pre class="r"><code>gv_miles %&gt;% filter(Event == &quot;GVRAT&quot;) %&gt;%
+  group_by(Bib) %&gt;% 
+  summarize(total_miles = sum(miles_d, na.rm = T)) %&gt;%
+  ggplot(aes(x = total_miles)) +
+  geom_histogram(binwidth = 5) +
+  geom_vline(xintercept = 634.84/122*20, color = &quot;red&quot;)</code></pre>
+<p><img src="/post/2020-05-20-great-virtual-race-across-tennessee_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Uh oh, looks like about just about half of the participants aren’t on track to make it.</p>
+<pre class="r"><code>gv_totals &lt;- gv_miles %&gt;% filter(Event == &quot;GVRAT&quot;) %&gt;%
+  group_by(Bib) %&gt;% 
+  summarize(total_miles = sum(miles_d, na.rm = T))
+quantile(gv_totals$total_miles, seq(0, 1, 0.1))</code></pre>
+<pre><code>##   0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100% 
+##    0   34   66   86   98  107  117  129  146  180  624</code></pre>
+<div id="total-miles-vs.gender" class="section level2">
+<h2>Total Miles vs. Gender</h2>
+<pre class="r"><code>gv_roster %&gt;% filter(Event == &quot;GVRAT&quot;) %&gt;%
+  ggplot(aes(x=Miles, fill = G)) + 
+  geom_histogram(binwidth = 5) + 
+  facet_grid(G~.)</code></pre>
+<p><img src="/post/2020-05-20-great-virtual-race-across-tennessee_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code>t.test(Miles ~ G, dat = gv_roster)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  Miles by G
+## t = -14.472, df = 16078, p-value &lt; 2.2e-16
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -15.03826 -11.45047
+## sample estimates:
+## mean in group F mean in group M 
+##        104.0505        117.2949</code></pre>
+<p>Interestingly men had run a little farther than women on average (including the 0 mile people).</p>
+</div>
+<div id="age-vs.mileage" class="section level2">
+<h2>Age vs. Mileage</h2>
+<pre class="r"><code>gv_roster %&gt;% filter(Event == &quot;GVRAT&quot;) %&gt;% 
+  ggplot(aes(x = A, y = Miles)) + 
+  geom_point(alpha = 0.01, color = &quot;blue&quot;)</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_point).</code></pre>
+<p><img src="/post/2020-05-20-great-virtual-race-across-tennessee_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>There didn’t seem to be a significant correlation between age and miles run, although on the regression, the older runners were running more in a statistically significant way. The regression parameter estimate is 0.84 total miles/year of age.</p>
+<pre class="r"><code>summary(lm(Miles ~ A, data = gv_roster))</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Miles ~ A, data = gv_roster)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -149.21  -33.07   -2.92   25.98  523.93 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 73.18551    1.76606   41.44   &lt;2e-16 ***
+## A            0.84467    0.03944   21.41   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 61.13 on 19306 degrees of freedom
+##   (4 observations deleted due to missingness)
+## Multiple R-squared:  0.0232, Adjusted R-squared:  0.02315 
+## F-statistic: 458.6 on 1 and 19306 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<div id="runners-by-state-and-country" class="section level1">
+<h1>Runners by State and Country</h1>
+<p>I decided to look at where runners come from. Here’s the list sorted by most runners.</p>
+<pre class="r"><code>gv_roster %&gt;% filter(Event == &quot;GVRAT&quot;) %&gt;%
+  group_by(Home) %&gt;%
+  summarize(nrunners = n()) %&gt;% 
+  arrange(-nrunners)</code></pre>
+<pre><code>## # A tibble: 142 x 2
+##    Home               nrunners
+##    &lt;fct&gt;                 &lt;int&gt;
+##  1 USA - Tennessee        1157
+##  2 USA - California        995
+##  3 Canada -Ontario         959
+##  4 USA - Texas             869
+##  5 England                 847
+##  6 USA - Virginia          792
+##  7 USA - Ohio              685
+##  8 USA - Illinois          682
+##  9 USA - New York          652
+## 10 USA - Pennsylvania      647
+## # … with 132 more rows</code></pre>
+<p>Interesting but not surprising that the state of Tennessee had the most runners signed up. Certainly this is way higher per capita than California!</p>
+<div id="runners-from-hawaii" class="section level3">
+<h3>Runners from Hawaii</h3>
+<p>Here’s the runners from my home state of Hawaii:</p>
+<pre class="r"><code>gv_roster %&gt;% filter(grepl(&quot;Hawaii&quot;, Home))</code></pre>
+<pre><code>## # A tibble: 42 x 7
+##      Bib name             Event G         A Home         Miles
+##    &lt;dbl&gt; &lt;chr&gt;            &lt;fct&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;        &lt;dbl&gt;
+##  1  9385 Duane Zitta      GVRAT M        39 USA - Hawaii  261.
+##  2 11868 Sally Cravens    GVRAT F        61 USA - Hawaii  192.
+##  3 17429 Aaron Reed       GVRAT M        28 USA - Hawaii  182.
+##  4  6786 April Shrum      GVRAT F        42 USA - Hawaii  169.
+##  5 16019 Kana Yamamoto    GVRAT F        45 USA - Hawaii  158.
+##  6  6906 Robert Davidson  GVRAT M        37 USA - Hawaii  155.
+##  7 16629 michael hee      GVRAT M        60 USA - Hawaii  154.
+##  8 11636 Sean Thompson    GVRAT M        39 USA - Hawaii  150.
+##  9 13815 Andrew Borrebach GVRAT M        29 USA - Hawaii  143.
+## 10  7202 Chris Robinson   GVRAT M        39 USA - Hawaii  134.
+## # … with 32 more rows</code></pre>
+</div>
+<div id="miles-by-state" class="section level3">
+<h3>Miles by State</h3>
+<pre class="r"><code>gv_roster %&gt;% filter(Event == &quot;GVRAT&quot;) %&gt;%
+  filter(grepl(&quot;USA&quot;, Home)) %&gt;%
+  ggplot(aes(x = reorder(Home, Miles, FUN = median),y = Miles)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + 
+  xlab(&quot;State&quot;)</code></pre>
+<p><img src="/post/2020-05-20-great-virtual-race-across-tennessee_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>Hawaii is the 49th place USA location by median miles. It’s hard to tell from the boxplots but the difference in miles between Hawaii and Nebraska is over 20 miles, so it’s a pretty significant percent difference.</p>
+<pre class="r"><code>gv_roster %&gt;% filter(Event == &quot;GVRAT&quot;) %&gt;%
+  filter(grepl(&quot;USA&quot;, Home)) %&gt;%
+  group_by(Home) %&gt;%
+  summarize(medianMiles = median(Miles)) %&gt;%
+  arrange(-medianMiles)</code></pre>
+<pre><code>## # A tibble: 53 x 2
+##    Home                medianMiles
+##    &lt;fct&gt;                     &lt;dbl&gt;
+##  1 USA - Nebraska             118.
+##  2 USA - West Virginia        117.
+##  3 USA - APO                  112.
+##  4 USA - Alabama              112.
+##  5 USA - North Dakota         112.
+##  6 USA - Colorado             112.
+##  7 USA - New Mexico           111.
+##  8 USA - Connecticut          109.
+##  9 USA - Kentucky             108.
+## 10 USA - Florida              108.
+## # … with 43 more rows</code></pre>
+</div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>I didn’t include the finishers in the race who are now going back across Tennessee to Arkansas. There were 11 as of this data pull. Ideas for next time:</p>
+<ul>
+<li>looking closer at my progress towards the goal (how my distance run affects my daily mileage required etc.)</li>
+<li>how many people were cheating at logging early miles (not supposed to log miles made before you signed up)</li>
+<li>re-creating the tidal wave chart that shows the histogram of total miles by date</li>
+</ul>
+</div>
