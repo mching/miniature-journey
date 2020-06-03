@@ -1,0 +1,158 @@
+---
+title: Finisher Characteristics and Hawaii Update
+author: ~
+date: '2020-05-30'
+slug: finisher-characteristics-and-hawaii-update
+categories: []
+tags: 
+  - exercise
+  - running
+type: ''
+subtitle: ''
+image: ''
+---
+
+I'm almost at the end of May, and I'm over 100 miles into this race. It's been a bit tough so far because of the time trial I did last week, but I'm still trying to get some cushion on the August 31 deadline for the race.
+
+On the Facebook group for this race they talk about the races between races. Some people look at their state standings. Others may do their name rankings (i.e., rank among people named Smith or Mike).
+
+I decided to look at how I've been doing compared to the other Hawaii runners and the runners with my first name. I also wanted to look at the people who have already finished and how they compare to the people who are still running.
+
+# Data Loading and Cleaning
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(lubridate))
+suppressPackageStartupMessages(library(scales))
+suppressPackageStartupMessages(library(epiR))
+```
+
+```{r}
+gv <- read_csv("../datasets/gvrat_20200530.csv") # Active runners in GVRAT
+bv <- read_csv("../datasets/gvbat_20200530.csv") # Finshers who are going back
+
+bv <- bv %>% mutate(finish = T)
+gv <- gv %>% mutate(finish = F)
+
+
+# Combine the finisher table and the active participant tables
+gv <- bind_rows(gv, bv)
+
+# I got rid of the doggies running in the doggy virtual race
+gv <- gv %>% filter(Event == "GVRAT")
+
+
+# Make data into long form for dplyr use
+gv_miles <- gv %>% 
+  select(-c(Position, `Participant's Name`, `Your Approximate   Location`,
+            `Comp%`, `Proj Fin`, KM, Home, G, A, Miles)) %>% 
+  pivot_longer(contains("/"), names_to = "run_date", values_to = "miles_d") %>%
+  mutate(run_date = mdy(paste0(run_date, "/2020"))) %>%
+  mutate(Event = as.factor(Event))
+
+gv_roster <- gv %>% 
+  select(Bib, name = `Participant's Name`, Event, G, A, Home, Miles, finish) %>%
+  mutate(Event = as.factor(Event)) %>%
+  mutate(Home = as.factor(Home)) %>%
+  mutate(G = as.factor(G)) 
+
+rm(bv)
+rm(gv)
+```
+
+# Hawaii Runners
+
+There are now 42 runners from Hawaii.
+
+```{r}
+Hawaii <- gv_roster %>% filter(Home == "USA - Hawaii") %>% 
+  mutate(place = dense_rank(-Miles)) %>%
+  select(Bib, name, G, A, Miles, place)
+
+Hawaii
+```
+
+Today, I'm in place #`r Hawaii$place[which(Hawaii$name == "Michael Ching")]` among Hawaii runners. 
+
+These Hawaii people seem to be doing pretty good. No one is going crazy, with the clear leader having about 100 miles per week.
+
+I decided to look at my rank compared to the other runners over time.
+
+```{r}
+gv_miles %>% filter(Bib %in% Hawaii$Bib) %>% 
+  arrange(run_date) %>% 
+  group_by(Bib) %>%
+  mutate(miles_t = cumsum(miles_d)) %>%
+  ungroup %>%
+  group_by(run_date) %>%
+  mutate(place_d = min_rank(-miles_t)) %>%
+  filter(Bib == 18986) %>%
+  ggplot(aes(x = run_date, y = place_d)) + geom_line() +
+  ylab("My place among Hawaii Runners") + xlab("Date")
+```
+
+# The Michaels
+
+I could do the same thing for my name "Michael".
+```{r}
+Michael <- gv_roster %>% filter(grepl("Michael", name)) %>% 
+  mutate(place = dense_rank(-Miles)) %>%
+  select(Bib, name, G, A, Miles, place)
+
+Michael
+```
+
+There are `r nrow(Michael)` Michaels in the race! Thanks in part to my late start I am in `r Michael$place[which(Michael$Bib == 18986)]` place among Michaels.
+
+Here are some other Michael characteristics.
+
+Michael ages. Not too many young Michaels anymore since Michael hasn't been as popular lately.
+
+```{r}
+Michael %>% ggplot(aes(x = A)) +
+  geom_histogram(binwidth = 5)
+
+summary(Michael$A)
+```
+
+Michaels are doing great with their miles. If we were one giant commingled Michael who is running at the mean pace, we would be on track to finish the race.
+```{r}
+summary(Michael$Miles)
+```
+
+# Finisher Characteristics
+
+## Age and Gender for Finishers:
+```{r}
+gv_roster %>% group_by(finish) %>%
+  summarize(n(), mean_age = mean(A, na.rm = T), 
+            median_age = median(A, na.rm = T),
+            male = mean(as.numeric(G)-1))
+```
+So far, finishers are older than non-finishers and are more likely to be male.
+
+## Bivariate Comparisons
+
+The 95% confidence interval of the difference in age is -6.9 to -0.8 years.
+
+```{r}
+t.test(gv_roster$A ~ gv_roster$finish)
+```
+
+Now looking at the effect that gender has on finishing, we can see that females are about 1/3 as likely as males to have finished the race.
+
+```{r}
+tab1 <- table(gv_roster$G, -gv_roster$finish)
+tab1
+epi.2by2(tab1, method = "cross.sectional")
+rm(tab1)
+```
+
+Putting both together, we can see that both age and gender are independently associated with finisher status.
+
+```{r}
+model1 <- glm(finish ~ A + G, data = gv_roster, family = "binomial")
+summary(model1)
+```
+
+The odds of finishing for females were 1/3 those of males independent of age. Since the outcome is so rare (<1%) the odds ratio closely approximates the prevalence rate ratio.
+
