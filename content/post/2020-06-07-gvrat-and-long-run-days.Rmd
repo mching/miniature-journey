@@ -1,0 +1,53 @@
+---
+title: GVRAT and Long Run Days
+author: ~
+date: '2020-06-07'
+slug: gvrat-and-long-run-days
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+I do my long run on Saturdays. A couple of friends do theirs on Sundays. I thought with the number of people in the database, it wouldn't be too hard to see what people use as their long run day. Conceptually it's just figuring out what is the mean per day of the week and seeing which one is the longest day. There could be some issues with this approach but overall this should return what I'm looking for.
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(lubridate))
+gv <- read_csv("../datasets/GVRAT_May_Summary.csv")
+glimpse(gv)
+```
+
+One way to look at this is to see the mean distance run by day. 
+```{r}
+gv_miles <- gv %>% 
+  select(-c(Name, Miles, KM)) %>%
+  pivot_longer(starts_with("May"), names_to = "run_date", 
+               values_to = "miles_day") %>%
+  mutate(run_date = mdy(paste0(run_date, ", 2020")))
+```
+
+
+```{r}
+gv_miles %>%
+  group_by(run_date) %>%
+  summarize(miles_mean = mean(miles_day)) %>%
+  ggplot(aes(x = run_date, y = miles_mean)) +
+  geom_line()
+```
+
+There's definitely a peak on Saturdays such as May 2, May 9, etc.
+
+Here's the mean for each day of the week:
+```{r}
+gv_miles %>% group_by(run_date) %>% 
+  mutate(dayofweek = weekdays(run_date)) %>%
+  group_by(dayofweek) %>% 
+  summarize(mean_miles = mean(miles_day)) %>%
+  arrange(-mean_miles)
+```
+
+## Conclusion
+
+Runners put in the most mileage on Saturdays in the GVRAT.

@@ -1,0 +1,150 @@
+---
+title: Last Day Distance in GVRAT
+author: ~
+date: '2020-06-27'
+slug: last-day-distance-in-gvrat
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>As people start finishing the race it seems like they really push themselves on the last day. I’ve seen people running 20, 30, 50 miles to reach the final distance. I wondered if there was a difference between what people average and what they do on the last day of the race.</p>
+<div id="data-loading" class="section level1">
+<h1>Data Loading</h1>
+<pre class="r"><code>suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(lubridate))
+gv &lt;- read_csv(&quot;../datasets/GVRAT_June_Summary.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Name = col_character(),
+##   `28-Jun` = col_logical(),
+##   `29-Jun` = col_logical(),
+##   `30-Jun` = col_logical()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<p>It took a little effort to reshape the data for manipulation. I wanted to get Bib, date, miles, and cumulative miles.</p>
+<pre class="r"><code>gv_miles &lt;- gv %&gt;% 
+  filter(Bib &gt;= 1) %&gt;% # Bibs between 0 and 1 were buzzards
+  filter(Miles &lt; 684.34) %&gt;% # We want people who hadn&#39;t finished in May
+  mutate(`31-May` = Miles) %&gt;% # Rename Miles to a date for May
+  select(-c(Name, Miles)) %&gt;% # Drop Miles and Name
+  pivot_longer(contains(&quot;-&quot;), names_to = &quot;run_date&quot;, 
+               values_to = &quot;miles_day&quot;) %&gt;% # Convert to long form
+  mutate(run_date = dmy(paste0(run_date, &quot;, 2020&quot;))) %&gt;% 
+  group_by(Bib) %&gt;% 
+  arrange(run_date) %&gt;%
+  mutate(miles_total = cumsum(miles_day)) </code></pre>
+</div>
+<div id="june-finishers" class="section level1">
+<h1>June Finishers</h1>
+<div id="who-finished-in-june" class="section level2">
+<h2>Who finished in June?</h2>
+<p>I found people whose total miles were over the race distance and then took the first run that was over the finish distance.</p>
+<pre class="r"><code>june_finishers &lt;- gv_miles %&gt;% 
+  filter(miles_total &gt; 684.34) %&gt;%
+  group_by(Bib) %&gt;%
+  arrange(miles_total) %&gt;%
+  slice(1)
+
+june_finishers</code></pre>
+<pre><code>## # A tibble: 515 x 4
+## # Groups:   Bib [515]
+##      Bib run_date   miles_day miles_total
+##    &lt;dbl&gt; &lt;date&gt;         &lt;dbl&gt;       &lt;dbl&gt;
+##  1     2 2020-06-09      19.2        701.
+##  2     9 2020-06-08      25          702.
+##  3    68 2020-06-25      10.4        686.
+##  4    72 2020-06-20      13          693.
+##  5    81 2020-06-22      40          718.
+##  6    84 2020-06-17      14.4        690.
+##  7    92 2020-06-16      18.9        686.
+##  8   105 2020-06-01      27          698.
+##  9   115 2020-06-26      12.5        694.
+## 10   142 2020-06-17      10          685 
+## # … with 505 more rows</code></pre>
+</div>
+<div id="how-many-people-finished-each-day-in-june-so-far" class="section level2">
+<h2>How many people finished each day in June so far</h2>
+<p>I constructed a graph to show how more and more people are finishing every day.</p>
+<pre class="r"><code>gv_miles %&gt;% 
+  filter(miles_total &gt; 684.34) %&gt;%
+  group_by(Bib) %&gt;%
+  arrange(miles_total) %&gt;%
+  slice(1) %&gt;%
+  group_by(run_date) %&gt;%
+  filter(run_date &lt; ymd(&#39;2020-06-27&#39;)) %&gt;%
+  summarize(finishers = n()) %&gt;%
+  ggplot(aes(x=run_date, y = finishers)) + geom_line()</code></pre>
+<p><img src="/post/2020-06-27-last-day-distance-in-gvrat_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="june-finishers-mileage-excluding-last-day" class="section level2">
+<h2>June Finishers Mileage Excluding Last Day</h2>
+<p>Here’s the mean miles of people who finished in June (excluding their last day).</p>
+<pre class="r"><code>gv_miles %&gt;% filter(Bib %in% june_finishers$Bib) %&gt;%
+  filter(run_date &gt; ymd(&#39;2020-05-31&#39;)) %&gt;%
+  filter(miles_total &lt; 684.34) %&gt;%
+  group_by(Bib) %&gt;% 
+  summarize(mean_june_miles = mean(miles_day))</code></pre>
+<pre><code>## # A tibble: 512 x 2
+##      Bib mean_june_miles
+##    &lt;dbl&gt;           &lt;dbl&gt;
+##  1     2            20.5
+##  2     9            17.7
+##  3    68            13.7
+##  4    72            15.1
+##  5    81            12.1
+##  6    84            17.2
+##  7    92            16.4
+##  8   115            13.4
+##  9   142            16.2
+## 10   170            13.0
+## # … with 502 more rows</code></pre>
+<pre class="r"><code>gv_miles %&gt;% filter(Bib %in% june_finishers$Bib) %&gt;%
+  filter(run_date &gt; ymd(&#39;2020-05-31&#39;)) %&gt;%
+  filter(miles_total &lt; 684.34) %&gt;%
+  group_by() %&gt;% 
+  summarize(mean_june_miles = mean(miles_day), 
+            median_june_miles = median(miles_day)) </code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   mean_june_miles median_june_miles
+##             &lt;dbl&gt;             &lt;dbl&gt;
+## 1            14.8              14.1</code></pre>
+<p>Among June finishers, the daily mileage excluding the last day was 14.8 miles.</p>
+</div>
+<div id="june-finishers-mileage-on-last-day" class="section level2">
+<h2>June Finishers Mileage on Last Day</h2>
+<pre class="r"><code>gv_miles %&gt;% 
+  filter(miles_total &gt; 684.34) %&gt;%
+  group_by(Bib) %&gt;%
+  arrange(miles_total) %&gt;%
+  slice(1) %&gt;%
+  group_by() %&gt;%
+  summarize(mean(miles_day), median(miles_day), min(miles_day), max(miles_day))</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   `mean(miles_day)` `median(miles_day)` `min(miles_day)` `max(miles_day)`
+##               &lt;dbl&gt;               &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1              19.9                16.9              3.3             99.4</code></pre>
+<p>Among the 515 finishers in June so far, the mean last day was 19.9 miles. This was skewed quite a bit by some outliers since it was so much higher than the median.</p>
+<p>I compared the two histograms:</p>
+<pre class="r"><code>gv_miles %&gt;% filter(Bib %in% june_finishers$Bib) %&gt;%
+  filter(run_date &gt; ymd(&#39;2020-05-31&#39;)) %&gt;%
+  filter(miles_total &lt; 684.34) %&gt;% 
+  ggplot(aes(miles_day)) + geom_histogram(binwidth = 2) +
+  ggtitle(&quot;Miles per Run before Finishing Date&quot;)</code></pre>
+<p><img src="/post/2020-06-27-last-day-distance-in-gvrat_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>gv_miles %&gt;% 
+  filter(miles_total &gt; 684.34) %&gt;%
+  group_by(Bib) %&gt;%
+  arrange(miles_total) %&gt;%
+  slice(1) %&gt;%
+  ggplot(aes(miles_day)) + geom_histogram(binwidth = 2) +
+  ggtitle(&quot;Miles per Run on Finishing Date&quot;)</code></pre>
+<p><img src="/post/2020-06-27-last-day-distance-in-gvrat_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+<p>They are pretty similar. Note that the height of the bins is greater in the first histogram. It looks like people aren’t really going crazy all out on that last day.</p>
+</div>
+</div>
