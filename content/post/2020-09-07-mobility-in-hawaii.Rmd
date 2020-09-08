@@ -1,0 +1,87 @@
+---
+title: Mobility in Hawaii
+author: ~
+date: '2020-09-07'
+slug: mobility-in-hawaii
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+I was reviewing the [coronavirus dashboard](https://hawaiicovid19.com/dashboard/) for the state of Hawaii. It has mobility data from anonymized cell phone records from [Descartes Labs](https://github.com/descarteslabs/DL-COVID-19). The chart was so small that I couldn't really read it, so I went to the source cited to see if I could see this better. At the source, they cite a [Hawaii data project](https://www.hawaiidata.org/covid19) that looks at this data but something about the Hawaii data site isn't working that great for the mobility visualization. I decided to see if I could write a script to visualize the Hawaii mobility data for myself. 
+
+```{r}
+library(tidyverse)
+library(zoo)
+```
+
+I downloaded the mobility data directly from Github.
+
+```{r}
+mobility <- readr::read_csv('https://raw.githubusercontent.com/descarteslabs/DL-COVID-19/master/DL-us-mobility-daterow.csv')
+
+timestamp()
+```
+
+After a little finessing, I was able to create the following curve. There are a lot of little peaks and valleys in the curve.
+```{r}
+mobility %>% filter(admin1 == "Hawaii") %>% 
+  mutate(admin2 = replace_na(admin2, "State Overall")) %>%
+  ggplot(aes(x= date, y = m50_index, color = admin2)) +
+  geom_line()
+```
+
+To help make these a little smoother, I took the 7 day average which gives a bit more distinction between the lines.
+
+```{r}
+mobility %>% filter(admin1 == "Hawaii") %>% 
+  mutate(admin2 = replace_na(admin2, "State Overall")) %>%
+  group_by(admin2) %>%
+  mutate(rolling_mean_7d = rollmean(m50_index, 7, align = 'right', fill = NA)) %>% 
+  ggplot(aes(x= date, y = rolling_mean_7d, color = admin2)) +
+  geom_line()
+
+```
+
+For comparison to the number of cases per day, I pulled the [NY Times data](https://github.com/nytimes/covid-19-data) that I used in my first coronavirus post.
+
+```{r}
+cases <- readr::read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv")
+```
+
+I calculated the rolling 7 day mean as before.
+```{r}
+cases %>% filter(state == "Hawaii") %>%
+  mutate(cases_yesterday = lag(cases)) %>%
+  mutate(new_cases = cases - cases_yesterday) %>%
+  mutate(rolling_mean_7d = rollmean(new_cases, 7, align = 'right', fill = NA))
+```
+# Combining the Data
+I was going to put these on the same graph, but after reading about [why this can be misleading](https://blog.datawrapper.de/dualaxis/), I decided not to do it. To make it easier to compare, here are the two graphs in close proximity for visual comparison.
+
+```{r}
+mobility %>% filter(fips == 15) %>% 
+  mutate(rolling_mean_7d = rollmean(m50_index, 7, align = 'right', fill = NA)) %>% 
+  ggplot(aes(x= date, y = rolling_mean_7d)) +
+  geom_line() +
+  ggtitle("Mobility as Percentage of Pre-COVID Baseline") + 
+  ylab("Percentage of baseline, rolling 7 day mean")
+
+cases %>% filter(state == "Hawaii") %>%
+  mutate(cases_yesterday = lag(cases)) %>%
+  mutate(new_cases = cases - cases_yesterday) %>%
+  mutate(rolling_mean_7d = rollmean(new_cases, 7, align = 'right', fill = NA)) %>%
+  ggplot(aes(x = date, y = rolling_mean_7d)) + geom_line() +
+  ggtitle("New COVID-19 Cases, Rolling 7 Day Mean") + 
+  ylab("New daily cases")
+```
+
+It's still a little hard to tell, but based on this, it seems that mobility is associated with an increase in infections, with the recent mobility declines being associated with a stable or falling new case count. 
+
+# Licenses
+
+Mobility data are licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/), which requires attribution to ["Descartes Labs."](http://descarteslabs.com/mobility/)
+
+Cases data are from [NY Times](https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html).

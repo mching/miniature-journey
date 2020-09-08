@@ -1,0 +1,117 @@
+---
+title: Mobility in Hawaii
+author: ~
+date: '2020-09-07'
+slug: mobility-in-hawaii
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>I was reviewing the <a href="https://hawaiicovid19.com/dashboard/">coronavirus dashboard</a> for the state of Hawaii. It has mobility data from anonymized cell phone records from <a href="https://github.com/descarteslabs/DL-COVID-19">Descartes Labs</a>. The chart was so small that I couldn’t really read it, so I went to the source cited to see if I could see this better. At the source, they cite a <a href="https://www.hawaiidata.org/covid19">Hawaii data project</a> that looks at this data but something about the Hawaii data site isn’t working that great for the mobility visualization. I decided to see if I could write a script to visualize the Hawaii mobility data for myself.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
+## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(zoo)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<p>I downloaded the mobility data directly from Github.</p>
+<pre class="r"><code>mobility &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/descarteslabs/DL-COVID-19/master/DL-us-mobility-daterow.csv&#39;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   date = col_date(format = &quot;&quot;),
+##   country_code = col_character(),
+##   admin_level = col_double(),
+##   admin1 = col_character(),
+##   admin2 = col_character(),
+##   fips = col_character(),
+##   samples = col_double(),
+##   m50 = col_double(),
+##   m50_index = col_double()
+## )</code></pre>
+<pre class="r"><code>timestamp()</code></pre>
+<pre><code>## ##------ Mon Sep  7 14:10:12 2020 ------##</code></pre>
+<p>After a little finessing, I was able to create the following curve. There are a lot of little peaks and valleys in the curve.</p>
+<pre class="r"><code>mobility %&gt;% filter(admin1 == &quot;Hawaii&quot;) %&gt;% 
+  mutate(admin2 = replace_na(admin2, &quot;State Overall&quot;)) %&gt;%
+  ggplot(aes(x= date, y = m50_index, color = admin2)) +
+  geom_line()</code></pre>
+<p><img src="/post/2020-09-07-mobility-in-hawaii_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>To help make these a little smoother, I took the 7 day average which gives a bit more distinction between the lines.</p>
+<pre class="r"><code>mobility %&gt;% filter(admin1 == &quot;Hawaii&quot;) %&gt;% 
+  mutate(admin2 = replace_na(admin2, &quot;State Overall&quot;)) %&gt;%
+  group_by(admin2) %&gt;%
+  mutate(rolling_mean_7d = rollmean(m50_index, 7, align = &#39;right&#39;, fill = NA)) %&gt;% 
+  ggplot(aes(x= date, y = rolling_mean_7d, color = admin2)) +
+  geom_line()</code></pre>
+<pre><code>## Warning: Removed 30 row(s) containing missing values (geom_path).</code></pre>
+<p><img src="/post/2020-09-07-mobility-in-hawaii_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>For comparison to the number of cases per day, I pulled the <a href="https://github.com/nytimes/covid-19-data">NY Times data</a> that I used in my first coronavirus post.</p>
+<pre class="r"><code>cases &lt;- readr::read_csv(&quot;https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   date = col_date(format = &quot;&quot;),
+##   state = col_character(),
+##   fips = col_character(),
+##   cases = col_double(),
+##   deaths = col_double()
+## )</code></pre>
+<p>I calculated the rolling 7 day mean as before.</p>
+<pre class="r"><code>cases %&gt;% filter(state == &quot;Hawaii&quot;) %&gt;%
+  mutate(cases_yesterday = lag(cases)) %&gt;%
+  mutate(new_cases = cases - cases_yesterday) %&gt;%
+  mutate(rolling_mean_7d = rollmean(new_cases, 7, align = &#39;right&#39;, fill = NA))</code></pre>
+<pre><code>## # A tibble: 185 x 8
+##    date       state fips  cases deaths cases_yesterday new_cases rolling_mean_7d
+##    &lt;date&gt;     &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;  &lt;dbl&gt;           &lt;dbl&gt;     &lt;dbl&gt;           &lt;dbl&gt;
+##  1 2020-03-06 Hawa… 15        1      0              NA        NA          NA    
+##  2 2020-03-07 Hawa… 15        1      0               1         0          NA    
+##  3 2020-03-08 Hawa… 15        2      0               1         1          NA    
+##  4 2020-03-09 Hawa… 15        2      0               2         0          NA    
+##  5 2020-03-10 Hawa… 15        2      0               2         0          NA    
+##  6 2020-03-11 Hawa… 15        2      0               2         0          NA    
+##  7 2020-03-12 Hawa… 15        2      0               2         0          NA    
+##  8 2020-03-13 Hawa… 15        2      0               2         0           0.143
+##  9 2020-03-14 Hawa… 15        4      0               2         2           0.429
+## 10 2020-03-15 Hawa… 15        7      0               4         3           0.714
+## # … with 175 more rows</code></pre>
+<div id="combining-the-data" class="section level1">
+<h1>Combining the Data</h1>
+<p>I was going to put these on the same graph, but after reading about <a href="https://blog.datawrapper.de/dualaxis/">why this can be misleading</a>, I decided not to do it. To make it easier to compare, here are the two graphs in close proximity for visual comparison.</p>
+<pre class="r"><code>mobility %&gt;% filter(fips == 15) %&gt;% 
+  mutate(rolling_mean_7d = rollmean(m50_index, 7, align = &#39;right&#39;, fill = NA)) %&gt;% 
+  ggplot(aes(x= date, y = rolling_mean_7d)) +
+  geom_line() +
+  ggtitle(&quot;Mobility as Percentage of Pre-COVID Baseline&quot;) + 
+  ylab(&quot;Percentage of baseline, rolling 7 day mean&quot;)</code></pre>
+<pre><code>## Warning: Removed 6 row(s) containing missing values (geom_path).</code></pre>
+<p><img src="/post/2020-09-07-mobility-in-hawaii_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>cases %&gt;% filter(state == &quot;Hawaii&quot;) %&gt;%
+  mutate(cases_yesterday = lag(cases)) %&gt;%
+  mutate(new_cases = cases - cases_yesterday) %&gt;%
+  mutate(rolling_mean_7d = rollmean(new_cases, 7, align = &#39;right&#39;, fill = NA)) %&gt;%
+  ggplot(aes(x = date, y = rolling_mean_7d)) + geom_line() +
+  ggtitle(&quot;New COVID-19 Cases, Rolling 7 Day Mean&quot;) + 
+  ylab(&quot;New daily cases&quot;)</code></pre>
+<pre><code>## Warning: Removed 7 row(s) containing missing values (geom_path).</code></pre>
+<p><img src="/post/2020-09-07-mobility-in-hawaii_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<p>It’s still a little hard to tell, but based on this, it seems that mobility is associated with an increase in infections, with the recent mobility declines being associated with a stable or falling new case count.</p>
+</div>
+<div id="licenses" class="section level1">
+<h1>Licenses</h1>
+<p>Mobility data are licensed under a <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>, which requires attribution to <a href="http://descarteslabs.com/mobility/">“Descartes Labs.”</a></p>
+<p>Cases data are from <a href="https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html">NY Times</a>.</p>
+</div>
