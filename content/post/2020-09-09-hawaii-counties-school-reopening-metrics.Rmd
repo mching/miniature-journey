@@ -1,0 +1,76 @@
+---
+title: Hawaii Counties School Reopening Metrics
+author: ~
+date: '2020-09-09'
+slug: hawaii-counties-school-reopening-metrics
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+There are a number of school reopening metrics around the country. They use some figures that are not so easy to gather on existing dashboards. To help visualize how Hawaii stacks up against the suggested metrics, I pulled the data and calculated the metrics for our state.
+
+The first mainland metric that I used came from [Minnesota's Safe Learning Plan.](https://mn.gov/covid19/assets/mn-safe-learning-plan_tcm1148-442202.pdf) They use a metric of total cases in the last 14 days per 10,000 population. 
+
+```{r}
+library(tidyverse)
+library(zoo)
+```
+
+I downloaded county populations estimates from [census.hawaii.gov](http://census.hawaii.gov/whats-new-releases/2019-county-population-estimates/).
+```{r}
+counties_hi <- data.frame(county = c("Honolulu", "Hawaii", "Kauai", "Maui"),
+                          population = c(974563, 201513, 72293, 167503))
+```
+
+I then pulled county level cases from NY Times database.
+```{r}
+cases <- readr::read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv")
+timestamp()
+```
+
+To make the data more manageable, I Filtered for only Hawaii cases.
+```{r}
+cases <- cases %>% filter(state == "Hawaii")
+```
+
+
+Because the cases are given as cumulative numbers, I had to calculate new cases each day. I also calculated rolling 14 day numbers.
+```{r}
+cases %>% 
+#  filter(date < "2020-09-12") %>%
+  left_join(counties_hi, by = "county") %>%
+  group_by(county) %>%
+  arrange(date) %>%
+  mutate(cases_14d_ago = lag(cases, 14, default = 0)) %>%
+  mutate(total_cases_14d_per10k = (cases - cases_14d_ago)/population*10000) %>% 
+  ggplot(aes(x = date, y = total_cases_14d_per10k, color = county)) +
+  geom_line() +
+  ggtitle("School Reopening Metrics Draft Proposal") +
+  ylab("Total cases over last 14 days per 10,000 population") +
+  xlab("date") +
+  geom_hline(aes(yintercept = c(5)), color = "green") +
+  geom_hline(aes(yintercept = c(15)), color = "yellow") +
+  geom_hline(aes(yintercept = c(25)), color = "orange") +
+  geom_hline(aes(yintercept = c(35)), color = "red") +
+  annotate("text", x = rep(as.Date("2020-05-15"),5), 
+           y = c(-2, 5, 15, 25, 35)+5,                 
+           label = c("in person", 
+                     "in person elementary, blended secondary",
+                     "blended all ages",
+                     "blended elementary, learning from home secondary",
+                     "learning from home all ages")) +
+     scale_x_date(breaks = function(x) seq.Date(from = min(x), 
+   											  to = max(x), 
+   											  by = "1 months"),
+                minor_breaks = function(x) seq.Date(from = min(x), 
+                									to = max(x), 
+                									by = "1 month"))
+```
+
+Uh, looks like there are some data issues here looking at the Maui spike.
+```{r}
+cases %>% filter(date == "2020-09-12")
+```

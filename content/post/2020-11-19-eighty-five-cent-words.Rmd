@@ -1,0 +1,96 @@
+---
+title: Eighty-five Cent Words
+author: ~
+date: '2020-11-19'
+slug: eighty-five-cent-words
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+Tonight my wife came to me with the problem of Dollar Words. The idea is that you can assign a numerical value to each letter of the alphabet (a = 1, b = 2 ... z = 26). If you replace each letter of a word with the value and add the values up, you get a sum. If the sum adds up to 100, that's called a dollar word. There are many lists of dollar words on the internet, but the challenge my wife presented was to come up with as many 85 cent words as I could. I tried for a few minutes but was not able to find any! Of course, this called for a brute force attack.
+
+I remembered some time ago looking at natural language processing to break a "corpus" of text up into "tokens", or smaller units of text. These units could be single words. Each word could then be calculated and then I could figure out which ones were 85 cents.
+
+I used the [Tidy Text Mining with R](https://www.tidytextmining.com/index.html) example to come up with a corpus of words. The example they use is all the words in Jane Austen's published works, which is a little dated, but sufficient.
+
+```{r}
+library(tidytext)
+library(janeaustenr)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+```
+
+First, some helper functions:
+```{r}
+# converts a letter into its value, such as a to 1, z to 26
+letterToInt <- function(x) {
+  which(letters == x)
+}
+
+# determines if a word has non-letters such as punctuation or numbers
+hasNonLetters <- function(x) {
+  str_detect(x, "\\W|[[:digit:]]|[[:punct:]]")
+}
+
+# calculates the dollar value of a word
+valueCalculate <- function(x) {
+  x <- tolower(x)                               # makes word all lowercase
+  wordsplit <- strsplit(x, split = "")          # splits word into letters
+  sum(sapply(unlist(wordsplit), letterToInt))   # calculates word value
+}
+```
+
+Then I loaded the [Jane Austen corpus](https://cran.r-project.org/web/packages/janeaustenr/index.html) and made them into a list of words. This is copied entirely from the [Tidy Text Mining web site.](https://www.tidytextmining.com/tidytext.html)
+
+```{r}
+original_books <- austen_books() %>%
+  group_by(book) %>%
+  mutate(linenumber = row_number(),
+         chapter = cumsum(str_detect(text, 
+                                     regex("^chapter [\\divxlc]",
+                                           ignore_case = TRUE)))) %>%
+  ungroup()
+
+
+tidy_books <- original_books %>%
+  unnest_tokens(word, text)
+```
+
+This results in a list of 725,055 tokens such as:
+
+```{r}
+head(tidy_books)
+```
+Looking just at the words, there were only 14,520 unique words, or tokens.
+```{r}
+wordsall <- unique(tidy_books$word)
+length(wordsall)
+```
+
+Here's the calculation heavy step, getting rid of all the words that have letters or punctuation. I suppose I could have just removed all the letters or punctuations from words instead...
+```{r, cache = TRUE}
+wordsall <- wordsall[!sapply(wordsall, hasNonLetters)]
+```
+
+After this, all I had to do was calculate the values of the words that were left, and come up with a list of the ones that were equal to 85 cents.
+```{r, cache = TRUE}
+wordsall <- sapply(wordsall, valueCalculate)
+words85 <- which(wordsall == 85)
+sort(labels(words85))
+```
+
+The result consisted of 151 words reflecting the beauty of Austen's writing. What a fun exercise!
+
+Before I go to bed, here's the distribution of dollar values of words in Austen's writing with the dotted red line at 85:
+```{r}
+ggplot(as_tibble(wordsall), aes(x = value)) + 
+  geom_histogram(binwidth = 1) +
+  xlab("Dollar Value") +
+  ggtitle("Distribution of Words' Dollar Values in Jane Austen's Novels") +
+  geom_vline(xintercept = 85, linetype = "dotted", color = "red")
+```
+

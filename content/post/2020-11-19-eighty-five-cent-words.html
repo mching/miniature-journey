@@ -1,0 +1,119 @@
+---
+title: Eighty-five Cent Words
+author: ~
+date: '2020-11-19'
+slug: eighty-five-cent-words
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>Tonight my wife came to me with the problem of Dollar Words. The idea is that you can assign a numerical value to each letter of the alphabet (a = 1, b = 2 … z = 26). If you replace each letter of a word with the value and add the values up, you get a sum. If the sum adds up to 100, that’s called a dollar word. There are many lists of dollar words on the internet, but the challenge my wife presented was to come up with as many 85 cent words as I could. I tried for a few minutes but was not able to find any! Of course, this called for a brute force attack.</p>
+<p>I remembered some time ago looking at natural language processing to break a “corpus” of text up into “tokens”, or smaller units of text. These units could be single words. Each word could then be calculated and then I could figure out which ones were 85 cents.</p>
+<p>I used the <a href="https://www.tidytextmining.com/index.html">Tidy Text Mining with R</a> example to come up with a corpus of words. The example they use is all the words in Jane Austen’s published works, which is a little dated, but sufficient.</p>
+<pre class="r"><code>library(tidytext)
+library(janeaustenr)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(stringr)
+library(ggplot2)</code></pre>
+<p>First, some helper functions:</p>
+<pre class="r"><code># converts a letter into its value, such as a to 1, z to 26
+letterToInt &lt;- function(x) {
+  which(letters == x)
+}
+
+# determines if a word has non-letters such as punctuation or numbers
+hasNonLetters &lt;- function(x) {
+  str_detect(x, &quot;\\W|[[:digit:]]|[[:punct:]]&quot;)
+}
+
+# calculates the dollar value of a word
+valueCalculate &lt;- function(x) {
+  x &lt;- tolower(x)                               # makes word all lowercase
+  wordsplit &lt;- strsplit(x, split = &quot;&quot;)          # splits word into letters
+  sum(sapply(unlist(wordsplit), letterToInt))   # calculates word value
+}</code></pre>
+<p>Then I loaded the <a href="https://cran.r-project.org/web/packages/janeaustenr/index.html">Jane Austen corpus</a> and made them into a list of words. This is copied entirely from the <a href="https://www.tidytextmining.com/tidytext.html">Tidy Text Mining web site.</a></p>
+<pre class="r"><code>original_books &lt;- austen_books() %&gt;%
+  group_by(book) %&gt;%
+  mutate(linenumber = row_number(),
+         chapter = cumsum(str_detect(text, 
+                                     regex(&quot;^chapter [\\divxlc]&quot;,
+                                           ignore_case = TRUE)))) %&gt;%
+  ungroup()
+
+
+tidy_books &lt;- original_books %&gt;%
+  unnest_tokens(word, text)</code></pre>
+<p>This results in a list of 725,055 tokens such as:</p>
+<pre class="r"><code>head(tidy_books)</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##   book                linenumber chapter word       
+##   &lt;fct&gt;                    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;      
+## 1 Sense &amp; Sensibility          1       0 sense      
+## 2 Sense &amp; Sensibility          1       0 and        
+## 3 Sense &amp; Sensibility          1       0 sensibility
+## 4 Sense &amp; Sensibility          3       0 by         
+## 5 Sense &amp; Sensibility          3       0 jane       
+## 6 Sense &amp; Sensibility          3       0 austen</code></pre>
+<p>Looking just at the words, there were only 14,520 unique words, or tokens.</p>
+<pre class="r"><code>wordsall &lt;- unique(tidy_books$word)
+length(wordsall)</code></pre>
+<pre><code>## [1] 14520</code></pre>
+<p>Here’s the calculation heavy step, getting rid of all the words that have letters or punctuation. I suppose I could have just removed all the letters or punctuations from words instead…</p>
+<pre class="r"><code>wordsall &lt;- wordsall[!sapply(wordsall, hasNonLetters)]</code></pre>
+<p>After this, all I had to do was calculate the values of the words that were left, and come up with a list of the ones that were equal to 85 cents.</p>
+<pre class="r"><code>wordsall &lt;- sapply(wordsall, valueCalculate)
+words85 &lt;- which(wordsall == 85)
+sort(labels(words85))</code></pre>
+<pre><code>##   [1] &quot;actress&quot;     &quot;admirably&quot;   &quot;advising&quot;    &quot;affluent&quot;    &quot;aggrandise&quot; 
+##   [6] &quot;attainable&quot;  &quot;awakening&quot;   &quot;believing&quot;   &quot;belonging&quot;   &quot;blister&quot;    
+##  [11] &quot;blundered&quot;   &quot;bottom&quot;      &quot;bracelets&quot;   &quot;british&quot;     &quot;burning&quot;    
+##  [16] &quot;catalogue&quot;   &quot;censure&quot;     &quot;chaperone&quot;   &quot;cherries&quot;    &quot;circular&quot;   
+##  [21] &quot;compelled&quot;   &quot;confines&quot;    &quot;contained&quot;   &quot;convince&quot;    &quot;creation&quot;   
+##  [26] &quot;deceitful&quot;   &quot;decrying&quot;    &quot;dejection&quot;   &quot;deliberated&quot; &quot;desiring&quot;   
+##  [31] &quot;despatched&quot;  &quot;devolve&quot;     &quot;disregard&quot;   &quot;dixons&quot;      &quot;donwell&quot;    
+##  [36] &quot;dormant&quot;     &quot;dramatis&quot;    &quot;eltons&quot;      &quot;endurance&quot;   &quot;enrolled&quot;   
+##  [41] &quot;entitle&quot;     &quot;espalier&quot;    &quot;events&quot;      &quot;excites&quot;     &quot;falsehood&quot;  
+##  [46] &quot;faulty&quot;      &quot;fearless&quot;    &quot;ferrars&quot;     &quot;figures&quot;     &quot;fitting&quot;    
+##  [51] &quot;fixedly&quot;     &quot;floors&quot;      &quot;formidable&quot;  &quot;forward&quot;     &quot;fricassee&quot;  
+##  [56] &quot;glories&quot;     &quot;gossip&quot;      &quot;grandmamma&quot;  &quot;grieves&quot;     &quot;hawkins&quot;    
+##  [61] &quot;hedgerow&quot;    &quot;heightened&quot;  &quot;hollow&quot;      &quot;humming&quot;     &quot;impeaching&quot; 
+##  [66] &quot;inaction&quot;    &quot;inclines&quot;    &quot;incurable&quot;   &quot;indelicacy&quot;  &quot;instance&quot;   
+##  [71] &quot;intends&quot;     &quot;kitty&quot;       &quot;lengthen&quot;    &quot;lengths&quot;     &quot;library&quot;    
+##  [76] &quot;lively&quot;      &quot;maddoxes&quot;    &quot;mansion&quot;     &quot;memento&quot;     &quot;mingling&quot;   
+##  [81] &quot;moderated&quot;   &quot;nought&quot;      &quot;objecting&quot;   &quot;obtrude&quot;     &quot;oddities&quot;   
+##  [86] &quot;original&quot;    &quot;others&quot;      &quot;palpably&quot;    &quot;parting&quot;     &quot;passing&quot;    
+##  [91] &quot;patient&quot;     &quot;pattened&quot;    &quot;peculiar&quot;    &quot;pelisse&quot;     &quot;pembroke&quot;   
+##  [96] &quot;poachers&quot;    &quot;presence&quot;    &quot;proceeds&quot;    &quot;rapidly&quot;     &quot;reciting&quot;   
+## [101] &quot;reckons&quot;     &quot;remarks&quot;     &quot;remnant&quot;     &quot;replacing&quot;   &quot;repute&quot;     
+## [106] &quot;residing&quot;    &quot;resumed&quot;     &quot;retract&quot;     &quot;revived&quot;     &quot;ridiculed&quot;  
+## [111] &quot;rubbers&quot;     &quot;sagacity&quot;    &quot;sensible&quot;    &quot;sentence&quot;    &quot;separate&quot;   
+## [116] &quot;settled&quot;     &quot;shameful&quot;    &quot;shewing&quot;     &quot;silver&quot;      &quot;sprigged&quot;   
+## [121] &quot;starve&quot;      &quot;stealth&quot;     &quot;steeles&quot;     &quot;stepped&quot;     &quot;stirs&quot;      
+## [126] &quot;stolen&quot;      &quot;stoop&quot;       &quot;storm&quot;       &quot;streamed&quot;    &quot;styled&quot;     
+## [131] &quot;swears&quot;      &quot;thereon&quot;     &quot;tilney&quot;      &quot;tiptoe&quot;      &quot;titles&quot;     
+## [136] &quot;tupman&quot;      &quot;unaffected&quot;  &quot;uneasy&quot;      &quot;unfeigned&quot;   &quot;unlocked&quot;   
+## [141] &quot;urgent&quot;      &quot;vacation&quot;    &quot;vaulted&quot;     &quot;violence&quot;    &quot;waiving&quot;    
+## [146] &quot;watching&quot;    &quot;weddings&quot;    &quot;wildly&quot;      &quot;wright&quot;      &quot;xlviii&quot;     
+## [151] &quot;yielding&quot;</code></pre>
+<p>The result consisted of 151 words reflecting the beauty of Austen’s writing. What a fun exercise!</p>
+<p>Before I go to bed, here’s the distribution of dollar values of words in Austen’s writing with the dotted red line at 85:</p>
+<pre class="r"><code>ggplot(as_tibble(wordsall), aes(x = value)) + 
+  geom_histogram(binwidth = 1) +
+  xlab(&quot;Dollar Value&quot;) +
+  ggtitle(&quot;Distribution of Words&#39; Dollar Values in Jane Austen&#39;s Novels&quot;) +
+  geom_vline(xintercept = 85, linetype = &quot;dotted&quot;, color = &quot;red&quot;)</code></pre>
+<p><img src="/post/2020-11-19-eighty-five-cent-words_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
