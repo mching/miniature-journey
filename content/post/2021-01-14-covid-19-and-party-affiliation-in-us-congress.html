@@ -1,0 +1,78 @@
+---
+title: COVID-19 and Party Affiliation in US Congress
+author: ~
+date: '2021-01-14'
+slug: covid-19-and-party-affiliation-in-us-congress
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>This week the New York Times published <a href="https://www.nytimes.com/interactive/2021/01/13/us/congressional-members-with-coronavirus.html">a simple infographic</a> showing how many members of Congress have tested positive for COVID-19. According to their reporting there have been 44 Republicans and 17 Democrats who have tested positive (as of January 14, 2021).</p>
+<p>They further break it down by Senate and House. In the Senate, there have been 8 out of 51 Republicans and 2 out of 48 Democrats. In the House, it is 36/213 to 15/226.</p>
+<div id="methods" class="section level1">
+<h1>Methods</h1>
+<p>Let’s create this dataset. I used epiR to do the analysis since it automates a lot of the epi process.</p>
+<pre class="r"><code>library(epiR)</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## Package epiR 1.0-15 is loaded</code></pre>
+<pre><code>## Type help(epi.about) for summary information</code></pre>
+<pre><code>## Type browseVignettes(package = &#39;epiR&#39;) to learn how to use epiR for applied epidemiological analyses</code></pre>
+<pre><code>## </code></pre>
+<pre class="r"><code>covid &lt;- data.frame(
+  chamber = rep(c(&quot;Senate&quot;, &quot;House&quot;), c(51+48, 213+226)),
+  party = rep(c(&quot;Republican&quot;, &quot;Democrat&quot;, &quot;Republican&quot;, &quot;Democrat&quot;), c(51, 48, 213, 226)),
+  case = rep(rep(c(&quot;positive&quot;,&quot;negative&quot;), 4), c(8, 51-8, 2, 48-2, 36, 213-36, 15, 226-15))
+)
+
+covid$case &lt;- factor(covid$case, levels = c(&quot;positive&quot;, &quot;negative&quot;))
+covid$party &lt;- factor(covid$party, levels = c(&quot;Republican&quot;, &quot;Democrat&quot;))
+
+ftable(covid)</code></pre>
+<pre><code>##                    case positive negative
+## chamber party                            
+## House   Republican            36      177
+##         Democrat              15      211
+## Senate  Republican             8       43
+##         Democrat               2       46</code></pre>
+<p>With such low numbers of cases in the Senate, it doesn’t make sense to stratify by chamber. I combined the two chambers and estimated the incidence risk ratio of being Republican vs. Democrat.</p>
+</div>
+<div id="results" class="section level1">
+<h1>Results</h1>
+<pre class="r"><code>table(covid$party, covid$case)</code></pre>
+<pre><code>##             
+##              positive negative
+##   Republican       44      220
+##   Democrat         17      257</code></pre>
+<pre class="r"><code>epi.2by2(table(covid$party, covid$case), method = &quot;cohort.count&quot;)</code></pre>
+<pre><code>##              Outcome +    Outcome -      Total        Inc risk *        Odds
+## Exposed +           44          220        264              16.7      0.2000
+## Exposed -           17          257        274               6.2      0.0661
+## Total               61          477        538              11.3      0.1279
+## 
+## Point estimates and 95% CIs:
+## -------------------------------------------------------------------
+## Inc risk ratio                               2.69 (1.58, 4.58)
+## Odds ratio                                   3.02 (1.68, 5.44)
+## Attrib risk *                                10.46 (5.14, 15.79)
+## Attrib risk in population *                  5.13 (1.22, 9.05)
+## Attrib fraction in exposed (%)               62.77 (36.53, 78.17)
+## Attrib fraction in population (%)            45.28 (19.43, 62.83)
+## -------------------------------------------------------------------
+##  Test that OR = 1: chi2(1) = 14.640 Pr&gt;chi2 = &lt;0.001
+##  Wald confidence limits
+##  CI: confidence interval
+##  * Outcomes per 100 population units</code></pre>
+<p>Amazingly 17% of Republican legislators have had COVID-19. Even 6.6% of Democrats have had it.</p>
+<p>Based on the calculation, the incidence risk ratio is 2.69 (95% confidence ratio 1.58-4.58). That is, Republican party affiliation was associated with a 2.69 higher incidence of COVID-19 in Congress compared to being a Democrat.</p>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>Because this is the entire population of US Congress legislators, the confidence ratio is not really helpful. We can say with full certainty that there are more Republican than Democrat legislators in the US Congress who contracted COVID-19.</p>
+<p>Of course believing in small government doesn’t biologically predispose one to getting viral infections. It’s the behaviors that one exhibits that raise the risk, such as not wearing a mask at parties with other non-mask wearing people.</p>
+<p>The NY Times data did not have the date of onset of disease for each legislator but it would have been interesting to do a survival analysis. I would have liked to see that curve!</p>
+</div>

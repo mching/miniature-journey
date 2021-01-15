@@ -1,0 +1,55 @@
+---
+title: COVID-19 and Party Affiliation in US Congress
+author: ~
+date: '2021-01-14'
+slug: covid-19-and-party-affiliation-in-us-congress
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+This week the New York Times published [a simple infographic](https://www.nytimes.com/interactive/2021/01/13/us/congressional-members-with-coronavirus.html) showing how many members of Congress have tested positive for COVID-19. According to their reporting there have been 44 Republicans and 17 Democrats who have tested positive (as of January 14, 2021).
+
+They further break it down by Senate and House. In the Senate, there have been 8 out of 51 Republicans and 2 out of 48 Democrats. In the House, it is 36/213 to 15/226.
+
+# Methods
+
+Let's create this dataset. I used epiR to do the analysis since it automates a lot of the epi process.
+
+```{r}
+library(epiR)
+
+
+covid <- data.frame(
+  chamber = rep(c("Senate", "House"), c(51+48, 213+226)),
+  party = rep(c("Republican", "Democrat", "Republican", "Democrat"), c(51, 48, 213, 226)),
+  case = rep(rep(c("positive","negative"), 4), c(8, 51-8, 2, 48-2, 36, 213-36, 15, 226-15))
+)
+
+covid$case <- factor(covid$case, levels = c("positive", "negative"))
+covid$party <- factor(covid$party, levels = c("Republican", "Democrat"))
+
+ftable(covid)
+```
+
+With such low numbers of cases in the Senate, it doesn't make sense to stratify by chamber. I combined the two chambers and estimated the incidence risk ratio of being Republican vs. Democrat.
+
+# Results
+```{r}
+table(covid$party, covid$case)
+
+epi.2by2(table(covid$party, covid$case), method = "cohort.count")
+```
+Amazingly 17% of Republican legislators have had COVID-19. Even 6.6% of Democrats have had it.
+
+Based on the calculation, the incidence risk ratio is 2.69 (95% confidence ratio 1.58-4.58). That is, Republican party affiliation was associated with a 2.69 higher incidence of COVID-19 in Congress compared to being a Democrat. 
+
+# Discussion
+
+Because this is the entire population of US Congress legislators, the confidence ratio is not really helpful. We can say with full certainty that there are more Republican than Democrat legislators in the US Congress who contracted COVID-19. 
+
+Of course believing in small government doesn't biologically predispose one to getting viral infections. It's the behaviors that one exhibits that raise the risk, such as not wearing a mask at parties with other non-mask wearing people.
+
+The NY Times data did not have the date of onset of disease for each legislator but it would have been interesting to do a survival analysis. I would have liked to see that curve!
