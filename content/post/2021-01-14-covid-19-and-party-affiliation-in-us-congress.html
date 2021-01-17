@@ -14,9 +14,10 @@ image: ''
 
 <p>This week the New York Times published <a href="https://www.nytimes.com/interactive/2021/01/13/us/congressional-members-with-coronavirus.html">a simple infographic</a> showing how many members of Congress have tested positive for COVID-19. According to their reporting there have been 44 Republicans and 17 Democrats who have tested positive (as of January 14, 2021).</p>
 <p>They further break it down by Senate and House. In the Senate, there have been 8 out of 51 Republicans and 2 out of 48 Democrats. In the House, it is 36/213 to 15/226.</p>
+<p>The article did not provide statistics to compare the two groups, so I figured I would do my own!</p>
 <div id="methods" class="section level1">
 <h1>Methods</h1>
-<p>Let’s create this dataset. I used epiR to do the analysis since it automates a lot of the epi process.</p>
+<p>Let’s create this dataset. I used <code>epiR</code> to do the analysis since it automates a lot of the epi process.</p>
 <pre class="r"><code>library(epiR)</code></pre>
 <pre><code>## Loading required package: survival</code></pre>
 <pre><code>## Package epiR 1.0-15 is loaded</code></pre>
@@ -39,10 +40,13 @@ ftable(covid)</code></pre>
 ##         Democrat              15      211
 ## Senate  Republican             8       43
 ##         Democrat               2       46</code></pre>
-<p>With such low numbers of cases in the Senate, it doesn’t make sense to stratify by chamber. I combined the two chambers and estimated the incidence risk ratio of being Republican vs. Democrat.</p>
+<p>With such low numbers of cases in the Senate, it doesn’t make sense to stratify by chamber. I estimated the incidence of coronavirus infection in each cohort and estimated the incidence risk ratio of being Republican vs. Democrat.</p>
+<p>I compared the incidence in Congress to the incidence in the general population, currently estimated at 7% (23.6 million divided by 328 million) using a one sample test of proportions.</p>
 </div>
 <div id="results" class="section level1">
 <h1>Results</h1>
+<div id="incidence-and-risk-ratio" class="section level2">
+<h2>Incidence and Risk Ratio</h2>
 <pre class="r"><code>table(covid$party, covid$case)</code></pre>
 <pre><code>##             
 ##              positive negative
@@ -67,12 +71,59 @@ ftable(covid)</code></pre>
 ##  Wald confidence limits
 ##  CI: confidence interval
 ##  * Outcomes per 100 population units</code></pre>
-<p>Amazingly 17% of Republican legislators have had COVID-19. Even 6.6% of Democrats have had it.</p>
+<p>Amazingly 16.7% of Republican legislators have had COVID-19. Even 6.6% of Democrats have had it.</p>
 <p>Based on the calculation, the incidence risk ratio is 2.69 (95% confidence ratio 1.58-4.58). That is, Republican party affiliation was associated with a 2.69 higher incidence of COVID-19 in Congress compared to being a Democrat.</p>
+</div>
+<div id="test-of-proportions" class="section level2">
+<h2>Test of Proportions</h2>
+<p>The incidence in the Congress was 61/538 or 11.3%.</p>
+<pre class="r"><code>p_pop = 23.6/328
+
+prop.test(61, 538, p_pop)</code></pre>
+<pre><code>## 
+##  1-sample proportions test with continuity correction
+## 
+## data:  61 out of 538, null probability p_pop
+## X-squared = 13.217, df = 1, p-value = 0.0002774
+## alternative hypothesis: true p is not equal to 0.07195122
+## 95 percent confidence interval:
+##  0.08845881 0.14397743
+## sample estimates:
+##         p 
+## 0.1133829</code></pre>
+<p>The null hypothesis is that the sample incidence is the same as the population. The two sided probability of finding an incidence of 11.3% with a population incidence of 7.2% is &lt;0.001.</p>
+<p>We can also compare the Democrat and Republican rates to the general population.</p>
+<pre class="r"><code>prop.test(44, 264, p_pop) # Republican test</code></pre>
+<pre><code>## 
+##  1-sample proportions test with continuity correction
+## 
+## data:  44 out of 264, null probability p_pop
+## X-squared = 34.064, df = 1, p-value = 5.334e-09
+## alternative hypothesis: true p is not equal to 0.07195122
+## 95 percent confidence interval:
+##  0.1248935 0.2183990
+## sample estimates:
+##         p 
+## 0.1666667</code></pre>
+<pre class="r"><code>prop.test(17, 274, p_pop) # Democrat test</code></pre>
+<pre><code>## 
+##  1-sample proportions test with continuity correction
+## 
+## data:  17 out of 274, null probability p_pop
+## X-squared = 0.26807, df = 1, p-value = 0.6046
+## alternative hypothesis: true p is not equal to 0.07195122
+## 95 percent confidence interval:
+##  0.0376738 0.0992757
+## sample estimates:
+##         p 
+## 0.0620438</code></pre>
+<p>Based on this we reject the null hypothesis that the Republican legislators have the same proportion of infections as the general population. We cannot reject the hypothesis that the Democratic legislation is the same as the general population.</p>
+</div>
 </div>
 <div id="discussion" class="section level1">
 <h1>Discussion</h1>
 <p>Because this is the entire population of US Congress legislators, the confidence ratio is not really helpful. We can say with full certainty that there are more Republican than Democrat legislators in the US Congress who contracted COVID-19.</p>
-<p>Of course believing in small government doesn’t biologically predispose one to getting viral infections. It’s the behaviors that one exhibits that raise the risk, such as not wearing a mask at parties with other non-mask wearing people.</p>
+<p>Comparing the incidence in Republicans and Democrats to the US population, being a Republican legislator results in higher risk for infection than the general population. Being a Democratic legislator was not more risky than being a member of the general population.</p>
+<p>Of course believing in small government doesn’t biologically predispose one to getting viral infections. It’s the behaviors that one exhibits that raise the risk, such as not wearing a mask at gatherings with other non-mask wearing people.</p>
 <p>The NY Times data did not have the date of onset of disease for each legislator but it would have been interesting to do a survival analysis. I would have liked to see that curve!</p>
 </div>

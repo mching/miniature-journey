@@ -14,13 +14,14 @@ This week the New York Times published [a simple infographic](https://www.nytime
 
 They further break it down by Senate and House. In the Senate, there have been 8 out of 51 Republicans and 2 out of 48 Democrats. In the House, it is 36/213 to 15/226.
 
+The article did not provide statistics to compare the two groups, so I figured I would do my own!
+
 # Methods
 
-Let's create this dataset. I used epiR to do the analysis since it automates a lot of the epi process.
+Let's create this dataset. I used `epiR` to do the analysis since it automates a lot of the epi process.
 
 ```{r}
 library(epiR)
-
 
 covid <- data.frame(
   chamber = rep(c("Senate", "House"), c(51+48, 213+226)),
@@ -34,22 +35,52 @@ covid$party <- factor(covid$party, levels = c("Republican", "Democrat"))
 ftable(covid)
 ```
 
-With such low numbers of cases in the Senate, it doesn't make sense to stratify by chamber. I combined the two chambers and estimated the incidence risk ratio of being Republican vs. Democrat.
+With such low numbers of cases in the Senate, it doesn't make sense to stratify by chamber. I estimated the incidence of coronavirus infection in each cohort and estimated the incidence risk ratio of being Republican vs. Democrat.
+
+I compared the incidence in Congress to the incidence in the general population, currently estimated at 7% (23.6 million divided by 328 million) using a one sample test of proportions.
 
 # Results
+
+## Incidence and Risk Ratio
+
 ```{r}
 table(covid$party, covid$case)
 
 epi.2by2(table(covid$party, covid$case), method = "cohort.count")
 ```
-Amazingly 17% of Republican legislators have had COVID-19. Even 6.6% of Democrats have had it.
+
+Amazingly 16.7% of Republican legislators have had COVID-19. Even 6.6% of Democrats have had it.
 
 Based on the calculation, the incidence risk ratio is 2.69 (95% confidence ratio 1.58-4.58). That is, Republican party affiliation was associated with a 2.69 higher incidence of COVID-19 in Congress compared to being a Democrat. 
+
+## Test of Proportions
+
+The incidence in the Congress was 61/538 or 11.3%. 
+
+```{r}
+p_pop = 23.6/328
+
+prop.test(61, 538, p_pop)
+
+```
+
+The null hypothesis is that the sample incidence is the same as the population. The two sided probability of finding an incidence of 11.3% with a population incidence of 7.2% is <0.001. 
+
+We can also compare the Democrat and Republican rates to the general population.
+
+```{r}
+prop.test(44, 264, p_pop) # Republican test
+prop.test(17, 274, p_pop) # Democrat test
+```
+
+Based on this we reject the null hypothesis that the Republican legislators have the same proportion of infections as the general population. We cannot reject the hypothesis that the Democratic legislation is the same as the general population.
 
 # Discussion
 
 Because this is the entire population of US Congress legislators, the confidence ratio is not really helpful. We can say with full certainty that there are more Republican than Democrat legislators in the US Congress who contracted COVID-19. 
 
-Of course believing in small government doesn't biologically predispose one to getting viral infections. It's the behaviors that one exhibits that raise the risk, such as not wearing a mask at parties with other non-mask wearing people.
+Comparing the incidence in Republicans and Democrats to the US population, being a Republican legislator results in higher risk for infection than the general population. Being a Democratic legislator was not more risky than being a member of the general population.
+
+Of course believing in small government doesn't biologically predispose one to getting viral infections. It's the behaviors that one exhibits that raise the risk, such as not wearing a mask at gatherings with other non-mask wearing people.
 
 The NY Times data did not have the date of onset of disease for each legislator but it would have been interesting to do a survival analysis. I would have liked to see that curve!
