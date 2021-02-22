@@ -1,0 +1,108 @@
+---
+title: Bean Sprout Respiration Update
+author: ~
+date: '2021-02-07'
+slug: bean-sprout-respiration-update
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>Four years ago, my wife’s Biology class did a <a href="https://mching.github.io/2017/04/09/bean-sprout-respiration/">bean sprout respiration lab</a> and she asked me to plot the data for her. Or maybe I just saw her data and decided I wanted to play with it. Anyway, they do this lab every year and this year I thought I would go back and look at the data again.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
+## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>resp &lt;- read_csv(&quot;../datasets/respiration21.csv&quot;,
+                 col_types = &quot;iffffddddd&quot;)</code></pre>
+<p>Wide data must come long. Last time I did this there were gather and spread functions. Those have been deprecated for the use of pivot_longer. For whatever reason, it did not like the way I specified the variables, but the result was as expected anyway.</p>
+<pre class="r"><code>resp &lt;- resp %&gt;% pivot_longer(
+  cols = 6:10,
+  names_to = &quot;minutes&quot;,
+  values_to = &quot;mL&quot;)
+
+
+resp$minutes &lt;- recode(resp$minutes, &quot;min0&quot; = 0, &quot;min5&quot; = 5, &quot;min10&quot; = 10,
+       &quot;min15&quot; = 15, &quot;min20&quot; = 20)
+
+resp</code></pre>
+<pre><code>## # A tibble: 1,370 x 7
+##     Year Teacher  Period Table Beansprout minutes    mL
+##    &lt;int&gt; &lt;fct&gt;    &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt;        &lt;dbl&gt; &lt;dbl&gt;
+##  1  2021 Bilenchi 1      A     young            0   0  
+##  2  2021 Bilenchi 1      A     young            5  15  
+##  3  2021 Bilenchi 1      A     young           10  30  
+##  4  2021 Bilenchi 1      A     young           15  44.5
+##  5  2021 Bilenchi 1      A     young           20  69.5
+##  6  2021 Bilenchi 1      B     young            0   0  
+##  7  2021 Bilenchi 1      B     young            5 130  
+##  8  2021 Bilenchi 1      B     young           10 240  
+##  9  2021 Bilenchi 1      B     young           15 410  
+## 10  2021 Bilenchi 1      B     young           20 490  
+## # … with 1,360 more rows</code></pre>
+<p>Here’s the data for drawing the plot, subgrouped by teacher, bean sprout, and time. More error messages that don’t affect what I wanted.</p>
+<pre class="r"><code>resp_plot &lt;- 
+  resp %&gt;% group_by(Teacher, Beansprout, minutes) %&gt;%
+  summarize(mean_mL = mean(mL, na.rm = T), sd_mL = sd(mL, na.rm = T))</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;Teacher&#39;, &#39;Beansprout&#39; (override with `.groups` argument)</code></pre>
+<pre class="r"><code>resp_plot</code></pre>
+<pre><code>## # A tibble: 60 x 5
+## # Groups:   Teacher, Beansprout [12]
+##    Teacher  Beansprout minutes mean_mL sd_mL
+##    &lt;fct&gt;    &lt;fct&gt;        &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;
+##  1 Bilenchi young            0     0     0  
+##  2 Bilenchi young            5    75.8  57.1
+##  3 Bilenchi young           10   141.   99.0
+##  4 Bilenchi young           15   219.  156. 
+##  5 Bilenchi young           20   278.  194. 
+##  6 Bilenchi mature           0     0     0  
+##  7 Bilenchi mature           5    25.2  14.0
+##  8 Bilenchi mature          10    58.1  27.7
+##  9 Bilenchi mature          15    90.2  38.5
+## 10 Bilenchi mature          20   122.   49.8
+## # … with 50 more rows</code></pre>
+<p>Here’s the plot. Mostly what would be expected although the Bilenchi beansprouts did not mature as well as the others.</p>
+<pre class="r"><code>ggplot(resp_plot,
+       aes(x = Beansprout, y = mean_mL, fill = factor(minutes))) +
+  geom_bar(stat = &quot;identity&quot;, position = position_dodge(), color = &quot;black&quot;) +
+  facet_grid(Teacher ~ .)</code></pre>
+<pre><code>## Warning: Removed 4 rows containing missing values (geom_bar).</code></pre>
+<p><img src="/post/2021-02-07-bean-sprout-respiration-update_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Each teacher-beansprout combo did not have enough data to make a nice plot with error bars, but the combination of all the groups did.</p>
+<pre class="r"><code>total_plot &lt;- resp %&gt;% group_by(Beansprout, minutes, Year) %&gt;%
+  summarize(mean_mL = mean(mL, na.rm = T), 
+            se_mL = sd(mL, na.rm = T)/sqrt(sum(!is.na(mL))))</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;Beansprout&#39;, &#39;minutes&#39; (override with `.groups` argument)</code></pre>
+<p>Here’s the final plot!</p>
+<pre class="r"><code>pd &lt;- position_dodge(0)
+ggplot(total_plot, aes(x=minutes, y = mean_mL, color = Beansprout)) +
+  geom_errorbar(aes(ymin=mean_mL-se_mL, ymax=mean_mL+se_mL), 
+                width=.1, position=pd) + 
+  geom_point(position=pd) +
+  ylab(&quot;mL&quot;) +
+  ggtitle(&quot;Mean (s.e.) Respiration of Young and Old Bean Sprouts&quot;) +
+  expand_limits(x = 0, y = 0) + # to show the origin
+facet_grid(. ~ Year)</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_point).</code></pre>
+<p><img src="/post/2021-02-07-bean-sprout-respiration-update_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Ah, it was a similar (but not identical) result as last time. Looks like either the sprouts were fresher or maybe they used more.</p>
+<p>I replicated the jittered scatter plot from last time and, uh oh, looks like there were some major outliers! Even without those outliers though, it does seem like there were higher respiration numbers in the young sprouts this time around.</p>
+<pre class="r"><code>ggplot(resp, aes(x=minutes, y=mL, color=Beansprout)) +
+  geom_point(shape = 1, alpha = .5, position=position_jitter(width=1,height=0)) +
+  geom_smooth(method=lm,   # Add linear regression lines
+                se=FALSE) +
+  ggtitle(&quot;Respiration of Young and Old Bean Sprouts&quot;) +
+  facet_grid(. ~ Year)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: Removed 482 rows containing non-finite values (stat_smooth).</code></pre>
+<pre><code>## Warning: Removed 482 rows containing missing values (geom_point).</code></pre>
+<p><img src="/post/2021-02-07-bean-sprout-respiration-update_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>

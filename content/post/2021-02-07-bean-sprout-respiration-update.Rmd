@@ -1,0 +1,85 @@
+---
+title: Bean Sprout Respiration Update
+author: ~
+date: '2021-02-07'
+slug: bean-sprout-respiration-update
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+Four years ago, my wife's Biology class did a [bean sprout respiration lab](https://mching.github.io/2017/04/09/bean-sprout-respiration/) and she asked me to plot the data for her. Or maybe I just saw her data and decided I wanted to play with it. Anyway, they do this lab every year and this year I thought I would go back and look at the data again.
+
+```{r}
+library(tidyverse)
+resp <- read_csv("../datasets/respiration21.csv",
+                 col_types = "iffffddddd")
+```
+
+Wide data must come long. Last time I did this there were gather and spread functions. Those have been deprecated for the use of pivot_longer. For whatever reason, it did not like the way I specified the variables, but the result was as expected anyway.
+
+```{r}
+
+resp <- resp %>% pivot_longer(
+  cols = 6:10,
+  names_to = "minutes",
+  values_to = "mL")
+
+
+resp$minutes <- recode(resp$minutes, "min0" = 0, "min5" = 5, "min10" = 10,
+       "min15" = 15, "min20" = 20)
+
+resp
+```
+
+Here's the data for drawing the plot, subgrouped by teacher, bean sprout, and time. More error messages that don't affect what I wanted.
+
+```{r}
+resp_plot <- 
+  resp %>% group_by(Teacher, Beansprout, minutes) %>%
+  summarize(mean_mL = mean(mL, na.rm = T), sd_mL = sd(mL, na.rm = T))
+
+resp_plot
+```
+Here's the plot. Mostly what would be expected although the Bilenchi beansprouts did not mature as well as the others.
+
+```{r}
+ggplot(resp_plot,
+       aes(x = Beansprout, y = mean_mL, fill = factor(minutes))) +
+  geom_bar(stat = "identity", position = position_dodge(), color = "black") +
+  facet_grid(Teacher ~ .)
+```
+
+Each teacher-beansprout combo did not have enough data to make a nice plot with error bars, but the combination of all the groups did.
+```{r}
+total_plot <- resp %>% group_by(Beansprout, minutes, Year) %>%
+  summarize(mean_mL = mean(mL, na.rm = T), 
+            se_mL = sd(mL, na.rm = T)/sqrt(sum(!is.na(mL))))
+```
+Here's the final plot!
+```{r}
+pd <- position_dodge(0)
+ggplot(total_plot, aes(x=minutes, y = mean_mL, color = Beansprout)) +
+  geom_errorbar(aes(ymin=mean_mL-se_mL, ymax=mean_mL+se_mL), 
+                width=.1, position=pd) + 
+  geom_point(position=pd) +
+  ylab("mL") +
+  ggtitle("Mean (s.e.) Respiration of Young and Old Bean Sprouts") +
+  expand_limits(x = 0, y = 0) + # to show the origin
+facet_grid(. ~ Year)
+```
+
+Ah, it was a similar (but not identical) result as last time. Looks like either the sprouts were fresher or maybe they used more. 
+
+I replicated the jittered scatter plot from last time and, uh oh, looks like there were some major outliers! Even without those outliers though, it does seem like there were higher respiration numbers in the young sprouts this time around.
+
+```{r}
+ggplot(resp, aes(x=minutes, y=mL, color=Beansprout)) +
+  geom_point(shape = 1, alpha = .5, position=position_jitter(width=1,height=0)) +
+  geom_smooth(method=lm,   # Add linear regression lines
+                se=FALSE) +
+  ggtitle("Respiration of Young and Old Bean Sprouts") +
+  facet_grid(. ~ Year)
+```
+
