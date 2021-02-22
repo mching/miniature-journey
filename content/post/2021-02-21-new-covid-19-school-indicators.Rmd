@@ -1,0 +1,111 @@
+---
+title: New COVID-19 School Indicators
+author: ~
+date: '2021-02-21'
+slug: new-covid-19-school-indicatorsRmd
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+The CDC recently updated its [school opening indicators](https://www.cdc.gov/coronavirus/2019-ncov/community/schools-childcare/indicators.html). It's really just a judgment call on how much transmission is happening in the communities. Since the data presented on the [Hawaii DOH website](https://health.hawaii.gov/coronavirusdisease2019/what-you-should-know/current-situation-in-hawaii/) isn't easy to compare directly to the CDC numbers, I calculated the numbers myself.
+
+I downloaded the data from the "How is Hawaii Doing at Flattening the Epidemic Curve?" Tableau figure on the [Hawaii DOH COVID-19 data site](https://health.hawaii.gov/coronavirusdisease2019/what-you-should-know/current-situation-in-hawaii/). It has daily counts by county and the positive and total tests.
+
+I like how this dataset requires pretty minimal processing. I did relabel the variables in Excel just to not have to deal with variables that have spaces in their names.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+dat <- read_csv("../datasets/hawaiicovid20210221.csv")
+dat
+dat$County <- factor(dat$County)
+dat$Date <- mdy(dat$Date)
+```
+I added in the 2019 census estimates for county population size, with a Missing category since there was one in the dataset.
+
+```{r}
+county_pops <- data.frame(County = c("Hawaii", "Honolulu", "Kauai", "Maui", "Missing"), 
+                          pops = c(201513, 974563, 72293, 167417, NA))
+```
+
+Ok, now for the calculation. I first added county population to the dataset. Then I grouped the data by county, calculated a cumulative sum and the cumulative sum from 7 days before. I took the difference to get the 7 day total cases. Then I divided that sum by the population of the county, and multipled by 100,000 to get the CDC metric. To make it easy to see the trends, I plotted the data and added horizontal lines at each threshold value.
+
+```{r}
+dat %>% left_join(county_pops, by = "County") %>%
+  group_by(County) %>%
+  arrange(Date) %>% 
+  mutate(total_cases = cumsum(NewCases)) %>%
+  mutate(cases_7d_ago = lag(total_cases, 7, default = 0)) %>%
+  mutate(cases_7d_sum_per100k = (total_cases-cases_7d_ago)/pops*100000) %>%
+  filter(Date > "2020-12-31") %>%
+  ggplot(aes(x = Date, y = cases_7d_sum_per100k, color = County)) +
+  geom_line() +
+  labs(title = "Total Cases Per 100,000 in Last 7 Days", 
+       subtitle = "CDC Indicators to Inform Decision Making") +
+  ylab("Total cases over last 7 days per 100,000 population") +
+  geom_hline(yintercept = 9.5, linetype = "dotted", color = "blue") +
+  geom_hline(yintercept = 49.5, linetype = "dotted", color = "yellow") +
+  geom_hline(yintercept = 99.5, linetype = "dotted", color = "orange")
+```
+
+I also needed the test percentage positive over last 7 days. That one is basically the same method as the one before but instead of just calculating the cumulative sum of the tests, I had to do the positive and total test sums. Then I got the 7 day prior cumulative sum for both and calculated the difference. I divided the 7 day total positives by 7 day total tests and plotted those results.
+
+```{r}
+dat %>% 
+  group_by(County) %>%
+  arrange(Date) %>% 
+  mutate(total_tests = cumsum(TotalTestEncounters)) %>%
+  mutate(total_positives = cumsum(NewPositiveTests)) %>%
+  mutate(total_tests_7d_ago = lag(total_tests, 7, default = 0)) %>%
+  mutate(total_positives_7d_ago = lag(total_positives, 7, default = 0)) %>%
+  mutate(test_positive_rate_7d = (total_positives-total_positives_7d_ago) /
+           (total_tests - total_tests_7d_ago)) %>%
+  select(County, Date, test_positive_rate_7d) %>%
+  filter(Date > "2020-12-31") %>%
+  ggplot(aes(x = Date, y = test_positive_rate_7d*100, color = County)) +
+  geom_line() +
+  labs(title = "Test Positive Rate in Last 7 Days", 
+       subtitle = "CDC Indicators to Inform Decision Making") +
+  ylab("Test positive rate over last 7 days (%) ") +
+  geom_hline(yintercept = 5, linetype = "dotted", color = "blue") +
+  geom_hline(yintercept = 7.95, linetype = "dotted", color = "yellow") +
+  geom_hline(yintercept = 9.95, linetype = "dotted", color = "orange")
+```
+
+In retrospect, I think I could have done this without calculating the cumulative sum, just using the lag. I would have to create a function for that...
+
+```{r}
+lagsum <- function(x, lag_start, lag_end) {
+  require(dplyr)
+  total = 0
+  for(i in lag_start:lag_end) {
+    total <- total + lag(x, i, default = 0)
+  }
+  return(total)
+}
+```
+
+And it works!
+
+```{r}
+dat %>% 
+  group_by(County) %>%
+  arrange(Date) %>% 
+  
+  # helper function lagsum method
+  mutate(total_cases_7d_lagsum = lagsum(NewCases, 0, 6)) %>%
+  
+  # cumsum method
+  mutate(total_cases = cumsum(NewCases)) %>%
+  mutate(cases_7d_ago = lag(total_cases, 7, default = 0)) %>%
+  mutate(total_cases_7d_cumsum = (total_cases-cases_7d_ago)) %>%
+  
+  # compare results
+  select(County,Date, total_cases_7d_lagsum, total_cases_7d_cumsum) %>%
+  filter(Date > "2021-02-14")
+```
+
+After googling some more, I discovered the RcppRoll::roll_sum function. Anything with Rcpp in its name is intimidating, so for now, I'll just use my homemade function.
