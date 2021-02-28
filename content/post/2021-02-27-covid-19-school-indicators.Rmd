@@ -1,0 +1,120 @@
+---
+title: COVID-19 School Indicators Update 2021-02-27
+author: ~
+date: '2021-02-27'
+slug: udpate-covid-19-school-indicators
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+Since the DOH does not publish data on how Hawaii fares compares to the CDC school reopening criteria, and since Maui is getting out of control, I figured I would update my graphs from last week. See that post for more context on where these numbers come from.
+
+I again downloaded the data from the "How is Hawaii Doing at Flattening the Epidemic Curve?" Tableau figure on the [Hawaii DOH COVID-19 data site](https://health.hawaii.gov/coronavirusdisease2019/what-you-should-know/current-situation-in-hawaii/). It has daily counts by county and the positive and total tests.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+
+# Read in data
+dat <- read_csv("../datasets/DOH_COVID20210227.csv")
+dat
+
+# Make variables into right classes
+dat$County <- factor(dat$County)
+dat$Date <- mdy(dat$Date)
+
+# County population data from 2019 US Census
+county_pops <- data.frame(County = c("Hawaii", "Honolulu", "Kauai", "Maui", "Missing"), 
+                          pops = c(201513, 974563, 72293, 167417, NA))
+
+# Make case count graph
+dat %>% left_join(county_pops, by = "County") %>%
+  group_by(County) %>%
+  arrange(Date) %>% 
+  mutate(total_cases = cumsum(NewCases)) %>%
+  mutate(cases_7d_ago = lag(total_cases, 7, default = 0)) %>%
+  mutate(cases_7d_sum_per100k = (total_cases-cases_7d_ago)/pops*100000) %>%
+  filter(Date > "2020-12-31") %>%
+  ggplot(aes(x = Date, y = cases_7d_sum_per100k, color = County)) +
+  geom_line() +
+  labs(title = "Total Cases Per 100,000 in Last 7 Days", 
+       subtitle = "CDC Indicators to Inform Decision Making") +
+  ylab("Total cases over last 7 days per 100,000 population") +
+  geom_hline(yintercept = 9.5, linetype = "dotted", color = "blue") +
+  geom_hline(yintercept = 49.5, linetype = "dotted", color = "yellow") +
+  geom_hline(yintercept = 99.5, linetype = "dotted", color = "orange")
+
+# Make Test Positive Graph
+dat %>% 
+  group_by(County) %>%
+  arrange(Date) %>% 
+  mutate(total_tests = cumsum(TotalTestEncounters)) %>%
+  mutate(total_positives = cumsum(NewPositiveTests)) %>%
+  mutate(total_tests_7d_ago = lag(total_tests, 7, default = 0)) %>%
+  mutate(total_positives_7d_ago = lag(total_positives, 7, default = 0)) %>%
+  mutate(test_positive_rate_7d = (total_positives-total_positives_7d_ago) /
+           (total_tests - total_tests_7d_ago)) %>%
+  select(County, Date, test_positive_rate_7d) %>%
+  filter(Date > "2020-12-31") %>%
+  ggplot(aes(x = Date, y = test_positive_rate_7d*100, color = County)) +
+  geom_line() +
+  labs(title = "Test Positive Rate in Last 7 Days", 
+       subtitle = "CDC Indicators to Inform Decision Making") +
+  ylab("Test positive rate over last 7 days (%) ") +
+  geom_hline(yintercept = 5, linetype = "dotted", color = "blue") +
+  geom_hline(yintercept = 7.95, linetype = "dotted", color = "yellow") +
+  geom_hline(yintercept = 9.95, linetype = "dotted", color = "orange")
+```
+
+Oops, as I was writing this I discovered I had written a helper function to help with the calculations...
+
+```{r}
+rollsum <- function(x, lag_start, lag_end) {
+  require(dplyr)
+  total = 0
+  for(i in lag_start:lag_end) {
+    total <- total + lag(x, i, default = 0)
+  }
+  return(total)
+}
+```
+
+Time to rewrite the code for those plots using the new function! It saves some lines of code but also seems to make it more readable to me.
+
+```{r}
+# Make case count graph
+dat %>% left_join(county_pops, by = "County") %>%
+  group_by(County) %>%
+  arrange(Date) %>% 
+  mutate(cases_7d_sum_per100k = rollsum(NewCases, 0, 6)/pops*100000) %>%
+  filter(Date > "2020-12-31") %>%
+  ggplot(aes(x = Date, y = cases_7d_sum_per100k, color = County)) +
+  geom_line() +
+  labs(title = "Total Cases Per 100,000 in Last 7 Days", 
+       subtitle = "CDC Indicators to Inform Decision Making") +
+  ylab("Total cases over last 7 days per 100,000 population") +
+  geom_hline(yintercept = 9.5, linetype = "dotted", color = "blue") +
+  geom_hline(yintercept = 49.5, linetype = "dotted", color = "yellow") +
+  geom_hline(yintercept = 99.5, linetype = "dotted", color = "orange")
+
+# Make Test Positive Graph
+dat %>% 
+  group_by(County) %>%
+  arrange(Date) %>% 
+  mutate(test_positive_rate_7d = rollsum(NewPositiveTests, 0, 6) / 
+           rollsum(TotalTestEncounters, 0, 6)) %>%
+  select(County, Date, test_positive_rate_7d) %>%
+  filter(Date > "2020-12-31") %>%
+  ggplot(aes(x = Date, y = test_positive_rate_7d*100, color = County)) +
+  geom_line() +
+  labs(title = "Test Positive Rate in Last 7 Days", 
+       subtitle = "CDC Indicators to Inform Decision Making") +
+  ylab("Test positive rate over last 7 days (%) ") +
+  geom_hline(yintercept = 5, linetype = "dotted", color = "blue") +
+  geom_hline(yintercept = 7.95, linetype = "dotted", color = "yellow") +
+  geom_hline(yintercept = 9.95, linetype = "dotted", color = "orange")
+
+```
