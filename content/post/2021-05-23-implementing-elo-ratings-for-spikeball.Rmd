@@ -1,0 +1,72 @@
+---
+title: Implementing Elo Ratings for Spikeball
+author: ~
+date: '2021-05-23'
+slug: implementing-elo-ratings-for-spikeball
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+My son's friends began a spikeball tournament and wanted to determine who would be the best spikeball team. The traditional choice would be a round robin format and/or a tournament. With a few teams, neither would take very long, but my son wanted to know if they could use the chess rating Elo system to determine what team was the best. 
+
+First we had to learn about how the Elo system works. Basically it assigns each team a baseline rating then as teams play each other, the teams that win more get more points and the teams that lose more have fewer points. It's similar to a computerized power ranking system in football or other sports.
+
+Here I load the dataset then check to make sure there are no teams that are mistyped. In this table the score corresponds to whether team1 won (score = 1) or team2 won (score = 0).
+```{r}
+games <- read.csv("../datasets/spikeball_results.csv")
+head(games)
+
+team_names <- sort(unique(c(games$team1, games$team2)))
+team_names
+```
+
+Next step was to create a stand in data table to hold the ratings and assign each team a starting rating of 1500.
+```{r}
+rating_table <- data.frame(
+  team = team_names,
+  rating = rep(1500, length(team_names))
+)
+
+rating_table
+```
+
+I constructed the Elo function where expected score is between 0 and 1 and corresponds to the probability of one team beating another as a function of the teams' ratings.
+```{r}
+expected_score <- function(rat_a, rat_b) {
+  1 / (1 + 10^((rat_b-rat_a)/400))
+}
+```
+
+The hard part was figuring out how to update the rating table using the result of a game, where score is 1 or 0 depending on whether team A won or team B won.
+```{r}
+rating_update <- function(team_a, team_b, score, ratings) {
+  # extract rating from table
+  rat_a <- ratings$rating[which(ratings$team == team_a)]
+  rat_b <- ratings$rating[which(ratings$team == team_b)]
+  
+  # calculate new rating
+  rat_a <- rat_a + 20 * (score-expected_score(rat_a, rat_b)) 
+  rat_b <- rat_b + 20 * (-score+expected_score(rat_a, rat_b))
+  
+  # replace rating in table
+  ratings$rating[which(ratings$team == team_a)] <- rat_a
+  ratings$rating[which(ratings$team == team_b)] <- rat_b
+  
+  return(ratings)
+}
+```
+
+Finally I went through the games and updated the table from each game. There's probably a nifty vector based way to do this but I used a for loop for simplicity.
+
+```{r}
+for(i in 1:nrow(games)) {
+  rating_table <- rating_update(games$team1[i], games$team2[i], games$score[i], rating_table)
+}
+
+library(dplyr)
+rating_table %>% arrange(-rating) 
+```
+Et voila! Elo ratings for all the teams. 

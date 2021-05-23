@@ -1,0 +1,121 @@
+---
+title: Implementing Elo Ratings for Spikeball
+author: ~
+date: '2021-05-23'
+slug: implementing-elo-ratings-for-spikeball
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>My son’s friends began a spikeball tournament and wanted to determine who would be the best spikeball team. The traditional choice would be a round robin format and/or a tournament. With a few teams, neither would take very long, but my son wanted to know if they could use the chess rating Elo system to determine what team was the best.</p>
+<p>First we had to learn about how the Elo system works. Basically it assigns each team a baseline rating then as teams play each other, the teams that win more get more points and the teams that lose more have fewer points. It’s similar to a computerized power ranking system in football or other sports.</p>
+<p>Here I load the dataset then check to make sure there are no teams that are mistyped. In this table the score corresponds to whether team1 won (score = 1) or team2 won (score = 0).</p>
+<pre class="r"><code>games &lt;- read.csv(&quot;../datasets/spikeball_results.csv&quot;)
+head(games)</code></pre>
+<pre><code>##   game_ID         team1         team2 score
+## 1       1 jackson_isaac landon_isaiah     1
+## 2       2 jackson_isaac     reef_evan     0
+## 3       3 conner_carter  micah_conrad     1
+## 4       4    laine_cole     reef_evan     0
+## 5       5 ryden_trenton  kekoa_cedric     0
+## 6       6    andyn_josh    laine_cole     0</code></pre>
+<pre class="r"><code>team_names &lt;- sort(unique(c(games$team1, games$team2)))
+team_names</code></pre>
+<pre><code>##  [1] &quot;andyn_josh&quot;     &quot;ari_justin&quot;     &quot;cole_isaiah&quot;    &quot;conner_carter&quot; 
+##  [5] &quot;conrad_evan&quot;    &quot;jackson_andyn&quot;  &quot;jackson_isaac&quot;  &quot;josh_carter&quot;   
+##  [9] &quot;kekoa_cedric&quot;   &quot;laine_cole&quot;     &quot;laine_conner&quot;   &quot;landon_conrad&quot; 
+## [13] &quot;landon_isaiah&quot;  &quot;micah_conrad&quot;   &quot;micah_isaiah&quot;   &quot;micah_landon&quot;  
+## [17] &quot;reef_evan&quot;      &quot;reef_isaac&quot;     &quot;ryden_kekoa&quot;    &quot;ryden_trenton&quot; 
+## [21] &quot;trenton_cedric&quot;</code></pre>
+<p>Next step was to create a stand in data table to hold the ratings and assign each team a starting rating of 1500.</p>
+<pre class="r"><code>rating_table &lt;- data.frame(
+  team = team_names,
+  rating = rep(1500, length(team_names))
+)
+
+rating_table</code></pre>
+<pre><code>##              team rating
+## 1      andyn_josh   1500
+## 2      ari_justin   1500
+## 3     cole_isaiah   1500
+## 4   conner_carter   1500
+## 5     conrad_evan   1500
+## 6   jackson_andyn   1500
+## 7   jackson_isaac   1500
+## 8     josh_carter   1500
+## 9    kekoa_cedric   1500
+## 10     laine_cole   1500
+## 11   laine_conner   1500
+## 12  landon_conrad   1500
+## 13  landon_isaiah   1500
+## 14   micah_conrad   1500
+## 15   micah_isaiah   1500
+## 16   micah_landon   1500
+## 17      reef_evan   1500
+## 18     reef_isaac   1500
+## 19    ryden_kekoa   1500
+## 20  ryden_trenton   1500
+## 21 trenton_cedric   1500</code></pre>
+<p>I constructed the Elo function where expected score is between 0 and 1 and corresponds to the probability of one team beating another as a function of the teams’ ratings.</p>
+<pre class="r"><code>expected_score &lt;- function(rat_a, rat_b) {
+  1 / (1 + 10^((rat_b-rat_a)/400))
+}</code></pre>
+<p>The hard part was figuring out how to update the rating table using the result of a game, where score is 1 or 0 depending on whether team A won or team B won.</p>
+<pre class="r"><code>rating_update &lt;- function(team_a, team_b, score, ratings) {
+  # extract rating from table
+  rat_a &lt;- ratings$rating[which(ratings$team == team_a)]
+  rat_b &lt;- ratings$rating[which(ratings$team == team_b)]
+  
+  # calculate new rating
+  rat_a &lt;- rat_a + 20 * (score-expected_score(rat_a, rat_b)) 
+  rat_b &lt;- rat_b + 20 * (-score+expected_score(rat_a, rat_b))
+  
+  # replace rating in table
+  ratings$rating[which(ratings$team == team_a)] &lt;- rat_a
+  ratings$rating[which(ratings$team == team_b)] &lt;- rat_b
+  
+  return(ratings)
+}</code></pre>
+<p>Finally I went through the games and updated the table from each game. There’s probably a nifty vector based way to do this but I used a for loop for simplicity.</p>
+<pre class="r"><code>for(i in 1:nrow(games)) {
+  rating_table &lt;- rating_update(games$team1[i], games$team2[i], games$score[i], rating_table)
+}
+
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>rating_table %&gt;% arrange(-rating) </code></pre>
+<pre><code>##              team   rating
+## 1   conner_carter 1538.572
+## 2  trenton_cedric 1529.417
+## 3       reef_evan 1527.265
+## 4     conrad_evan 1510.550
+## 5      reef_isaac 1509.976
+## 6    micah_landon 1509.186
+## 7     josh_carter 1508.643
+## 8   ryden_trenton 1500.813
+## 9   jackson_isaac 1499.465
+## 10   kekoa_cedric 1499.449
+## 11    cole_isaiah 1499.425
+## 12     laine_cole 1499.139
+## 13  landon_conrad 1490.837
+## 14    ryden_kekoa 1490.296
+## 15  landon_isaiah 1490.288
+## 16   micah_conrad 1490.288
+## 17   laine_conner 1490.000
+## 18   micah_isaiah 1482.445
+## 19     andyn_josh 1480.565
+## 20  jackson_andyn 1480.008
+## 21     ari_justin 1471.381</code></pre>
+<p>Et voila! Elo ratings for all the teams.</p>
