@@ -1,0 +1,38 @@
+---
+title: Advocacy Survey
+author: ~
+date: '2021-05-22'
+slug: advocacy-survey
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+Our pediatric chapter's advocacy committee asked the chapter members what their priorities are for advocacy issues. We gave them a list of topics to rate as 1-10 and I needed to calculate the mean score then rank them. This is probably doable as a pivot table within the spreadsheet software, but why pivot table when I can practice some data manipulation skills?
+
+First load tidyverse package and advocacy dataset.
+```{r}
+library(tidyverse)
+advo <- read_csv("../datasets/advocacy_survey.csv")
+advo
+```
+
+I got rid of the timestamp and the free text questions.
+```{r}
+advo <- advo[-c(1,20,21)]
+```
+
+Then I had to convert the wide data into long data, calculate the mean responses, and sort them by mean.
+```{r}
+advo %>%  
+  pivot_longer(cols = names(advo),
+               names_to = "topic", 
+               values_to = "score") %>%
+  group_by(topic) %>%
+  summarize(responses = sum(!is.na(score)), mscore = mean(score, na.rm = T)) %>% 
+  arrange(-mscore)
+```
+
+
+
