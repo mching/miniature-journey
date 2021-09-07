@@ -263,6 +263,8 @@ m2
 So here we have 577/408 = `r 577/408`. Pretty close to sqrt(2) = `r sqrt(2)`!
 
 # Discussion
-Again, it's getting late and I'm getting sleepy so I'm giving up before we take this too much farther. Some ideas would be to create a function that could automatically return the best rational approximation of 3 digit numbers or 2 digit numbers for any irrational number. Or we could see why the distribution of remainders is broader for certain irrational numbers than for others. Why is pi < phi < sqrt(2) < e as far as boxes? Doesn't that imply that e is "more irrational" than phi? But the author said that phi is the most irrational? 
+Again, it's getting late and I'm getting sleepy so I'm giving up before we take this too much farther. Some ideas would be:
 
-Why does my function result in getting numbers that are bigger than 1000?
+* Create a function that could automatically return the best rational approximation of 3 digit numbers or 2 digit numbers for any irrational number. 
+* Look at why the distribution of remainders is broader for certain irrational numbers than for others? Why is pi < phi < sqrt(2) < e as far as boxes? Doesn't that imply that e is "more irrational" than phi? But the author said that phi is the most irrational? 
+* Why does my function result in getting numbers that are bigger than 1000 when I'm only asking for numbers up to 1000?
