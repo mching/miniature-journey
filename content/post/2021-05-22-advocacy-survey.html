@@ -12,15 +12,16 @@ image: ''
 
 
 
-<p>Our pediatric chapter’s advocacy committee asked the chapter members what their priorities are for advocacy issues. We gave them a list of topics to rate as 1-10 and I needed to calculate the mean score then rank them. This is probably doable as a pivot table within the spreadsheet software, but why pivot table when I can practice some data manipulation skills?</p>
+<p>(Updated 2021-09-01)
+Our pediatric chapter’s advocacy committee asked the chapter members what their priorities are for advocacy issues. We gave them a list of topics to rate as 1-10 and I needed to calculate the mean score then rank them. This is probably doable as a pivot table within the spreadsheet software, but why pivot table when I can practice some data manipulation skills?</p>
 <p>First load tidyverse package and advocacy dataset.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
 <pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
 ## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
 ## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
 ## ✓ readr   1.3.1     ✓ forcats 0.5.0</code></pre>
-<pre><code>## ── Conflicts ───────────────────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────── tidyverse_conflicts() ──
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>advo &lt;- read_csv(&quot;../datasets/advocacy_survey.csv&quot;)</code></pre>
@@ -33,7 +34,7 @@ image: ''
 ## )</code></pre>
 <pre><code>## See spec(...) for full column specifications.</code></pre>
 <pre class="r"><code>advo</code></pre>
-<pre><code>## # A tibble: 16 x 21
+<pre><code>## # A tibble: 19 x 21
 ##    Timestamp `HAAP Community… `Medical Home a… `Strengthening … `Strengthening …
 ##    &lt;chr&gt;                &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
 ##  1 5/16/202…                4                4                4                9
@@ -52,6 +53,9 @@ image: ''
 ## 14 5/24/202…                5                7               10                8
 ## 15 5/24/202…                1                1               10                1
 ## 16 5/26/202…               NA               10               NA               NA
+## 17 5/27/202…                8                9               10               10
+## 18 5/27/202…                3                3                8                6
+## 19 5/27/202…                8                8                9                6
 ## # … with 16 more variables: `Strengthening regulations on daycares to reduce
 ## #   deaths of children in unsafe childcare conditions` &lt;dbl&gt;, `Tobacco/Vaping
 ## #   prevention and control` &lt;dbl&gt;, `Support for children and teenagers who come
@@ -82,21 +86,21 @@ image: ''
 <pre><code>## # A tibble: 18 x 3
 ##    topic                                                        responses mscore
 ##    &lt;chr&gt;                                                            &lt;int&gt;  &lt;dbl&gt;
-##  1 Vaccines (recent issues have included pharmacy vaccination,…        15   8.67
-##  2 Access to timely and appropriate mental health services             16   8.5 
-##  3 Strengthening Early Intervention services                           15   8   
-##  4 Medical Home advocacy with payers, government                       16   7.88
-##  5 Tobacco/Vaping prevention and control                               15   7.67
-##  6 Expanding school-based health and/or behavioral services            14   7.36
-##  7 Access to health care                                               16   7.25
-##  8 Food insecurity / healthy eating                                    16   7.19
-##  9 Health literacy                                                     16   6.81
-## 10 Increase visibility of HAAP as a resource for children and …        15   6.67
-## 11 Support for children and teenagers who come into contact wi…        15   6.67
-## 12 Language access for patients / families with limited Englis…        16   6.5 
-## 13 Combating racism, prejudice, and related trauma                     16   6.31
-## 14 HAAP Community Engagement (e.g. doing educational sessions,…        15   6.2 
-## 15 Strengthening Child Welfare Services                                15   6.2 
-## 16 Houselessness and poverty alleviation                               15   6   
-## 17 Strengthening regulations on daycares to reduce deaths of c…        15   5.67
-## 18 Climate justice and mitigation                                      15   5.07</code></pre>
+##  1 Access to timely and appropriate mental health services             19   8.74
+##  2 Vaccines (recent issues have included pharmacy vaccination,…        18   8.61
+##  3 Strengthening Early Intervention services                           18   8.17
+##  4 Medical Home advocacy with payers, government                       19   7.68
+##  5 Expanding school-based health and/or behavioral services            17   7.53
+##  6 Tobacco/Vaping prevention and control                               18   7.5 
+##  7 Food insecurity / healthy eating                                    19   7.47
+##  8 Access to health care                                               19   7.32
+##  9 Health literacy                                                     19   6.89
+## 10 Support for children and teenagers who come into contact wi…        18   6.89
+## 11 Increase visibility of HAAP as a resource for children and …        18   6.83
+## 12 Language access for patients / families with limited Englis…        19   6.58
+## 13 Combating racism, prejudice, and related trauma                     19   6.42
+## 14 Houselessness and poverty alleviation                               18   6.39
+## 15 Strengthening Child Welfare Services                                18   6.39
+## 16 HAAP Community Engagement (e.g. doing educational sessions,…        18   6.22
+## 17 Strengthening regulations on daycares to reduce deaths of c…        18   5.72
+## 18 Climate justice and mitigation                                      18   5.17</code></pre>

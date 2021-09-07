@@ -1,0 +1,268 @@
+---
+title: Dirichlet Rational Approximation
+author: ~
+date: '2021-08-13'
+slug: dirichlet-rational-approximation
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+I'm reading this fantastic book <i>Shape</i> by Joshua Ellenberg, and in one of the chapters it talks about rational approximations of irrational numbers. That is, like how 335/113 is very close to pi. He shows a technique for figuring out rational approximations that proves that it is possible to find an approximation that is better than dividing by a power of 10 (like 31415/10000). In other words, you can find a denominator that is smaller than 10000 that will lead to an error that is less than 1/10000. I don't know, he explains it better in the book, but there are a few exercises that he leaves unshown that would be fun to create in R.
+
+The first one is how he shows that the remainders of the rational approximations of pi cluster around 1/113. That's super cool!
+
+The other one is how he calculates a rational approximation of the golden ratio as 987/610.
+
+# Pi Is Kind of Rational
+
+First let me try to recreate the clustering of the rational approximations of pi. 
+
+To do this, let's create a helper function that takes an irrational number, multiplies it by an integer n, then returns an integer that contains the first few digits of the remainder. For example, if you multiply 8*pi, you get 25.13274... and the function returns 133.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+multiple_remainder <- function(n, irrat, digits=3) {
+  (((n*irrat) %% 1)*10^digits) %/% 1 + 1
+}
+
+multiple_remainder(8, pi, 3)
+```
+
+Now we will get all the remainders for n from 1 to 1000.
+
+```{r}
+n = 1000
+boxes <- data.frame(n_multiple = 1:n, box_no = rep(NA, n))
+
+boxes$box_no <- sapply(boxes$n_multiple, multiple_remainder, irrat = pi, log10(n))
+
+boxes <- tibble(n_multiple = 1:n)
+boxes <- boxes %>% mutate(box_no = 
+                            multiple_remainder(n_multiple, pi, log10(n)))
+
+head(boxes)
+table(boxes$box_no)
+```
+
+We see they are not evenly distributed between 0 and 1000. There are more about every 9 (i.e., 9, 18, 27,..,). 
+
+Which ones create these remainders? Ones that are 113 apart as the author suggests!
+
+```{r}
+boxes %>% filter(box_no == 9)
+```
+Here's another example:
+
+```{r}
+boxes %>% filter(box_no == 850)
+```
+
+This cyclic distribution of the remainders is reminiscent of a rational number, but not quite. I think the author says that the golden ratio is a much more irrational irrational number than pi because it does not have this cyclical nature to its remainders (see below).
+
+# Calculating a Rational Approximation
+
+The idea behind deriving the rational approximation is: if you have n x pi remainder about equal to b and m x pi remainder also about equal to b, then the difference between the two (m pi - n pi) or (m-n) x pi is going to be pretty close to an integer. And (m-n) x pi / (m - n) is going to be the rational approximation of pi. 
+
+What's the first pair of numbers we get in pi multiple remainders?
+
+```{r}
+boxes %>% group_by(box_no) %>% 
+  summarize(n = n())
+```
+
+It's box number 9.
+
+```{r}
+boxes %>% group_by(box_no) %>% 
+  summarize(n = n()) %>% filter(n > 8)
+```
+
+So in theory, all of these should result in reasonable approximations of pi. Let's try.
+
+```{r}
+m1 <- 106
+m2 <- 219
+
+(m2 - m1)* pi # numerator
+(m2 - m1) # denominator
+
+```
+
+OMG. The very first pair of numbers we tried got us to the famous 355/113 rational approximation of pi! Wait a minute, does that mean that any pair gets us there?
+
+```{r}
+m1 <- 332
+m2 <- 784
+
+(m2 - m1)* pi # numerator
+(m2 - m1) # denominator
+ 
+```
+
+But 1420 over 452 simplifies to uhhh 355/113!
+
+Ok, let's try a different box. It looks like a lot of the boxes are multiples of 9, so let's try one that's not. Let's use box 71.
+
+```{r}
+boxes %>% filter(box_no == 71)
+```
+
+```{r}
+m1 <- 735
+m2 <- 961
+
+(m2 - m1)* pi # numerator
+(m2 - m1) # denominator
+
+```
+
+WTF! It's the same milu! That's just nuts.
+
+Ok, let's try a different irrational number, maybe the golden ratio...
+
+The golden ratio is approximated by (1 + square root of 5) / 2.
+
+```{r}
+phi <- (1 + sqrt(5))/2
+boxes <- tibble(n_multiple = 1:n)
+boxes <- boxes %>% mutate(box_no = 
+                            multiple_remainder(n_multiple, phi, log10(n)))
+
+boxes %>% group_by(box_no) %>% 
+  summarize(n = n()) %>% arrange(-n)
+```
+
+```{r}
+boxes %>% filter(box_no == 6)
+
+m1 <- 89
+m2 <- 699
+
+(m2 - m1)* phi # numerator
+(m2 - m1) # denominator
+
+987/610
+
+```
+
+That's the ratio given in the book! 987/610! It turns out that 610 and 987 are two Fibonacci sequence numbers anyway and actually the last two before 1000. What if we did this for 10000? Would it be the two greatest Fibonacci numbers that are less than 10000? I suspect yes.
+
+```{r}
+n <- 10000
+boxes <- tibble(n_multiple = 1:n)
+boxes <- boxes %>% mutate(box_no = 
+                            multiple_remainder(n_multiple, phi, log10(n)))
+
+boxes %>% group_by(box_no) %>% 
+  summarize(n = n()) %>% arrange(-n)
+
+boxes %>% filter(box_no == 3)
+
+m1 <- 1597
+m2 <- 8362
+
+(m2 - m1)* phi # numerator
+(m2 - m1) # denominator
+
+10946/6765
+```
+Yeah, that sort of worked but it got the Fibonacci number right after 10000! Why did that happen? That's the 20th one. The 18th one is 4181 which is still a pretty good approximation. I mean, the definition of the Fibonacci sequence is that the ratio of any two consecutive numbers will approach the golden ratio as the numbers get larger, so it's not that shocking. In fact, any two series of numbers in the sequence should get better at approximating the golden ratio.
+
+```{r}
+6765/4181
+```
+
+
+I think we could do this for any irrational number. How about e?
+
+```{r}
+n <- 1000
+boxes <- tibble(n_multiple = 1:n)
+boxes <- boxes %>% mutate(box_no = 
+                            multiple_remainder(n_multiple, exp(1), log10(n)))
+
+boxes %>% group_by(box_no) %>% 
+  summarize(n = n()) %>% arrange(-n)
+
+
+```
+
+```{r}
+boxes %>% filter(box_no == 13)
+
+m1 <- 39
+m2 <- 575
+
+(m2 - m1)* exp(1) # numerator
+(m2 - m1) # denominator
+
+1456/8
+536/8
+
+182/67
+
+(182/67 - exp(1))/exp(1)
+
+```
+
+Huh, this approximation is not that great. I mean, it's better than 0.1% off but could it be better? Let's choose another box.
+
+
+```{r}
+boxes %>% filter(box_no == 37)
+
+m1 <- 188
+m2 <- 724
+
+(m2 - m1)* exp(1) # numerator
+(m2 - m1) # denominator
+
+1457/536
+
+(1457/536 - exp(1))/exp(1)
+
+```
+
+Wow this one is a lot better! Like 1000 times better!
+
+What we need is to look not just at a random approximation but all the approximations that are calculated by this method... There are 973 pairs after all that fall into the same box.
+
+Oh well, maybe an exercise for another day...
+
+One more before I give up... let's do square root of 2.
+
+```{r}
+n <- 1000
+boxes <- tibble(n_multiple = 1:n)
+boxes <- boxes %>% mutate(box_no = 
+                            multiple_remainder(n_multiple, sqrt(2), log10(n)))
+
+boxes %>% group_by(box_no) %>% 
+  summarize(n = n()) %>% arrange(-n)
+
+```
+Lots of boxes! I guess that means square root of 2 is kind of like the golden ratio in that there are not a lot of collisions of remainders. There were 912 rows in square root of 2 table but 973 in the e table and 891 in the phi table. This compares to 72 in the pi table...
+
+```{r}
+
+box_to_check <- 48
+m1 <- boxes %>% filter(box_no == box_to_check) %>% select(n_multiple) %>% min
+m2 <- boxes %>% filter(box_no == box_to_check) %>% select(n_multiple) %>% max
+
+m1
+m2
+
+(m2 - m1)* sqrt(2) # numerator
+(m2 - m1) # denominator
+
+```
+
+So here we have 577/408 = `r 577/408`. Pretty close to sqrt(2) = `r sqrt(2)`!
+
+# Discussion
+Again, it's getting late and I'm getting sleepy so I'm giving up before we take this too much farther. Some ideas would be to create a function that could automatically return the best rational approximation of 3 digit numbers or 2 digit numbers for any irrational number. Or we could see why the distribution of remainders is broader for certain irrational numbers than for others. Why is pi < phi < sqrt(2) < e as far as boxes? Doesn't that imply that e is "more irrational" than phi? But the author said that phi is the most irrational? 
+
+Why does my function result in getting numbers that are bigger than 1000?

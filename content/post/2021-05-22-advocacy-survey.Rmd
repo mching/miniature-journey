@@ -9,6 +9,7 @@ type: ''
 subtitle: ''
 image: ''
 ---
+(Updated 2021-09-01) 
 Our pediatric chapter's advocacy committee asked the chapter members what their priorities are for advocacy issues. We gave them a list of topics to rate as 1-10 and I needed to calculate the mean score then rank them. This is probably doable as a pivot table within the spreadsheet software, but why pivot table when I can practice some data manipulation skills?
 
 First load tidyverse package and advocacy dataset.

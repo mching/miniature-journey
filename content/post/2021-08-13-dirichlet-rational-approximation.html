@@ -1,0 +1,373 @@
+---
+title: Dirichlet Rational Approximation
+author: ~
+date: '2021-08-13'
+slug: dirichlet-rational-approximation
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+
+
+<p>I’m reading this fantastic book <i>Shape</i> by Joshua Ellenberg, and in one of the chapters it talks about rational approximations of irrational numbers. That is, like how 335/113 is very close to pi. He shows a technique for figuring out rational approximations that proves that it is possible to find an approximation that is better than dividing by a power of 10 (like 31415/10000). In other words, you can find a denominator that is smaller than 10000 that will lead to an error that is less than 1/10000. I don’t know, he explains it better in the book, but there are a few exercises that he leaves unshown that would be fun to create in R.</p>
+<p>The first one is how he shows that the remainders of the rational approximations of pi cluster around 1/113. That’s super cool!</p>
+<p>The other one is how he calculates a rational approximation of the golden ratio as 987/610.</p>
+<div id="pi-is-kind-of-rational" class="section level1">
+<h1>Pi Is Kind of Rational</h1>
+<p>First let me try to recreate the clustering of the rational approximations of pi.</p>
+<p>To do this, let’s create a helper function that takes an irrational number, multiplies it by an integer n, then returns an integer that contains the first few digits of the remainder. For example, if you multiply 8*pi, you get 25.13274… and the function returns 133.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(ggplot2)
+multiple_remainder &lt;- function(n, irrat, digits=3) {
+  (((n*irrat) %% 1)*10^digits) %/% 1 + 1
+}
+
+multiple_remainder(8, pi, 3)</code></pre>
+<pre><code>## [1] 133</code></pre>
+<p>Now we will get all the remainders for n from 1 to 1000.</p>
+<pre class="r"><code>n = 1000
+boxes &lt;- data.frame(n_multiple = 1:n, box_no = rep(NA, n))
+
+boxes$box_no &lt;- sapply(boxes$n_multiple, multiple_remainder, irrat = pi, log10(n))
+
+boxes &lt;- tibble(n_multiple = 1:n)
+boxes &lt;- boxes %&gt;% mutate(box_no = 
+                            multiple_remainder(n_multiple, pi, log10(n)))
+
+head(boxes)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   n_multiple box_no
+##        &lt;int&gt;  &lt;dbl&gt;
+## 1          1    142
+## 2          2    284
+## 3          3    425
+## 4          4    567
+## 5          5    708
+## 6          6    850</code></pre>
+<pre class="r"><code>table(boxes$box_no)</code></pre>
+<pre><code>## 
+##    9   18   27   36   44   45   53   54   62   71   80   89   98  106  107  115 
+##    8    8    9    9    1    8    6    3    9    9    9    9    9    2    7    7 
+##  116  124  133  142  151  160  168  169  177  186  195  204  213  221  222  230 
+##    2    9    9    9    8    8    5    4    9    9    9    9    9    1    8    6 
+##  231  239  248  257  266  275  283  284  292  293  301  310  319  328  337  345 
+##    3    9    9    9    9    9    2    7    7    1    8    9    9    9    9    5 
+##  346  354  363  372  381  390  398  399  407  408  416  425  434  443  452  460 
+##    4    9    9    9    9    9    1    8    6    3    9    9    8    8    9    3 
+##  461  469  470  478  487  496  505  514  522  523  531  540  549  558  567  575 
+##    6    8    1    9    9    9    9    9    5    4    9    9    9    9    9    1 
+##  576  584  585  593  602  611  620  629  637  638  646  647  655  664  673  682 
+##    7    6    2    9    9    9    9    9    3    6    8    1    9    9    9    9 
+##  691  699  700  708  717  726  735  744  752  753  761  762  770  779  788  797 
+##    9    5    4    9    8    8    8    9    2    7    7    2    9    9    9    9 
+##  806  814  815  823  824  832  841  850  859  868  876  877  885  894  903  912 
+##    9    4    5    8    1    9    9    9    8    8    5    3    9    9    9    9 
+##  921  929  930  938  939  947  956  965  974  983  991  992 1000 
+##    9    2    7    7    2    9    9    9    9    9    4    5    8</code></pre>
+<p>We see they are not evenly distributed between 0 and 1000. There are more about every 9 (i.e., 9, 18, 27,..,).</p>
+<p>Which ones create these remainders? Ones that are 113 apart as the author suggests!</p>
+<pre class="r"><code>boxes %&gt;% filter(box_no == 9)</code></pre>
+<pre><code>## # A tibble: 8 x 2
+##   n_multiple box_no
+##        &lt;int&gt;  &lt;dbl&gt;
+## 1        106      9
+## 2        219      9
+## 3        332      9
+## 4        445      9
+## 5        558      9
+## 6        671      9
+## 7        784      9
+## 8        897      9</code></pre>
+<p>Here’s another example:</p>
+<pre class="r"><code>boxes %&gt;% filter(box_no == 850)</code></pre>
+<pre><code>## # A tibble: 9 x 2
+##   n_multiple box_no
+##        &lt;int&gt;  &lt;dbl&gt;
+## 1          6    850
+## 2        119    850
+## 3        232    850
+## 4        345    850
+## 5        458    850
+## 6        571    850
+## 7        684    850
+## 8        797    850
+## 9        910    850</code></pre>
+<p>This cyclic distribution of the remainders is reminiscent of a rational number, but not quite. I think the author says that the golden ratio is a much more irrational irrational number than pi because it does not have this cyclical nature to its remainders (see below).</p>
+</div>
+<div id="calculating-a-rational-approximation" class="section level1">
+<h1>Calculating a Rational Approximation</h1>
+<p>The idea behind deriving the rational approximation is: if you have n x pi remainder about equal to b and m x pi remainder also about equal to b, then the difference between the two (m pi - n pi) or (m-n) x pi is going to be pretty close to an integer. And (m-n) x pi / (m - n) is going to be the rational approximation of pi.</p>
+<p>What’s the first pair of numbers we get in pi multiple remainders?</p>
+<pre class="r"><code>boxes %&gt;% group_by(box_no) %&gt;% 
+  summarize(n = n())</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 141 x 2
+##    box_no     n
+##     &lt;dbl&gt; &lt;int&gt;
+##  1      9     8
+##  2     18     8
+##  3     27     9
+##  4     36     9
+##  5     44     1
+##  6     45     8
+##  7     53     6
+##  8     54     3
+##  9     62     9
+## 10     71     9
+## # … with 131 more rows</code></pre>
+<p>It’s box number 9.</p>
+<pre class="r"><code>boxes %&gt;% group_by(box_no) %&gt;% 
+  summarize(n = n()) %&gt;% filter(n &gt; 8)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 72 x 2
+##    box_no     n
+##     &lt;dbl&gt; &lt;int&gt;
+##  1     27     9
+##  2     36     9
+##  3     62     9
+##  4     71     9
+##  5     80     9
+##  6     89     9
+##  7     98     9
+##  8    124     9
+##  9    133     9
+## 10    142     9
+## # … with 62 more rows</code></pre>
+<p>So in theory, all of these should result in reasonable approximations of pi. Let’s try.</p>
+<pre class="r"><code>m1 &lt;- 106
+m2 &lt;- 219
+
+(m2 - m1)* pi # numerator</code></pre>
+<pre><code>## [1] 355</code></pre>
+<pre class="r"><code>(m2 - m1) # denominator</code></pre>
+<pre><code>## [1] 113</code></pre>
+<p>OMG. The very first pair of numbers we tried got us to the famous 355/113 rational approximation of pi! Wait a minute, does that mean that any pair gets us there?</p>
+<pre class="r"><code>m1 &lt;- 332
+m2 &lt;- 784
+
+(m2 - m1)* pi # numerator</code></pre>
+<pre><code>## [1] 1420</code></pre>
+<pre class="r"><code>(m2 - m1) # denominator</code></pre>
+<pre><code>## [1] 452</code></pre>
+<p>But 1420 over 452 simplifies to uhhh 355/113!</p>
+<p>Ok, let’s try a different box. It looks like a lot of the boxes are multiples of 9, so let’s try one that’s not. Let’s use box 71.</p>
+<pre class="r"><code>boxes %&gt;% filter(box_no == 71)</code></pre>
+<pre><code>## # A tibble: 9 x 2
+##   n_multiple box_no
+##        &lt;int&gt;  &lt;dbl&gt;
+## 1         57     71
+## 2        170     71
+## 3        283     71
+## 4        396     71
+## 5        509     71
+## 6        622     71
+## 7        735     71
+## 8        848     71
+## 9        961     71</code></pre>
+<pre class="r"><code>m1 &lt;- 735
+m2 &lt;- 961
+
+(m2 - m1)* pi # numerator</code></pre>
+<pre><code>## [1] 709.9999</code></pre>
+<pre class="r"><code>(m2 - m1) # denominator</code></pre>
+<pre><code>## [1] 226</code></pre>
+<p>WTF! It’s the same milu! That’s just nuts.</p>
+<p>Ok, let’s try a different irrational number, maybe the golden ratio…</p>
+<p>The golden ratio is approximated by (1 + square root of 5) / 2.</p>
+<pre class="r"><code>phi &lt;- (1 + sqrt(5))/2
+boxes &lt;- tibble(n_multiple = 1:n)
+boxes &lt;- boxes %&gt;% mutate(box_no = 
+                            multiple_remainder(n_multiple, phi, log10(n)))
+
+boxes %&gt;% group_by(box_no) %&gt;% 
+  summarize(n = n()) %&gt;% arrange(-n)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 891 x 2
+##    box_no     n
+##     &lt;dbl&gt; &lt;int&gt;
+##  1      6     2
+##  2     11     2
+##  3     14     2
+##  4     16     2
+##  5     19     2
+##  6     21     2
+##  7     24     2
+##  8     29     2
+##  9     34     2
+## 10     83     2
+## # … with 881 more rows</code></pre>
+<pre class="r"><code>boxes %&gt;% filter(box_no == 6)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   n_multiple box_no
+##        &lt;int&gt;  &lt;dbl&gt;
+## 1         89      6
+## 2        699      6</code></pre>
+<pre class="r"><code>m1 &lt;- 89
+m2 &lt;- 699
+
+(m2 - m1)* phi # numerator</code></pre>
+<pre><code>## [1] 987.0007</code></pre>
+<pre class="r"><code>(m2 - m1) # denominator</code></pre>
+<pre><code>## [1] 610</code></pre>
+<pre class="r"><code>987/610</code></pre>
+<pre><code>## [1] 1.618033</code></pre>
+<p>That’s the ratio given in the book! 987/610! It turns out that 610 and 987 are two Fibonacci sequence numbers anyway and actually the last two before 1000. What if we did this for 10000? Would it be the two greatest Fibonacci numbers that are less than 10000? I suspect yes.</p>
+<pre class="r"><code>n &lt;- 10000
+boxes &lt;- tibble(n_multiple = 1:n)
+boxes &lt;- boxes %&gt;% mutate(box_no = 
+                            multiple_remainder(n_multiple, phi, log10(n)))
+
+boxes %&gt;% group_by(box_no) %&gt;% 
+  summarize(n = n()) %&gt;% arrange(-n)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 8,901 x 2
+##    box_no     n
+##     &lt;dbl&gt; &lt;int&gt;
+##  1      3     2
+##  2     15     2
+##  3     22     2
+##  4     34     2
+##  5     46     2
+##  6     65     2
+##  7     68     2
+##  8     77     2
+##  9     87     2
+## 10     96     2
+## # … with 8,891 more rows</code></pre>
+<pre class="r"><code>boxes %&gt;% filter(box_no == 3)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   n_multiple box_no
+##        &lt;int&gt;  &lt;dbl&gt;
+## 1       1597      3
+## 2       8362      3</code></pre>
+<pre class="r"><code>m1 &lt;- 1597
+m2 &lt;- 8362
+
+(m2 - m1)* phi # numerator</code></pre>
+<pre><code>## [1] 10946</code></pre>
+<pre class="r"><code>(m2 - m1) # denominator</code></pre>
+<pre><code>## [1] 6765</code></pre>
+<pre class="r"><code>10946/6765</code></pre>
+<pre><code>## [1] 1.618034</code></pre>
+<p>Yeah, that sort of worked but it got the Fibonacci number right after 10000! Why did that happen? That’s the 20th one. The 18th one is 4181 which is still a pretty good approximation. I mean, the definition of the Fibonacci sequence is that the ratio of any two consecutive numbers will approach the golden ratio as the numbers get larger, so it’s not that shocking. In fact, any two series of numbers in the sequence should get better at approximating the golden ratio.</p>
+<pre class="r"><code>6765/4181</code></pre>
+<pre><code>## [1] 1.618034</code></pre>
+<p>I think we could do this for any irrational number. How about e?</p>
+<pre class="r"><code>n &lt;- 1000
+boxes &lt;- tibble(n_multiple = 1:n)
+boxes &lt;- boxes %&gt;% mutate(box_no = 
+                            multiple_remainder(n_multiple, exp(1), log10(n)))
+
+boxes %&gt;% group_by(box_no) %&gt;% 
+  summarize(n = n()) %&gt;% arrange(-n)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 973 x 2
+##    box_no     n
+##     &lt;dbl&gt; &lt;int&gt;
+##  1     13     2
+##  2     24     2
+##  3     26     2
+##  4     28     2
+##  5     35     2
+##  6     37     2
+##  7     39     2
+##  8     41     2
+##  9     46     2
+## 10     48     2
+## # … with 963 more rows</code></pre>
+<pre class="r"><code>boxes %&gt;% filter(box_no == 13)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   n_multiple box_no
+##        &lt;int&gt;  &lt;dbl&gt;
+## 1         39     13
+## 2        575     13</code></pre>
+<pre class="r"><code>m1 &lt;- 39
+m2 &lt;- 575
+
+(m2 - m1)* exp(1) # numerator</code></pre>
+<pre><code>## [1] 1456.999</code></pre>
+<pre class="r"><code>(m2 - m1) # denominator</code></pre>
+<pre><code>## [1] 536</code></pre>
+<pre class="r"><code>1456/8</code></pre>
+<pre><code>## [1] 182</code></pre>
+<pre class="r"><code>536/8</code></pre>
+<pre><code>## [1] 67</code></pre>
+<pre class="r"><code>182/67</code></pre>
+<pre><code>## [1] 2.716418</code></pre>
+<pre class="r"><code>(182/67 - exp(1))/exp(1)</code></pre>
+<pre><code>## [1] -0.0006856971</code></pre>
+<p>Huh, this approximation is not that great. I mean, it’s better than 0.1% off but could it be better? Let’s choose another box.</p>
+<pre class="r"><code>boxes %&gt;% filter(box_no == 37)</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   n_multiple box_no
+##        &lt;int&gt;  &lt;dbl&gt;
+## 1        188     37
+## 2        724     37</code></pre>
+<pre class="r"><code>m1 &lt;- 188
+m2 &lt;- 724
+
+(m2 - m1)* exp(1) # numerator</code></pre>
+<pre><code>## [1] 1456.999</code></pre>
+<pre class="r"><code>(m2 - m1) # denominator</code></pre>
+<pre><code>## [1] 536</code></pre>
+<pre class="r"><code>1457/536</code></pre>
+<pre><code>## [1] 2.718284</code></pre>
+<pre class="r"><code>(1457/536 - exp(1))/exp(1)</code></pre>
+<pre><code>## [1] 6.451246e-07</code></pre>
+<p>Wow this one is a lot better! Like 1000 times better!</p>
+<p>What we need is to look not just at a random approximation but all the approximations that are calculated by this method… There are 973 pairs after all that fall into the same box.</p>
+<p>Oh well, maybe an exercise for another day…</p>
+<p>One more before I give up… let’s do square root of 2.</p>
+<pre class="r"><code>n &lt;- 1000
+boxes &lt;- tibble(n_multiple = 1:n)
+boxes &lt;- boxes %&gt;% mutate(box_no = 
+                            multiple_remainder(n_multiple, sqrt(2), log10(n)))
+
+boxes %&gt;% group_by(box_no) %&gt;% 
+  summarize(n = n()) %&gt;% arrange(-n)</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<pre><code>## # A tibble: 912 x 2
+##    box_no     n
+##     &lt;dbl&gt; &lt;int&gt;
+##  1     48     2
+##  2     53     2
+##  3     56     2
+##  4     61     2
+##  5     72     2
+##  6    117     2
+##  7    119     2
+##  8    122     2
+##  9    125     2
+## 10    127     2
+## # … with 902 more rows</code></pre>
+<p>Lots of boxes! I guess that means square root of 2 is kind of like the golden ratio in that there are not a lot of collisions of remainders. There were 912 rows in square root of 2 table but 973 in the e table and 891 in the phi table. This compares to 72 in the pi table…</p>
+<pre class="r"><code>box_to_check &lt;- 48
+m1 &lt;- boxes %&gt;% filter(box_no == box_to_check) %&gt;% select(n_multiple) %&gt;% min
+m2 &lt;- boxes %&gt;% filter(box_no == box_to_check) %&gt;% select(n_multiple) %&gt;% max
+
+m1</code></pre>
+<pre><code>## [1] 524</code></pre>
+<pre class="r"><code>m2</code></pre>
+<pre><code>## [1] 932</code></pre>
+<pre class="r"><code>(m2 - m1)* sqrt(2) # numerator</code></pre>
+<pre><code>## [1] 576.9991</code></pre>
+<pre class="r"><code>(m2 - m1) # denominator</code></pre>
+<pre><code>## [1] 408</code></pre>
+<p>So here we have 577/408 = 1.4142157. Pretty close to sqrt(2) = 1.4142136!</p>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>Again, it’s getting late and I’m getting sleepy so I’m giving up before we take this too much farther. Some ideas would be to create a function that could automatically return the best rational approximation of 3 digit numbers or 2 digit numbers for any irrational number. Or we could see why the distribution of remainders is broader for certain irrational numbers than for others. Why is pi &lt; phi &lt; sqrt(2) &lt; e as far as boxes? Doesn’t that imply that e is “more irrational” than phi? But the author said that phi is the most irrational?</p>
+<p>Why does my function result in getting numbers that are bigger than 1000?</p>
+</div>
