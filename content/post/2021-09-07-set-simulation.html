@@ -17,41 +17,83 @@ image: ''
 <p>I wanted to find out what is the probability of having a set among 12 cards (and 15 for that matter). To do this, of course, I turned to R.</p>
 <div id="create-the-deck" class="section level1">
 <h1>Create the Deck</h1>
-<pre class="r"><code>a1 &lt;- rep(c(0,1,10), rep(27, 3))
-a2 &lt;- rep(rep(c(0,1,10), rep(9, 3)), 3)
-a3 &lt;- rep(rep(c(0,1,10), rep(3, 3)), 9)
-a4 &lt;- rep(c(0,1,10), 27)
+<p>Each card has 4 attributes, each of which has 3 different variations. I represented each attribute as a1, a2, a3, or a4, and each variation as 0, 1, or 2.</p>
+<pre class="r"><code>a1 &lt;- rep(c(0,1,2), rep(27, 3))
+a2 &lt;- rep(rep(c(0,1,2), rep(9, 3)), 3)
+a3 &lt;- rep(rep(c(0,1,2), rep(3, 3)), 9)
+a4 &lt;- rep(c(0,1,2), 27)
 
-cards &lt;- data.frame(a1, a2, a3, a4)
-
-# number of 3 card combinations in deck
+cards &lt;- data.frame(a1, a2, a3, a4)</code></pre>
+<div id="combinations-of-3-cards" class="section level2">
+<h2>Combinations of 3 Cards</h2>
+<pre class="r"><code># number of 3 card combinations in deck
 81*80*79/3/2</code></pre>
 <pre><code>## [1] 85320</code></pre>
 <pre class="r"><code># number of 3 card combinations in 12 cards
 12*11*10/3/2</code></pre>
 <pre><code>## [1] 220</code></pre>
-<pre class="r"><code>trio &lt;- cards[sample(1:81, 3), ]
-colSums(trio)</code></pre>
+</div>
+</div>
+<div id="testing-if-3-cards-are-a-set" class="section level1">
+<h1>Testing if 3 Cards are a Set</h1>
+<p>To test if 3 cards are a set, I sampled 3 card numbers at random by choosing 3 integers between 1 and 82 inclusive. Then I extracted the cards’ attributes for those cards and summed them.</p>
+<p>Here’s a little more about the game. In order for 3 cards to meet the set criteria, each attribute must be the same for all 3 cards, or different for all 3 cards. So a1 has to be all 0s or all 1s or all 2s or 0, 1, and 2. Attribute 2 doesn’t have to follow the same pattern as a1, just all the same or all different. Same for a3 and a4…</p>
+<p>So if we sum the attributes, they have to be equal to 0+0+0=0 or 1+1+1=3 or 2+2+2=6, or 0+1+2=3. Again, they can only be 0, 3, or 6. If we have 0+1+0, that’s not right. Or 0+2+2, again not right. There is no other way to make 0, 3, or 6 other than by them all to be the same or all to be different.</p>
+<div id="mathematics-aside-given-3-random-cards-what-is-the-probability-they-are-a-set" class="section level2">
+<h2>Mathematics Aside: Given 3 Random Cards, What Is the Probability They Are a Set?</h2>
+<p>This hints at the calculation that would need to be done to do this in a mathematics way. For an attribute, each card can have 3 outcomes (0, 1, 2). There are 27 possible permutations, and 3 possible ways for them to be all the same and 6 possible ways for them to be all different. So for each attribute there is a 9/27, or 1/3, chance that it meets the criteria. Given random distribution of the attributes, for each of 4 attributes to meet the criteria, we would calculate that probability as (1/3)^4 or 1/81.</p>
+<p>When you deal 12 cards, there are 220 combinations of 3. They are not all independent since many of them have the same card within them. I have to do some more thinking about how the dependence affects the probability of finding at least one set that meets the criteria.</p>
+</div>
+<div id="back-to-the-programming" class="section level2">
+<h2>Back to the Programming</h2>
+<p>Ok, now back to the programming. We take 3 cards, sum their attributes, and then see if each attribute’s sum is equal to 0, 3, or 6. If they are all equal to 0, 3, or 6, then they are a set! Below I set up some functions to test if a trio of cards is a set.</p>
+<pre class="r"><code>set.seed(1)
+trio &lt;- cards[sample(1:81, 3), ]
+trio # cards&#39; attributes</code></pre>
+<pre><code>##    a1 a2 a3 a4
+## 68  2  1  1  1
+## 39  1  1  0  2
+## 1   0  0  0  0</code></pre>
+<pre class="r"><code>colSums(trio) # sum the attributes</code></pre>
 <pre><code>## a1 a2 a3 a4 
-##  1 21 10 11</code></pre>
+##  3  2  1  3</code></pre>
 <pre class="r"><code>trio_sum &lt;- colSums(trio)
-test1 &lt;- function(x) x %in% c(0, 3, 11, 30)
 
-sapply(trio_sum, test1)</code></pre>
+# Helper function that tests whether a number is 0, 3, or 6.
+test1 &lt;- function(x) x %in% c(0, 3, 6) 
+
+sapply(trio_sum, test1) # test if each individual attribute meets the set condition</code></pre>
 <pre><code>##    a1    a2    a3    a4 
-## FALSE FALSE FALSE  TRUE</code></pre>
-<pre class="r"><code>all(sapply(trio_sum, test1))</code></pre>
+##  TRUE FALSE FALSE  TRUE</code></pre>
+<pre class="r"><code>all(sapply(trio_sum, test1)) # test if all attributes meet the set condition</code></pre>
 <pre><code>## [1] FALSE</code></pre>
-<pre class="r"><code>is_set &lt;- function(trio_sum) all(sapply(trio_sum, test1))
-
-# Draw 12 cards
+<pre class="r"><code># Helper function that tests whether 3 cards&#39; attributes are a set
+is_set &lt;- function(trio) all(sapply(colSums(trio), test1))
+is_set(trio)</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<pre class="r"><code># Test if function returns true for the following sets
+is_set(matrix(rep(2, 12), 3)) # all 0</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>is_set(matrix(rep(2, 12), 3)) # all 1</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>is_set(matrix(rep(2, 12), 3)) # all 2</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>is_set(matrix(rep(c(0,1,2), 4), 3)) # all 0, 1, and 2</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+</div>
+<div id="simulating-finding-sets-in-a-deal-of-12-cards" class="section level1">
+<h1>Simulating Finding Sets in a Deal of 12 Cards</h1>
+<p>Now we can build a little closer to the game. First we draw 12 cards.</p>
+<pre class="r"><code># Draw 12 cards
 set.seed(1)
 deal &lt;- sample(1:81, 12)
 deal # card numbers</code></pre>
 <pre><code>##  [1] 68 39  1 34 43 14 59 51 21 54  7 37</code></pre>
+<p>Within those 12 cards, we need to find all combinations of 3 cards.</p>
 <pre class="r"><code># Find all combinations of sets of 3
 sets &lt;- combn(deal, 3, simplify = F)
-sets </code></pre>
+head(sets)</code></pre>
 <pre><code>## [[1]]
 ## [1] 68 39  1
 ## 
@@ -68,656 +110,16 @@ sets </code></pre>
 ## [1] 68 39 59
 ## 
 ## [[6]]
-## [1] 68 39 51
-## 
-## [[7]]
-## [1] 68 39 21
-## 
-## [[8]]
-## [1] 68 39 54
-## 
-## [[9]]
-## [1] 68 39  7
-## 
-## [[10]]
-## [1] 68 39 37
-## 
-## [[11]]
-## [1] 68  1 34
-## 
-## [[12]]
-## [1] 68  1 43
-## 
-## [[13]]
-## [1] 68  1 14
-## 
-## [[14]]
-## [1] 68  1 59
-## 
-## [[15]]
-## [1] 68  1 51
-## 
-## [[16]]
-## [1] 68  1 21
-## 
-## [[17]]
-## [1] 68  1 54
-## 
-## [[18]]
-## [1] 68  1  7
-## 
-## [[19]]
-## [1] 68  1 37
-## 
-## [[20]]
-## [1] 68 34 43
-## 
-## [[21]]
-## [1] 68 34 14
-## 
-## [[22]]
-## [1] 68 34 59
-## 
-## [[23]]
-## [1] 68 34 51
-## 
-## [[24]]
-## [1] 68 34 21
-## 
-## [[25]]
-## [1] 68 34 54
-## 
-## [[26]]
-## [1] 68 34  7
-## 
-## [[27]]
-## [1] 68 34 37
-## 
-## [[28]]
-## [1] 68 43 14
-## 
-## [[29]]
-## [1] 68 43 59
-## 
-## [[30]]
-## [1] 68 43 51
-## 
-## [[31]]
-## [1] 68 43 21
-## 
-## [[32]]
-## [1] 68 43 54
-## 
-## [[33]]
-## [1] 68 43  7
-## 
-## [[34]]
-## [1] 68 43 37
-## 
-## [[35]]
-## [1] 68 14 59
-## 
-## [[36]]
-## [1] 68 14 51
-## 
-## [[37]]
-## [1] 68 14 21
-## 
-## [[38]]
-## [1] 68 14 54
-## 
-## [[39]]
-## [1] 68 14  7
-## 
-## [[40]]
-## [1] 68 14 37
-## 
-## [[41]]
-## [1] 68 59 51
-## 
-## [[42]]
-## [1] 68 59 21
-## 
-## [[43]]
-## [1] 68 59 54
-## 
-## [[44]]
-## [1] 68 59  7
-## 
-## [[45]]
-## [1] 68 59 37
-## 
-## [[46]]
-## [1] 68 51 21
-## 
-## [[47]]
-## [1] 68 51 54
-## 
-## [[48]]
-## [1] 68 51  7
-## 
-## [[49]]
-## [1] 68 51 37
-## 
-## [[50]]
-## [1] 68 21 54
-## 
-## [[51]]
-## [1] 68 21  7
-## 
-## [[52]]
-## [1] 68 21 37
-## 
-## [[53]]
-## [1] 68 54  7
-## 
-## [[54]]
-## [1] 68 54 37
-## 
-## [[55]]
-## [1] 68  7 37
-## 
-## [[56]]
-## [1] 39  1 34
-## 
-## [[57]]
-## [1] 39  1 43
-## 
-## [[58]]
-## [1] 39  1 14
-## 
-## [[59]]
-## [1] 39  1 59
-## 
-## [[60]]
-## [1] 39  1 51
-## 
-## [[61]]
-## [1] 39  1 21
-## 
-## [[62]]
-## [1] 39  1 54
-## 
-## [[63]]
-## [1] 39  1  7
-## 
-## [[64]]
-## [1] 39  1 37
-## 
-## [[65]]
-## [1] 39 34 43
-## 
-## [[66]]
-## [1] 39 34 14
-## 
-## [[67]]
-## [1] 39 34 59
-## 
-## [[68]]
-## [1] 39 34 51
-## 
-## [[69]]
-## [1] 39 34 21
-## 
-## [[70]]
-## [1] 39 34 54
-## 
-## [[71]]
-## [1] 39 34  7
-## 
-## [[72]]
-## [1] 39 34 37
-## 
-## [[73]]
-## [1] 39 43 14
-## 
-## [[74]]
-## [1] 39 43 59
-## 
-## [[75]]
-## [1] 39 43 51
-## 
-## [[76]]
-## [1] 39 43 21
-## 
-## [[77]]
-## [1] 39 43 54
-## 
-## [[78]]
-## [1] 39 43  7
-## 
-## [[79]]
-## [1] 39 43 37
-## 
-## [[80]]
-## [1] 39 14 59
-## 
-## [[81]]
-## [1] 39 14 51
-## 
-## [[82]]
-## [1] 39 14 21
-## 
-## [[83]]
-## [1] 39 14 54
-## 
-## [[84]]
-## [1] 39 14  7
-## 
-## [[85]]
-## [1] 39 14 37
-## 
-## [[86]]
-## [1] 39 59 51
-## 
-## [[87]]
-## [1] 39 59 21
-## 
-## [[88]]
-## [1] 39 59 54
-## 
-## [[89]]
-## [1] 39 59  7
-## 
-## [[90]]
-## [1] 39 59 37
-## 
-## [[91]]
-## [1] 39 51 21
-## 
-## [[92]]
-## [1] 39 51 54
-## 
-## [[93]]
-## [1] 39 51  7
-## 
-## [[94]]
-## [1] 39 51 37
-## 
-## [[95]]
-## [1] 39 21 54
-## 
-## [[96]]
-## [1] 39 21  7
-## 
-## [[97]]
-## [1] 39 21 37
-## 
-## [[98]]
-## [1] 39 54  7
-## 
-## [[99]]
-## [1] 39 54 37
-## 
-## [[100]]
-## [1] 39  7 37
-## 
-## [[101]]
-## [1]  1 34 43
-## 
-## [[102]]
-## [1]  1 34 14
-## 
-## [[103]]
-## [1]  1 34 59
-## 
-## [[104]]
-## [1]  1 34 51
-## 
-## [[105]]
-## [1]  1 34 21
-## 
-## [[106]]
-## [1]  1 34 54
-## 
-## [[107]]
-## [1]  1 34  7
-## 
-## [[108]]
-## [1]  1 34 37
-## 
-## [[109]]
-## [1]  1 43 14
-## 
-## [[110]]
-## [1]  1 43 59
-## 
-## [[111]]
-## [1]  1 43 51
-## 
-## [[112]]
-## [1]  1 43 21
-## 
-## [[113]]
-## [1]  1 43 54
-## 
-## [[114]]
-## [1]  1 43  7
-## 
-## [[115]]
-## [1]  1 43 37
-## 
-## [[116]]
-## [1]  1 14 59
-## 
-## [[117]]
-## [1]  1 14 51
-## 
-## [[118]]
-## [1]  1 14 21
-## 
-## [[119]]
-## [1]  1 14 54
-## 
-## [[120]]
-## [1]  1 14  7
-## 
-## [[121]]
-## [1]  1 14 37
-## 
-## [[122]]
-## [1]  1 59 51
-## 
-## [[123]]
-## [1]  1 59 21
-## 
-## [[124]]
-## [1]  1 59 54
-## 
-## [[125]]
-## [1]  1 59  7
-## 
-## [[126]]
-## [1]  1 59 37
-## 
-## [[127]]
-## [1]  1 51 21
-## 
-## [[128]]
-## [1]  1 51 54
-## 
-## [[129]]
-## [1]  1 51  7
-## 
-## [[130]]
-## [1]  1 51 37
-## 
-## [[131]]
-## [1]  1 21 54
-## 
-## [[132]]
-## [1]  1 21  7
-## 
-## [[133]]
-## [1]  1 21 37
-## 
-## [[134]]
-## [1]  1 54  7
-## 
-## [[135]]
-## [1]  1 54 37
-## 
-## [[136]]
-## [1]  1  7 37
-## 
-## [[137]]
-## [1] 34 43 14
-## 
-## [[138]]
-## [1] 34 43 59
-## 
-## [[139]]
-## [1] 34 43 51
-## 
-## [[140]]
-## [1] 34 43 21
-## 
-## [[141]]
-## [1] 34 43 54
-## 
-## [[142]]
-## [1] 34 43  7
-## 
-## [[143]]
-## [1] 34 43 37
-## 
-## [[144]]
-## [1] 34 14 59
-## 
-## [[145]]
-## [1] 34 14 51
-## 
-## [[146]]
-## [1] 34 14 21
-## 
-## [[147]]
-## [1] 34 14 54
-## 
-## [[148]]
-## [1] 34 14  7
-## 
-## [[149]]
-## [1] 34 14 37
-## 
-## [[150]]
-## [1] 34 59 51
-## 
-## [[151]]
-## [1] 34 59 21
-## 
-## [[152]]
-## [1] 34 59 54
-## 
-## [[153]]
-## [1] 34 59  7
-## 
-## [[154]]
-## [1] 34 59 37
-## 
-## [[155]]
-## [1] 34 51 21
-## 
-## [[156]]
-## [1] 34 51 54
-## 
-## [[157]]
-## [1] 34 51  7
-## 
-## [[158]]
-## [1] 34 51 37
-## 
-## [[159]]
-## [1] 34 21 54
-## 
-## [[160]]
-## [1] 34 21  7
-## 
-## [[161]]
-## [1] 34 21 37
-## 
-## [[162]]
-## [1] 34 54  7
-## 
-## [[163]]
-## [1] 34 54 37
-## 
-## [[164]]
-## [1] 34  7 37
-## 
-## [[165]]
-## [1] 43 14 59
-## 
-## [[166]]
-## [1] 43 14 51
-## 
-## [[167]]
-## [1] 43 14 21
-## 
-## [[168]]
-## [1] 43 14 54
-## 
-## [[169]]
-## [1] 43 14  7
-## 
-## [[170]]
-## [1] 43 14 37
-## 
-## [[171]]
-## [1] 43 59 51
-## 
-## [[172]]
-## [1] 43 59 21
-## 
-## [[173]]
-## [1] 43 59 54
-## 
-## [[174]]
-## [1] 43 59  7
-## 
-## [[175]]
-## [1] 43 59 37
-## 
-## [[176]]
-## [1] 43 51 21
-## 
-## [[177]]
-## [1] 43 51 54
-## 
-## [[178]]
-## [1] 43 51  7
-## 
-## [[179]]
-## [1] 43 51 37
-## 
-## [[180]]
-## [1] 43 21 54
-## 
-## [[181]]
-## [1] 43 21  7
-## 
-## [[182]]
-## [1] 43 21 37
-## 
-## [[183]]
-## [1] 43 54  7
-## 
-## [[184]]
-## [1] 43 54 37
-## 
-## [[185]]
-## [1] 43  7 37
-## 
-## [[186]]
-## [1] 14 59 51
-## 
-## [[187]]
-## [1] 14 59 21
-## 
-## [[188]]
-## [1] 14 59 54
-## 
-## [[189]]
-## [1] 14 59  7
-## 
-## [[190]]
-## [1] 14 59 37
-## 
-## [[191]]
-## [1] 14 51 21
-## 
-## [[192]]
-## [1] 14 51 54
-## 
-## [[193]]
-## [1] 14 51  7
-## 
-## [[194]]
-## [1] 14 51 37
-## 
-## [[195]]
-## [1] 14 21 54
-## 
-## [[196]]
-## [1] 14 21  7
-## 
-## [[197]]
-## [1] 14 21 37
-## 
-## [[198]]
-## [1] 14 54  7
-## 
-## [[199]]
-## [1] 14 54 37
-## 
-## [[200]]
-## [1] 14  7 37
-## 
-## [[201]]
-## [1] 59 51 21
-## 
-## [[202]]
-## [1] 59 51 54
-## 
-## [[203]]
-## [1] 59 51  7
-## 
-## [[204]]
-## [1] 59 51 37
-## 
-## [[205]]
-## [1] 59 21 54
-## 
-## [[206]]
-## [1] 59 21  7
-## 
-## [[207]]
-## [1] 59 21 37
-## 
-## [[208]]
-## [1] 59 54  7
-## 
-## [[209]]
-## [1] 59 54 37
-## 
-## [[210]]
-## [1] 59  7 37
-## 
-## [[211]]
-## [1] 51 21 54
-## 
-## [[212]]
-## [1] 51 21  7
-## 
-## [[213]]
-## [1] 51 21 37
-## 
-## [[214]]
-## [1] 51 54  7
-## 
-## [[215]]
-## [1] 51 54 37
-## 
-## [[216]]
-## [1] 51  7 37
-## 
-## [[217]]
-## [1] 21 54  7
-## 
-## [[218]]
-## [1] 21 54 37
-## 
-## [[219]]
-## [1] 21  7 37
-## 
-## [[220]]
-## [1] 54  7 37</code></pre>
-<pre class="r"><code># Function that takes a set of 3 cards and determines if they form a true Set
-test_set &lt;- function(set) {
-  cards[set, ] |&gt; colSums() |&gt; is_set()
-}
+## [1] 68 39 51</code></pre>
+<p>Since we’re just drawing card numbers, we have to back up the function a little more above to take the given card numbers, extract the attributes for those card numbers, then test if they form a set.</p>
+<pre class="r"><code># Function that takes a set of 3 cards numbers and determines if their
+# attributes form a true Set
 
-# We can apply the function to all the combinations in the cards dealt
-sapply(sets, test_set)</code></pre>
+test_set &lt;- function(set) {
+  cards[set, ] |&gt; is_set()
+}</code></pre>
+<p>We can apply the function to all the combinations in the cards dealt.</p>
+<pre class="r"><code>sapply(sets, test_set)</code></pre>
 <pre><code>##   [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ##  [13] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
 ##  [25] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
@@ -737,16 +139,16 @@ sapply(sets, test_set)</code></pre>
 ## [193] FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ## [205] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
 ## [217] FALSE FALSE FALSE FALSE</code></pre>
-<pre class="r"><code># In this draw of 12 cards we find that there are actually 4 Sets!
-table(sapply(sets, test_set))</code></pre>
+<p>In this draw of 12 cards we find that there are actually 4 Sets!</p>
+<pre class="r"><code>table(sapply(sets, test_set))</code></pre>
 <pre><code>## 
 ## FALSE  TRUE 
 ##   216     4</code></pre>
-<pre class="r"><code># The sets that fulfill the Set criteria are the following
-which(sapply(sets, test_set) == TRUE)</code></pre>
+<p>The sets that fulfill the Set criteria are the following:</p>
+<pre class="r"><code>which(sapply(sets, test_set) == TRUE)</code></pre>
 <pre><code>## [1]  17  24 172 196</code></pre>
-<pre class="r"><code># The card numbers in those sets are:
-sets_true &lt;- sets[which(sapply(sets, test_set) == TRUE)]
+<p>The card numbers and their attributes in those sets are:</p>
+<pre class="r"><code>sets_true &lt;- sets[which(sapply(sets, test_set) == TRUE)]
 sets_true # which sets fulfill the Set criteria</code></pre>
 <pre><code>## [[1]]
 ## [1] 68  1 54
@@ -763,25 +165,70 @@ sets_true # which sets fulfill the Set criteria</code></pre>
 lapply(sets_true, function(x) cards[unlist(x),])</code></pre>
 <pre><code>## [[1]]
 ##    a1 a2 a3 a4
-## 68 10  1  1  1
+## 68  2  1  1  1
 ## 1   0  0  0  0
-## 54  1 10 10 10
+## 54  1  2  2  2
 ## 
 ## [[2]]
 ##    a1 a2 a3 a4
-## 68 10  1  1  1
-## 34  1  0 10  0
-## 21  0 10  0 10
+## 68  2  1  1  1
+## 34  1  0  2  0
+## 21  0  2  0  2
 ## 
 ## [[3]]
 ##    a1 a2 a3 a4
-## 43  1  1 10  0
-## 59 10  0  1  1
-## 21  0 10  0 10
+## 43  1  1  2  0
+## 59  2  0  1  1
+## 21  0  2  0  2
 ## 
 ## [[4]]
 ##    a1 a2 a3 a4
 ## 14  0  1  1  1
-## 21  0 10  0 10
-## 7   0  0 10  0</code></pre>
+## 21  0  2  0  2
+## 7   0  0  2  0</code></pre>
+<p>So we can see that the trios of cards actually look like sets…</p>
+</div>
+<div id="repeating-the-simulation-1000-times" class="section level1">
+<h1>Repeating the Simulation 1000 times</h1>
+<p>Ok now that we have shown that we can simulate the 12 cards, let’s simulate the probability that a random draw of 12 cards will contain at least one set.</p>
+<p>To do this we need a function that takes as its input a vector of 12 card numbers and returns the number of sets found.</p>
+<pre class="r"><code>set_sim &lt;- function(deal) {
+  sets &lt;- combn(deal, 3, simplify = F)
+  sum(sapply(sets, test_set))
+}</code></pre>
+<p>Yikes, is that all that’s needed? Seems like too good to be true. Testing it on the original random deal from above gets the same answer. Ok then…</p>
+<pre class="r"><code>set_sim(deal) </code></pre>
+<pre><code>## [1] 4</code></pre>
+<p>Now let’s create 1000 random deals. Google tip to this <a href="https://stackoverflow.com/questions/21540535/creating-a-list-of-random-vectors-in-r">link</a>.</p>
+<pre class="r"><code>set.seed(1)
+deals &lt;- replicate(1000, sample(1:81,size=12), simplify=FALSE)
+head(deals)</code></pre>
+<pre><code>## [[1]]
+##  [1] 68 39  1 34 43 14 59 51 21 54  7 37
+## 
+## [[2]]
+##  [1] 37 34 44 33 35 70 74 42 38 20 28 72
+## 
+## [[3]]
+##  [1] 44 70 40 81 25 80 39 51 42  6 24 32
+## 
+## [[4]]
+##  [1] 14  2 45 18 22 65 70 75 13 40 48 23
+## 
+## [[5]]
+##  [1] 29 13 22 28 48 33 45 21 31 17 77 64
+## 
+## [[6]]
+##  [1] 60 51 34 10  1 43 59 26 15 58 29 24</code></pre>
+<pre class="r"><code>deals_sets &lt;- sapply(deals, set_sim)
+table(deals_sets)</code></pre>
+<pre><code>## deals_sets
+##   0   1   2   3   4   5   6   7   8 
+##  34 165 253 270 174  78  20   5   1</code></pre>
+<p>Ohhh… that took a while even with only 1000 samples and trying to use vector methods as much as I could. That being said, it produced a really nice distribution here!</p>
+<pre class="r"><code>hist(deals_sets)</code></pre>
+<p><img src="/post/2021-09-07-set-simulation_files/figure-html/unnamed-chunk-15-1.png" width="672" />
+So out of 1000 random deals of 12 cards, 34 did not have any sets. That’s a 3.4% rate of not finding a set, or 96.6% rate of finding a set. This compares extremely well to their cited 33:1 odds of finding a set, which of course, is 33/34 or 97%.</p>
+<p>In addition, the most common number of sets is not 1, and not even 2. It’s 3 sets! Actually according to this simulation, there is a greater than 50% chance of there being 3 or more sets found among the 12 cards!</p>
+<p>We can do the same thing for 15 cards, but we would probably have to run 10000 trials given that it says 2500:1 odds of finding a match. On my puny laptop, that might take all night. Well, since it’s bedtime, why not?</p>
 </div>
