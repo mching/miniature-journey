@@ -1,0 +1,80 @@
+---
+title: Set Simulation
+author: ~
+date: '2021-09-07'
+slug: set-simulation
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+My son and I were playing the card game Set this weekend. It's a fun pattern matching game, and if you don't know the rules, they're available online [here.](https://www.setgame.com/set/puzzle) Basically you deal out 12 cards and look for a set of 3 cards that fit a certain pattern. Each time a set is removed, 3 more cards are dealt to return the number of face up cards to 12. As each set is removed, this happens 23 times until the remaining 69 cards are gone. The winner is the person who has discovered the most sets.
+
+In the instructions it says that there are 33:1 odds of having a set that fits the criteria when 12 cards are face up, and about 2500:1 when 15 cards are face up. In this one game, we kept being unable to find a set among 12 cards. When this happened we dealt another 3 cards (to make 15) and were usually able to find a set right away. But we were definitely getting stuck more than 1 in 34 times. 
+
+I wanted to find out what is the probability of having a set among 12 cards (and 15 for that matter). To do this, of course, I turned to R.
+
+# Create the Deck
+
+```{r}
+a1 <- rep(c(0,1,10), rep(27, 3))
+a2 <- rep(rep(c(0,1,10), rep(9, 3)), 3)
+a3 <- rep(rep(c(0,1,10), rep(3, 3)), 9)
+a4 <- rep(c(0,1,10), 27)
+
+cards <- data.frame(a1, a2, a3, a4)
+
+# number of 3 card combinations in deck
+81*80*79/3/2
+
+# number of 3 card combinations in 12 cards
+12*11*10/3/2
+
+trio <- cards[sample(1:81, 3), ]
+colSums(trio)
+  
+trio_sum <- colSums(trio)
+test1 <- function(x) x %in% c(0, 3, 11, 30)
+
+sapply(trio_sum, test1)
+all(sapply(trio_sum, test1))
+
+is_set <- function(trio_sum) all(sapply(trio_sum, test1))
+
+# Draw 12 cards
+set.seed(1)
+deal <- sample(1:81, 12)
+deal # card numbers
+
+# Find all combinations of sets of 3
+sets <- combn(deal, 3, simplify = F)
+sets 
+
+# Function that takes a set of 3 cards and determines if they form a true Set
+test_set <- function(set) {
+  cards[set, ] |> colSums() |> is_set()
+}
+
+# We can apply the function to all the combinations in the cards dealt
+sapply(sets, test_set)
+
+# In this draw of 12 cards we find that there are actually 4 Sets!
+table(sapply(sets, test_set))
+
+# The sets that fulfill the Set criteria are the following
+which(sapply(sets, test_set) == TRUE)
+
+# The card numbers in those sets are:
+sets_true <- sets[which(sapply(sets, test_set) == TRUE)]
+sets_true # which sets fulfill the Set criteria
+
+# The actual card attributes are:
+lapply(sets_true, function(x) cards[unlist(x),])
+```
+
+```{r}
+
+```
+
