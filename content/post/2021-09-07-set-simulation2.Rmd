@@ -1,5 +1,5 @@
 ---
-title: Set Simulation 2
+title: Set Simulation
 author: ~
 date: '2021-09-07'
 slug: set-simulation
@@ -48,9 +48,9 @@ Here's a little more about the game. In order for 3 cards to meet the set criter
 So if we sum the attributes, they have to be equal to 0+0+0=0 or 1+1+1=3 or 2+2+2=6, or 0+1+2=3. Again, they can only be 0, 3,  or 6. If we have 0+1+0, that's not right. Or 0+2+2, again not right. There is no other way to make 0, 3, or 6 other than by them all to be the same or all to be different.
 
 ## Mathematics Aside: Given 3 Random Cards, What Is the Probability They Are a Set?
-This hints at the calculation that would need to be done to do this in a mathematics way. For an attribute, each card can have 3 outcomes (0, 1, 2). There are 27 possible permutations, and 3 possible ways for them to be all the same and 6 possible ways for them to be all different. So for each attribute there is a 9/27, or 1/3, chance that it meets the criteria. Given random distribution of the attributes, for each of 4 attributes to meet the criteria, we would calculate that probability as (1/3)^4 or 1/81. 
+This hints at the calculation that would need to be done to do this in a mathematics way. For an attribute, each card can have 3 outcomes (0, 1, 2). There are 27 possible permutations, and 3 possible ways for them to be all the same and 6 possible ways for them to be all different. So for each attribute there is a 9/27, or 1/3, chance that it meets the criteria. Given random distribution of the attributes, for each of 4 attributes to meet the criteria, we would calculate that probability as (1/3)^4 or 1/81, or about 1.2%. 
 
-When you deal 12 cards, there are 220 combinations of 3. They are not all independent since many of them have the same card within them. I have to do some more thinking about how the dependence affects the probability of finding at least one set that meets the criteria.
+When you deal 12 cards, there are 220 combinations of 3. They are not all independent since many of them have the same card within them. I have to do some more thinking about how the dependence affects the probability of finding at least one set that meets the criteria, but apparently this increases the probability of finding a set.
 
 ## Back to the Programming
 
@@ -69,14 +69,15 @@ test1 <- function(x) x %in% c(0, 3, 6)
 
 sapply(trio_sum, test1) # test if each individual attribute meets the set condition
 all(sapply(trio_sum, test1)) # test if all attributes meet the set condition
+prod(sapply(trio_sum, test1)) # alternate test if all attributes are true
 
 # Helper function that tests whether 3 cards' attributes are a set
 is_set <- function(trio) all(sapply(colSums(trio), test1))
 is_set(trio)
 
 # Test if function returns true for the following sets
-is_set(matrix(rep(2, 12), 3)) # all 0
-is_set(matrix(rep(2, 12), 3)) # all 1
+is_set(matrix(rep(0, 12), 3)) # all 0
+is_set(matrix(rep(1, 12), 3)) # all 1
 is_set(matrix(rep(2, 12), 3)) # all 2
 is_set(matrix(rep(c(0,1,2), 4), 3)) # all 0, 1, and 2
 ```
@@ -145,6 +146,7 @@ set_sim <- function(deal) {
   sets <- combn(deal, 3, simplify = F)
   sum(sapply(sets, test_set))
 }
+
 ```
 
 Yikes, is that all that's needed? Seems like too good to be true. Testing it on the original random deal from above gets the same answer. Ok then...
@@ -176,7 +178,7 @@ So out of 1000 random deals of 12 cards, 34 did not have any sets. That's a 3.4%
 
 In addition, the most common number of sets is not 1, and not even 2. It's 3 sets! Actually according to this simulation, there is a greater than 50% chance of there being 3 or more sets found among the 12 cards!
 
-We can do the same thing for 15 cards, but we would probably have to run 10000 trials given that it says 2500:1 odds of finding a match. On my puny laptop, that might take all day. 
+We can do the same thing for 15 cards, but we would probably have to run 10000 trials given that it says 2500:1 odds of finding a match. On my puny laptop, that might take all day!
 
 ```{r}
 set.seed(1)
@@ -194,10 +196,12 @@ hist(deals_sets)
 
 So I let that chunk above run while I went to work. It took 7860 seconds, or 2 hours 11 minutes on my puny laptop. 
 
-After 30,000 simulations of a 15 card deal, I found 11 where there were no sets. This is about 0.03% or 2727:1. That's pretty close to what it says in the instruction book for the game. 
+After 30,000 simulations of a 15 card deal, I found 11 where there were no sets. This is about 0.03% or 2727:1. That's pretty close to what it says in the instruction book for the game, 2500:1. 
 
 ```
 deals_sets
    0    1    2    3    4    5    6    7    8    9   10   11   12   13   14 
   11  144  792 2281 4410 6028 6247 4938 2995 1463  498  146   39    5    3 
 ```
+### Notes
+I had to figure some stuff out here because of updates to hugo and blogdown. Now blogdown doesn't build the site so I had to manually call `build_site(local = TRUE)` to rebuild the Github pages directory, then push it to Github. Images were broken in preview but worked after pushing to Github. All in all, this method of publishing the blog is starting to become more kludgy, and it may be soon time to jump ship to Netlify!
