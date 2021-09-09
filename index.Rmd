@@ -1,5 +1,6 @@
 ---
 site: blogdown:::blogdown_site
+title: Dripping Data
 ---
 # Dripping Data
 
