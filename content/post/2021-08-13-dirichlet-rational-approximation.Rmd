@@ -199,26 +199,8 @@ m2 <- 575
 (m2 - m1)* exp(1) # numerator
 (m2 - m1) # denominator
 
-1456/8
-536/8
-
-182/67
-
-(182/67 - exp(1))/exp(1)
-
-```
-
-Huh, this approximation is not that great. I mean, it's better than 0.1% off but could it be better? Let's choose another box.
-
-
-```{r}
-boxes %>% filter(box_no == 37)
-
-m1 <- 188
-m2 <- 724
-
-(m2 - m1)* exp(1) # numerator
-(m2 - m1) # denominator
+1457
+536
 
 1457/536
 
@@ -226,7 +208,7 @@ m2 <- 724
 
 ```
 
-Wow this one is a lot better! Like 1000 times better!
+Not too shabby. This is a less than 1 in a million error.
 
 What we need is to look not just at a random approximation but all the approximations that are calculated by this method... There are 973 pairs after all that fall into the same box.
 
