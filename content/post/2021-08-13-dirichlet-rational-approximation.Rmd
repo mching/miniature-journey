@@ -123,7 +123,7 @@ WTF! It's the same milu! That's just nuts.
 
 Ok, let's try a different irrational number, maybe the golden ratio...
 
-The golden ratio is approximated by (1 + square root of 5) / 2.
+The golden ratio is (1 + square root of 5) / 2.
 
 ```{r}
 phi <- (1 + sqrt(5))/2
