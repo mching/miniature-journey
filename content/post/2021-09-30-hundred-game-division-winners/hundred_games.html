@@ -1,0 +1,171 @@
+---
+title: Hundred Game Division Winners
+author: ''
+date: '2021-09-30'
+slug: hundred-game-division-winners
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p>As we get closer to the end of the baseball season, the San Francisco Giants and Los Angeles Dodgers both have over 100 wins. A friend asked if there had been situations where two 100 win teams had been in the same division AND there had been no other 100 win teams in other divisions. It’s kind of a weird question, but it inspired me to look at the Lahman database to find an answer.</p>
+<pre class="r"><code>library(Lahman)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
+## ✓ tibble  3.1.4     ✓ dplyr   1.0.7
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   2.0.1     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<p>The Lahman database contains a table called Teams that reports on the various team statistics for every baseball season from 1871 to the present day.</p>
+<pre class="r"><code>data(Teams)
+str(Teams)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    2955 obs. of  48 variables:
+##  $ yearID        : int  1871 1871 1871 1871 1871 1871 1871 1871 1871 1872 ...
+##  $ lgID          : Factor w/ 7 levels &quot;AA&quot;,&quot;AL&quot;,&quot;FL&quot;,..: 4 4 4 4 4 4 4 4 4 4 ...
+##  $ teamID        : Factor w/ 149 levels &quot;ALT&quot;,&quot;ANA&quot;,&quot;ARI&quot;,..: 24 31 39 56 90 97 111 136 142 8 ...
+##  $ franchID      : Factor w/ 120 levels &quot;ALT&quot;,&quot;ANA&quot;,&quot;ARI&quot;,..: 13 36 25 56 70 85 91 109 77 9 ...
+##  $ divID         : chr  NA NA NA NA ...
+##  $ Rank          : int  3 2 8 7 5 1 9 6 4 2 ...
+##  $ G             : int  31 28 29 19 33 28 25 29 32 58 ...
+##  $ Ghome         : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ W             : int  20 19 10 7 16 21 4 13 15 35 ...
+##  $ L             : int  10 9 19 12 17 7 21 15 15 19 ...
+##  $ DivWin        : chr  NA NA NA NA ...
+##  $ WCWin         : chr  NA NA NA NA ...
+##  $ LgWin         : chr  &quot;N&quot; &quot;N&quot; &quot;N&quot; &quot;N&quot; ...
+##  $ WSWin         : chr  NA NA NA NA ...
+##  $ R             : int  401 302 249 137 302 376 231 351 310 617 ...
+##  $ AB            : int  1372 1196 1186 746 1404 1281 1036 1248 1353 2571 ...
+##  $ H             : int  426 323 328 178 403 410 274 384 375 753 ...
+##  $ X2B           : int  70 52 35 19 43 66 44 51 54 106 ...
+##  $ X3B           : int  37 21 40 8 21 27 25 34 26 31 ...
+##  $ HR            : int  3 10 7 2 1 9 3 6 6 14 ...
+##  $ BB            : int  60 60 26 33 33 46 38 49 48 29 ...
+##  $ SO            : int  19 22 25 9 15 23 30 19 13 28 ...
+##  $ SB            : int  73 69 18 16 46 56 53 62 48 53 ...
+##  $ CS            : int  16 21 8 4 15 12 10 24 13 18 ...
+##  $ HBP           : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ SF            : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ RA            : int  303 241 341 243 313 266 287 362 303 434 ...
+##  $ ER            : int  109 77 116 97 121 137 108 153 137 166 ...
+##  $ ERA           : num  3.55 2.76 4.11 5.17 3.72 4.95 4.3 5.51 4.37 2.9 ...
+##  $ CG            : int  22 25 23 19 32 27 23 28 32 48 ...
+##  $ SHO           : int  1 0 0 1 1 0 1 0 0 1 ...
+##  $ SV            : int  3 1 0 0 0 0 0 0 0 1 ...
+##  $ IPouts        : int  828 753 762 507 879 747 678 750 846 1548 ...
+##  $ HA            : int  367 308 346 261 373 329 315 431 371 573 ...
+##  $ HRA           : int  2 6 13 5 7 3 3 4 4 3 ...
+##  $ BBA           : int  42 28 53 21 42 53 34 75 45 63 ...
+##  $ SOA           : int  23 22 34 17 22 16 16 12 13 77 ...
+##  $ E             : int  243 229 234 163 235 194 220 198 218 432 ...
+##  $ DP            : int  24 16 15 8 14 13 14 22 20 22 ...
+##  $ FP            : num  0.834 0.829 0.818 0.803 0.84 0.845 0.821 0.845 0.85 0.83 ...
+##  $ name          : chr  &quot;Boston Red Stockings&quot; &quot;Chicago White Stockings&quot; &quot;Cleveland Forest Citys&quot; &quot;Fort Wayne Kekiongas&quot; ...
+##  $ park          : chr  &quot;South End Grounds I&quot; &quot;Union Base-Ball Grounds&quot; &quot;National Association Grounds&quot; &quot;Hamilton Field&quot; ...
+##  $ attendance    : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ BPF           : int  103 104 96 101 90 102 97 101 94 106 ...
+##  $ PPF           : int  98 102 100 107 88 98 99 100 98 102 ...
+##  $ teamIDBR      : chr  &quot;BOS&quot; &quot;CHI&quot; &quot;CLE&quot; &quot;KEK&quot; ...
+##  $ teamIDlahman45: chr  &quot;BS1&quot; &quot;CH1&quot; &quot;CL1&quot; &quot;FW1&quot; ...
+##  $ teamIDretro   : chr  &quot;BS1&quot; &quot;CH1&quot; &quot;CL1&quot; &quot;FW1&quot; ...</code></pre>
+<p>All I needed was the year, league, team, division, and wins. I also selected the games played and losses for completeness.</p>
+<pre class="r"><code>teams &lt;- Teams %&gt;% select(yearID, lgID, teamID, divID, Rank, G, W, L, name)
+table(teams$divID, teams$lgID, useNA = &quot;if&quot;)</code></pre>
+<pre><code>##       
+##         AA  AL  FL  NA  NL  PL  UA
+##   C      0 135   0   0 150   0   0
+##   E      0 302   0   0 286   0   0
+##   W      0 283   0   0 282   0   0
+##   &lt;NA&gt;  85 560  16  50 786   8  12</code></pre>
+<p>I filtered by 100 win teams then grouped these by year, league, and division. I counted the teams in each division that had won 100 games. Then I filtered by the years where there were more than 1 team in a division that had won at least 100 games.</p>
+<pre class="r"><code>teams %&gt;% filter(W &gt;= 100) %&gt;% 
+  group_by(yearID, lgID, divID) %&gt;%
+  summarize(n_100_win_teams = n()) %&gt;% 
+  filter(n_100_win_teams &gt; 1)</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;yearID&#39;, &#39;lgID&#39;. You can override using the `.groups` argument.</code></pre>
+<pre><code>## # A tibble: 10 × 4
+## # Groups:   yearID, lgID [10]
+##    yearID lgID  divID n_100_win_teams
+##     &lt;int&gt; &lt;fct&gt; &lt;chr&gt;           &lt;int&gt;
+##  1   1909 NL    &lt;NA&gt;                2
+##  2   1915 AL    &lt;NA&gt;                2
+##  3   1942 NL    &lt;NA&gt;                2
+##  4   1954 AL    &lt;NA&gt;                2
+##  5   1961 AL    &lt;NA&gt;                2
+##  6   1962 NL    &lt;NA&gt;                2
+##  7   1980 AL    E                   2
+##  8   1993 NL    W                   2
+##  9   2001 AL    W                   2
+## 10   2018 AL    E                   2</code></pre>
+<p>In 2018 the AL East had two 100 team winners, the Red Sox and Yankees (108 and 100 wins respectively). However there was actually another team that had 100 wins, the Houston Astros, so that doesn’t quite fit my friend’s question.</p>
+<pre class="r"><code>teams %&gt;% filter(yearID == 2018 &amp; W &gt;= 100) %&gt;% arrange(-W)</code></pre>
+<pre><code>##   yearID lgID teamID divID Rank   G   W  L             name
+## 1   2018   AL    BOS     E    1 162 108 54   Boston Red Sox
+## 2   2018   AL    HOU     W    1 162 103 59   Houston Astros
+## 3   2018   AL    NYA     E    2 162 100 62 New York Yankees</code></pre>
+<p>In 2001, there were two teams that won 100 games, the Mariners and Athletics. The Mariners had 116 wins, in Ichiro Suzuki’s rookie year. The team lost to the 95 win Yankees in the ALCS. The As actually won 102 games but still finished 14 games back of the Mariners. They lost to the Yankees in the division series. The Yankees then lost in the World Series to the Diamondbacks in 7 games.</p>
+<pre class="r"><code>teams %&gt;% filter(yearID == 2001 &amp; W&gt;=100) %&gt;% arrange(-W)</code></pre>
+<pre><code>##   yearID lgID teamID divID Rank   G   W  L              name
+## 1   2001   AL    SEA     W    1 162 116 46  Seattle Mariners
+## 2   2001   AL    OAK     W    2 162 102 60 Oakland Athletics</code></pre>
+<p>Some other teams included the Braves in their last year in the NL West, beating out the Giants 104-103 wins. Neither made it to the World Series, with the Blue Jays defeating the Phillies due to Joe Carter’s walk off home run in game 6.</p>
+<pre class="r"><code>teams %&gt;% filter(yearID == 1993 &amp; W&gt;=100) %&gt;% arrange(-W)</code></pre>
+<pre><code>##   yearID lgID teamID divID Rank   G   W  L                 name
+## 1   1993   NL    ATL     W    1 162 104 58       Atlanta Braves
+## 2   1993   NL    SFN     W    2 162 103 59 San Francisco Giants</code></pre>
+<p>The 1962 season was also a cool story with the Giants and Dodgers both finishing with 101 wins. This was from before there were divisions in baseball and only one team would make the world series. As a result the two teams played an additional 3 game regular-season series with the Giants coming out ahead 2-1.</p>
+<pre class="r"><code>teams %&gt;% filter(yearID == 1962 &amp; W &gt;= 100) %&gt;% arrange(-W)</code></pre>
+<pre><code>##   yearID lgID teamID divID Rank   G   W  L                 name
+## 1   1962   NL    SFN  &lt;NA&gt;    1 165 103 62 San Francisco Giants
+## 2   1962   NL    LAN  &lt;NA&gt;    2 165 102 63  Los Angeles Dodgers</code></pre>
+<pre class="r"><code>teams %&gt;% filter(yearID == 1961 &amp; W &gt;= 100) %&gt;% arrange(-W)</code></pre>
+<pre><code>##   yearID lgID teamID divID Rank   G   W  L             name
+## 1   1961   AL    NYA  &lt;NA&gt;    1 163 109 53 New York Yankees
+## 2   1961   AL    DET  &lt;NA&gt;    2 163 101 61   Detroit Tigers</code></pre>
+<p>Another question is how often are there 100 game win teams in baseball?</p>
+<p>First we can check how many times there are 100 win teams in a season.</p>
+<pre class="r"><code>teams %&gt;% mutate(w100 = (W&gt;=100)) %&gt;% 
+  group_by(yearID) %&gt;% 
+  summarize(n_teams = n(), w100teams = sum(w100)) %&gt;%
+  arrange(-w100teams)</code></pre>
+<pre><code>## # A tibble: 150 × 3
+##    yearID n_teams w100teams
+##     &lt;int&gt;   &lt;int&gt;     &lt;int&gt;
+##  1   2019      30         4
+##  2   1942      16         3
+##  3   1977      26         3
+##  4   1998      30         3
+##  5   2002      30         3
+##  6   2003      30         3
+##  7   2017      30         3
+##  8   2018      30         3
+##  9   1909      16         2
+## 10   1910      16         2
+## # … with 140 more rows</code></pre>
+<pre class="r"><code>teams %&gt;% mutate(w100 = (W&gt;=100)) %&gt;% 
+  group_by(yearID) %&gt;% 
+  summarize(n_teams = n(), w100teams = sum(w100)) %&gt;% 
+  summarize(n_seasons = sum(n_teams), w100teams = sum(w100teams))</code></pre>
+<pre><code>## # A tibble: 1 × 2
+##   n_seasons w100teams
+##       &lt;int&gt;     &lt;int&gt;
+## 1      2955       109</code></pre>
+<p>There have been 109 hundred win seasons in the 2955 baseball team seasons in the database.</p>
+<pre class="r"><code>teams %&gt;% mutate(w100 = (W&gt;=100)) %&gt;% 
+  group_by(yearID) %&gt;% 
+  summarize(n_teams = n(), w100teams = sum(w100)) %&gt;% 
+  summarize(n_seasons = sum(n_teams), w100teams = sum(w100teams)) %&gt;% 
+  summarize(w100teams/n_seasons)</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   `w100teams/n_seasons`
+##                   &lt;dbl&gt;
+## 1                0.0369</code></pre>
+<p>That breaks down to about 3.7%. Given that there are 30 teams in the league, we would expect about 1 team to reach the 100 win plateau per year.</p>

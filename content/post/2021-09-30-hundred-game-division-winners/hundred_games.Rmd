@@ -1,0 +1,95 @@
+---
+title: Hundred Game Division Winners
+author: ''
+date: '2021-09-30'
+slug: hundred-game-division-winners
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+As we get closer to the end of the baseball season, the San Francisco Giants and Los Angeles Dodgers both have over 100 wins. A friend asked if there had been situations where two 100 win teams had been in the same division AND there had been no other 100 win teams in other divisions. It's kind of a weird question, but it inspired me to look at the Lahman database to find an answer. 
+
+```{r}
+library(Lahman)
+library(tidyverse)
+```
+
+The Lahman database contains a table called Teams that reports on the various team statistics for every baseball season from 1871 to the present day.
+```{r}
+data(Teams)
+str(Teams)
+```
+
+All I needed was the year, league, team, division, and wins. I also selected the games played and losses for completeness.
+
+```{r}
+teams <- Teams %>% select(yearID, lgID, teamID, divID, Rank, G, W, L, name)
+table(teams$divID, teams$lgID, useNA = "if")
+```
+
+I filtered by 100 win teams then grouped these by year, league, and division. I counted the teams in each division that had won 100 games. Then I filtered by the years where there were more than 1 team in a division that had won at least 100 games. 
+
+```{r}
+teams %>% filter(W >= 100) %>% 
+  group_by(yearID, lgID, divID) %>%
+  summarize(n_100_win_teams = n()) %>% 
+  filter(n_100_win_teams > 1)
+```
+
+In 2018 the AL East had two 100 team winners, the Red Sox and Yankees (108 and 100 wins respectively). However there was actually another team that had 100 wins, the Houston Astros, so that doesn't quite fit my friend's question.
+
+```{r}
+teams %>% filter(yearID == 2018 & W >= 100) %>% arrange(-W)
+```
+In 2001, there were two teams that won 100 games, the Mariners and Athletics. The Mariners had 116 wins, in Ichiro Suzuki's rookie year. The team lost to the 95 win Yankees in the ALCS. The As actually won 102 games but still finished 14 games back of the Mariners. They lost to the Yankees in the division series. The Yankees then lost in the World Series to the Diamondbacks in 7 games.
+
+```{r}
+teams %>% filter(yearID == 2001 & W>=100) %>% arrange(-W)
+```
+Some other teams included the Braves in their last year in the NL West, beating out the Giants 104-103 wins. Neither made it to the World Series, with the Blue Jays defeating the Phillies due to Joe Carter's walk off home run in game 6.
+
+```{r}
+teams %>% filter(yearID == 1993 & W>=100) %>% arrange(-W)
+```
+
+The 1962 season was also a cool story with the Giants and Dodgers both finishing with 101 wins. This was from before there were divisions in baseball and only one team would make the world series. As a result the two teams played an additional 3 game regular-season series with the Giants coming out ahead 2-1.
+
+```{r}
+teams %>% filter(yearID == 1962 & W >= 100) %>% arrange(-W)
+```
+
+```{r}
+teams %>% filter(yearID == 1961 & W >= 100) %>% arrange(-W)
+```
+Another question is how often are there 100 game win teams in baseball? 
+
+First we can check how many times there are 100 win teams in a season.
+
+```{r}
+teams %>% mutate(w100 = (W>=100)) %>% 
+  group_by(yearID) %>% 
+  summarize(n_teams = n(), w100teams = sum(w100)) %>%
+  arrange(-w100teams)
+```
+
+```{r}
+teams %>% mutate(w100 = (W>=100)) %>% 
+  group_by(yearID) %>% 
+  summarize(n_teams = n(), w100teams = sum(w100)) %>% 
+  summarize(n_seasons = sum(n_teams), w100teams = sum(w100teams))
+
+```
+There have been 109 hundred win seasons in the 2955 baseball team seasons in the database.
+
+```{r}
+teams %>% mutate(w100 = (W>=100)) %>% 
+  group_by(yearID) %>% 
+  summarize(n_teams = n(), w100teams = sum(w100)) %>% 
+  summarize(n_seasons = sum(n_teams), w100teams = sum(w100teams)) %>% 
+  summarize(w100teams/n_seasons)
+```
+
+That breaks down to about 3.7%. Given that there are 30 teams in the league, we would expect about 1 team to reach the 100 win plateau per year. 
+
