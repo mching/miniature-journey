@@ -1,0 +1,46 @@
+---
+title: Top Starter Wins for MLB Division Champions
+author: ''
+date: '2021-10-11'
+slug: top-starter-wins-for-mlb-division-champions
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+---
+
+It's baseball playoff time and I heard somewhere that the pitcher with the most wins on the AL East champion Tampa Bay Rays had only 10 wins. Now pitcher wins have a bad rap now as being a stat that is largely outside of the pitcher's control, and the Rays often use "openers" who don't end up qualifying for wins because they don't go the full 5 innings required for the win. Pitcher wins also seemed down this year with the winningest pitcher having 20 wins and the next winningest having 17. In fact many teams had pitchers with only like 14 or 12 wins. I wondered how often it is that the pitcher with the most wins on a team will win such a small proportion of the games...
+
+```{r}
+library(tidyverse)
+library(Lahman)
+```
+
+For purposes of this exercise, I'm going to start with the division era starting in 1969.
+
+```{r}
+data(Teams)
+data(Pitching)
+teams <- tbl_df(Teams)
+pitching <- tbl_df(Pitching)
+
+rm(Pitching)
+rm(Teams)
+
+str(teams)
+str(pitching)
+pitching <- pitching %>% select(playerID, yearID, stint, teamID, lgID, W, L, G)
+
+table(teams$DivWin)
+div_winners <- teams %>% filter(DivWin == "Y") %>% 
+  select(yearID, lgID, teamID, divID, G, W, L)
+
+div_winners %>% left_join(pitching, by = c("yearID", "teamID", "lgID")) %>% 
+  group_by(yearID, lgID, teamID) %>% 
+  mutate(Wrank = min_rank(-W.y)) %>% 
+  filter(Wrank == 1) %>%
+  filter(yearID != 2020) %>%
+  arrange(W.y)
+```
+

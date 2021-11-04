@@ -1,0 +1,140 @@
+---
+title: 'Bio Lab: HR and RR after Exercise'
+author: ''
+date: '2021-11-03'
+output:
+  word_document: default
+  pdf_document: default
+categories: []
+tags: []
+type: ''
+subtitle: ''
+image: ''
+slug: bio-lab-hr-and-rr-after-exercise
+---
+
+# Introduction
+
+Students in Biology classes at Iolani School collected data on heart rate and respiratory rate before, during, and after exercise. We describe the results below.
+
+# Methods
+
+
+```{r}
+library("tidyverse") # Software library used for data cleaning and analysis.
+```
+
+I received a spreadsheet with two types of data, both in wide format. I separated these into separate tables in the spreadsheet software.
+
+```{r}
+hr <- read_csv("/Users/mching/Documents/miniature-journey/content/datasets/bio_hr.csv")
+rr <- read_csv("/Users/mching/Documents/miniature-journey/content/datasets/bio_rr.csv")
+```
+
+I first checked for students with the same initials within the same class (teacher and period).
+
+```{r}
+hr %>% mutate(pdinit = paste(Period, initials)) %>% 
+  group_by(pdinit) %>%
+  summarize(npdinit = n()) %>% arrange(-npdinit)
+```
+
+Since there were none (other than blank rows of NAs), I made the wide data into long data so they could be joined.
+
+```{r}
+hr <- hr %>% pivot_longer(cols = starts_with("t"), names_to = "minutes", 
+                          names_prefix = "t",
+                          values_to = "HR")
+
+rr <- rr %>% pivot_longer(cols = starts_with("t"), names_to = "minutes", 
+                          names_prefix = "t",
+                          values_to = "RR")
+
+dat <- full_join(rr, hr, by = c("Period", "initials", "minutes"))
+glimpse(dat)
+dat$minutes <- as.integer(dat$minutes)
+```
+
+I separated the Period column into teacher and period 
+
+```{r}
+dat <- dat %>% separate(Period, c("teacher", "period"))
+```
+
+# Results
+
+## All data
+
+Since there are probably no differences between students in each class, I reported the combined data first.
+
+There are quite a few outliers when we plot every data point.
+
+```{r}
+dat %>% group_by(minutes) %>%
+  ggplot(aes(x = minutes, y = HR, color = teacher)) +
+  geom_point(alpha = 0.2, position = position_jitter(width = 0.2, height = 1)) +
+    scale_x_continuous(breaks = seq(0,10,1))
+
+dat %>% group_by(minutes) %>%
+  ggplot(aes(x = minutes, y = RR, color = teacher)) +
+  geom_point(alpha = 0.2, position = position_jitter(width = 0.2, height = 1)) +
+    scale_x_continuous(breaks = seq(0,10,1))
+```
+
+
+When we look at means however, the outliers disappear and we are left with pretty nice results.
+
+```{r}
+
+dat %>% group_by(minutes) %>%
+  summarize(meanHR = mean(HR, na.rm = T),
+            sdHR = sd(HR, na.rm = T),
+            meanRR = mean(RR, na.rm = T),
+            sdRR = sd(RR, na.rm = T))
+
+dat %>% group_by(minutes) %>%
+  summarize(meanHR = mean(HR, na.rm = T)) %>%
+  ggplot(aes(x = minutes, y = meanHR)) +
+  geom_point()
+
+dat %>% group_by(minutes) %>%
+  summarize(meanRR = mean(RR, na.rm = T)) %>%
+  ggplot(aes(x = minutes, y = meanRR)) +
+  geom_point()
+
+```
+
+## Data grouped by Teacher and Period
+
+Grouping data by teacher and period was one way to see if there were differences among these groups. It wasn't obvious whether there were any differences.
+
+```{r}
+dat %>% group_by(teacher, minutes) %>% 
+  summarize(meanHR = mean(HR, na.rm = T),
+            meanRR = mean(RR, na.rm = T)) %>%
+  arrange(minutes, teacher)
+```
+
+I plotted the means by classes for heart rate...
+```{r}
+dat %>% group_by(teacher, period, minutes) %>% 
+  summarize(meanHR = mean(HR, na.rm = T)) %>%
+  ggplot(aes(x = minutes, y = meanHR, color = period, shape = teacher)) +
+  geom_point(position=position_jitter(width=.1)) + 
+  scale_x_continuous(breaks = seq(0,10,1)) +
+  scale_color_brewer(palette = "Dark2")
+```
+
+...and respiratory rate.
+
+```{r}
+dat %>% group_by(teacher, period, minutes) %>% 
+  summarize(meanRR = mean(RR, na.rm = T)) %>%
+  ggplot(aes(x = minutes, y = meanRR, color = period, shape = teacher)) +
+  geom_point(position=position_jitter(width=.1)) + 
+  scale_x_continuous(breaks = seq(0,10,1)) +
+  scale_color_brewer(palette = "Dark2")
+```
+# Discussion
+
+Not much eye opening in these analyses. Kids started exercising and their heart and respiratory rates went up (and became more variable with a greater standard deviation). When they stopped exercising, the heart and respiratory rates went down but not all the way back to baseline by 5 minute post exercise.
